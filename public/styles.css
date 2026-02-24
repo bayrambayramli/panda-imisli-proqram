@@ -52,8 +52,9 @@ body {
 }
 
 .date-section label {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
+  color: white;
 }
 
 .today-date {
@@ -118,11 +119,11 @@ body {
 }
 
 .section h2 {
-  color: #667eea;
+  color: #1a237e;
   margin-bottom: 12px;
   font-size: 18px;
   font-weight: bold;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid #1a237e;
   padding-bottom: 8px;
 }
 
@@ -151,10 +152,10 @@ body {
 }
 
 .form-group label {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 4px;
   font-size: 14px;
-  color: #333;
+  color: #000;
 }
 
 .form-group input,
@@ -295,7 +296,7 @@ body {
 }
 
 .sessions-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #f0f0f0;
 }
 
 /* Row accents */
@@ -433,9 +434,10 @@ body {
 /* No Data Message */
 .no-data-msg {
   text-align: center;
-  color: #999;
+  color: #333;
   padding: 20px;
   font-style: italic;
+  font-weight: 500;
 }
 
 /* Add Ticket Button Styling */
@@ -505,7 +507,7 @@ body {
 }
 
 .close {
-  color: #aaa;
+  color: #333;
   float: right;
   font-size: 24px;
   font-weight: bold;
@@ -518,9 +520,9 @@ body {
 }
 
 .modal-content h2 {
-  color: #667eea;
+  color: #1a237e;
   margin-bottom: 15px;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid #1a237e;
   padding-bottom: 10px;
 }
 
@@ -553,12 +555,12 @@ body {
 }
 
 .btn-cancel {
-  background-color: #999;
+  background-color: #666;
   color: white;
 }
 
 .btn-cancel:hover {
-  background-color: #777;
+  background-color: #333;
   transform: translateY(-2px);
 }
 
@@ -617,9 +619,10 @@ body {
 }
 
 .settings-section h3 {
-  color: #667eea;
+  color: #1a237e;
   margin: 0 0 10px 0;
   font-size: 16px;
+  font-weight: 700;
 }
 
 .pass-type-row {
@@ -666,9 +669,10 @@ body {
 }
 
 .history-picker label {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   white-space: nowrap;
+  color: #000;
 }
 
 .history-picker input {
@@ -716,10 +720,11 @@ body {
 }
 
 .history-section h3 {
-  color: #667eea;
+  color: #1a237e;
   margin-bottom: 10px;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid #1a237e;
   padding-bottom: 8px;
+  font-weight: 700;
 }
 
 .history-table {
@@ -760,7 +765,7 @@ body {
 }
 
 .history-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #f0f0f0;
 }
 
 /* Scrollbar Styling */

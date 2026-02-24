@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeDateDisplay();
   loadData();
   setupEventListeners();
+  startAutoEndPolling();
 });
 
 // Load settings from server
@@ -44,6 +45,28 @@ function updatePriceConfig() {
 function getTodayDate() {
   const today = new Date();
   return today.toISOString().split('T')[0];
+}
+
+// Polling for auto-end events from server
+let lastAutoEndTimestamp = null;
+async function startAutoEndPolling() {
+  setInterval(async () => {
+    try {
+      const response = await fetch('/api/checkAutoEnd');
+      const event = await response.json();
+      
+      // Check if auto-end was triggered and it's a new event
+      if (event.triggered && event.timestamp !== lastAutoEndTimestamp) {
+        lastAutoEndTimestamp = event.timestamp;
+        
+        // Show auto-end message and reload data
+        await showUiAlert('Gün bitmiş. Bütün seanslar sonlandırılmışdır.');
+        loadData(); // Reload to show completed sessions
+      }
+    } catch (error) {
+      console.error('Error checking auto-end event:', error);
+    }
+  }, 10000); // Check every 10 seconds
 }
 
 // Initialize date display
@@ -376,6 +399,16 @@ async function addChild() {
   const playZone = document.getElementById('playZone').value;
   const duration = document.getElementById('duration').value;
   const notes = document.getElementById('notesInput').value.trim();
+  
+  // Check if work day is over
+  const now = new Date();
+  const currentHour = now.getHours();
+  const endDayHour = settings.endDayHour || 22;
+  
+  if (currentHour >= endDayHour) {
+    await showUiAlert(`İş günü bitib. Saat ${endDayHour}:00-dan sonra yeni seans əlavə etmək mümkün deyil. Zəhmət olmasa, "Ayarlar"-dan günün bitmə saatını dəyişdirin.`);
+    return;
+  }
   
   // Validation
   if (!name || !age || !playZone || !duration) {
@@ -906,7 +939,7 @@ async function saveSettings() {
   }
 
   if (isNaN(endDayHour) || endDayHour < 0 || endDayHour > 23) {
-    await showUiAlert('Günü bitirmə saati 0-23 arasında olmalıdır.');
+    await showUiAlert('Günü bitirmə saatı 0-23 arasında olmalıdır.');
     return;
   }
 
@@ -923,7 +956,7 @@ async function saveSettings() {
       updatePriceConfig();
       updateDurationDropdown();
       closeSettingsModal();
-      await showUiAlert('Ayarlar yadda saxlanıldı');
+      await showUiAlert('Ayarlar yadda saxlanıldı.');
     } else {
       await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
     }

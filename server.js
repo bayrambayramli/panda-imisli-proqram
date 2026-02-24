@@ -7,6 +7,12 @@ const ExcelJS = require('exceljs');
 const app = express();
 const PORT = 3000;
 
+// Auto-end event tracker
+let autoEndEvent = {
+  triggered: false,
+  timestamp: null
+};
+
 // Middleware
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -247,6 +253,10 @@ app.get('/api/settings', (req, res) => {
   res.json(settings);
 });
 
+app.get('/api/checkAutoEnd', (req, res) => {
+  res.json(autoEndEvent);
+});
+
 app.post('/api/settings', (req, res) => {
   const { passTypes, endDayHour } = req.body;
   const settings = { passTypes, endDayHour };
@@ -268,14 +278,29 @@ function checkAndAutoEndSessions(endDayHour) {
     const data = loadData(date);
     
     // Move all active sessions to completed with end time
-    data.active.forEach(child => {
-      child.endTime = new Date().toISOString();
-      data.completed.push(child);
-    });
-    data.active = [];
-    
-    saveData(date, data);
-    console.log(`Auto-ended all sessions at ${endDayHour}:00`);
+    if (data.active.length > 0) {
+      data.active.forEach(child => {
+        child.endTime = new Date().toISOString();
+        data.completed.push(child);
+      });
+      data.active = [];
+      
+      saveData(date, data);
+      
+      // Signal auto-end event to frontend
+      autoEndEvent = {
+        triggered: true,
+        timestamp: new Date().toISOString(),
+        sessionCount: data.completed.length
+      };
+      
+      console.log(`Auto-ended all sessions at ${endDayHour}:00`);
+      
+      // Clear the flag after 2 minutes so it's only shown once
+      setTimeout(() => {
+        autoEndEvent.triggered = false;
+      }, 120000);
+    }
   }
 }
 
