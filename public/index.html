@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panda İmişli</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Panda İmişli uşaq əyləncə mərkəzi</h1>
+      <div class="date-section">
+        <button id="todayBtn" type="button" class="today-date btn-info" onclick="openStatsModal()">Bugün: <span id="dateDisplay"></span></button>
+        <button id="settingsBtn" class="btn-history">⚙️ Ayarlar</button>
+        <button id="historyBtn" class="btn-history">📅 Tarixçə</button>
+        <button id="exportTodayExcelBtn" class="btn-history">📤 Excel-ə Çıxış</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Section 1: Add New Child (Top) -->
+      <section class="section add-child-section">
+        <h2>➕ Yeni Uşaq Əlavə Et</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="childName">Ad *</label>
+            <input type="text" id="childName" placeholder="Uşağın adı" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="childAge">Yaş *</label>
+            <select id="childAge" required>
+              <option value="">Yaş seçin</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="playZone">Oyun Zonası *</label>
+            <select id="playZone" required>
+              <option value="">Zona seçin</option>
+              <option value="Lego">Lego</option>
+              <option value="Əsas">Əsas</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="duration">Müddət *</label>
+            <select id="duration" required>
+              <option value="">Müddət seçin</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notesInput">Qeydlər</label>
+            <input type="text" id="notesInput" placeholder="Əlavə qeydlər">
+          </div>
+
+          <div class="form-group form-actions">
+            <button id="addChildBtn" class="btn-add">+ Əlavə Et</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Active Sessions (Middle) -->
+      <section class="section active-sessions-section">
+        <h2>🎮 Aktiv Seanslar (<span id="activeCount">0</span>) <button class="btn-section-fullscreen" id="activeFullBtn">Tam ekran</button></h2>
+        <div class="table-wrapper">
+          <table id="activeTable" class="sessions-table">
+            <thead>
+              <tr>
+                <th>Ad</th>
+                <th>Yaş</th>
+                <th>Zona</th>
+                <th>Başlama Vaxtı</th>
+                <th>Qalan Vaxt</th>
+                <th>Qiymət</th>
+                <th>Qeydlər</th>
+                <th>Əməliyyatlar</th>
+              </tr>
+            </thead>
+            <tbody id="activeTableBody">
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+          <p id="noActiveMsg" class="no-data-msg">Aktiv seans yoxdur</p>
+        </div>
+      </section>
+
+      <!-- Section 3: Completed Sessions (Bottom) -->
+      <section class="section completed-sessions-section">
+        <h2>✅ Bitmiş Seanslar (<span id="completedCount">0</span>) <button class="btn-section-fullscreen" id="completedFullBtn">Tam ekran</button></h2>
+        <div class="table-wrapper">
+          <table id="completedTable" class="sessions-table">
+            <thead>
+              <tr>
+                <th>Ad</th>
+                <th>Yaş</th>
+                <th>Zona</th>
+                <th>Qiymət</th>
+                <th>Qeydlər</th>
+                <th>Başlama Vaxtı</th>
+                <th>Bitiş Vaxtı</th>
+                <th>Əməliyyatlar</th>
+              </tr>
+            </thead>
+            <tbody id="completedTableBody">
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+          <p id="noCompletedMsg" class="no-data-msg">Bitmiş seans yoxdur</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal for editing -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Uşaq Məlumatını Redaktə Et</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="editName">Ad</label>
+          <input type="text" id="editName">
+        </div>
+        <div class="form-group">
+          <label for="editAge">Yaş</label>
+          <select id="editAge">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editPlayZone">Oyun Bölgəsi</label>
+          <select id="editPlayZone">
+            <option value="Lego">Lego</option>
+            <option value="Əsas">Əsas</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editDuration">Müddət</label>
+          <select id="editDuration">
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label for="editNotes">Qeydlər</label>
+          <input type="text" id="editNotes">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="saveEditBtn" class="btn-save">Dəyişiklikləri Yadda Saxla</button>
+        <button id="cancelEditBtn" class="btn-cancel">Ləğv Et</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content history-modal">
+      <span class="close" id="historyCloseBtn">&times;</span>
+      <h2>📅 Tarixçə</h2>
+      <div class="history-picker">
+        <label for="historyDate">Tarixi seçin:</label>
+        <input type="date" id="historyDate">
+        <button id="loadHistoryBtn" class="btn-load-history">Yüklə</button>
+        <button id="historyExportBtn" class="btn-export">📥 Excel-ə Ixrac Et</button>
+      </div>
+      <div id="historyContent" class="history-content">
+        <p class="no-data-msg">Tarix seçin və yükləyin</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Modal -->
+  <div id="statsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="statsCloseBtn">&times;</span>
+      <h2>📊 Statistikalar (Bugün)</h2>
+      <div class="stats-grid" style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+        <div><strong>Ümumi qəbul edilən uşaqlar:</strong> <span id="statTotal">0</span></div>
+        <div><strong>Aktiv:</strong> <span id="statActive">0</span></div>
+        <div><strong>Bitmiş:</strong> <span id="statCompleted">0</span></div>
+        <div><strong>Ümumi gəlir:</strong> <span id="statRevenue">0 AZN</span></div>
+      </div>
+      <div class="modal-actions">
+        <button id="closeStatsBtn" class="btn-cancel">Bağla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UI Prompt Modal (confirm/prompt replacement) -->
+  <div id="uiPromptModal" class="modal">
+    <div class="modal-content" id="uiPromptContent">
+      <p id="uiPromptMessage"></p>
+      <input type="text" id="uiPromptInput" style="display:none;margin-top:10px;padding:8px;border:1px solid #ddd;border-radius:6px;width:100%" />
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:15px;">
+        <button id="uiPromptCancel" class="btn-cancel">Ləğv Et</button>
+        <button id="uiPromptOk" class="btn-save">Təsdiq et</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content settings-modal">
+      <span class="close" id="settingsCloseBtn">&times;</span>
+      <h2>⚙️ Ayarlar</h2>
+      
+      <!-- Pass Types Management -->
+      <div class="settings-section">
+        <h3>Bilet Tipləri</h3>
+        <div id="passTypesContainer" style="border:1px solid #ddd;padding:8px;border-radius:6px;min-height:60px;margin-bottom:10px;"></div>
+        <button onclick="addPassTypeRow()" class="btn btn-add-ticket">Yeni Bilet Əlavə Et</button>
+      </div>
+
+      <!-- Auto-End Sessions Time -->
+      <div class="settings-section">
+        <h3>Günü Bitir</h3>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label for="endDayHour">Seansları sonlandırmaq saati:</label>
+          <input type="number" id="endDayHour" min="0" max="23" style="width:60px;padding:8px;border:1px solid #ddd;border-radius:6px;" />
+          <span style="font-size:12px;color:#666;">(0-23, 24-saat formatında)</span>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="modal-actions">
+        <button id="settingsSaveBtn" class="btn-save">Yadda Saxla</button>
+        <button id="settingsCancelBtn" class="btn-cancel">Ləğv Et</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

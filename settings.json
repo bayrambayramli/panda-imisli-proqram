@@ -1,0 +1,17 @@
+{
+  "passTypes": [
+    {
+      "id": 1,
+      "name": "1 saat",
+      "duration": 60,
+      "price": 5
+    },
+    {
+      "id": 3,
+      "name": "Limitsiz",
+      "duration": "unlimited",
+      "price": 8
+    }
+  ],
+  "endDayHour": 22
+}
