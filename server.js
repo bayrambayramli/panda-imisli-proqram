@@ -220,7 +220,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
       notes: child.notes || '',
       startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
       endTime: child.endTime ? new Date(child.endTime).toLocaleString() : '',
-      status: data.active.find(c => c.id == child.id) ? 'Aktiv' : 'Bitmiş'
+      status: data.active.find(c => c.id == child.id) ? 'Aktiv' : 'Bitib'
     });
   });
 

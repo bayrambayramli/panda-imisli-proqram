@@ -72,7 +72,7 @@ function setupEventListeners() {
   document.getElementById('historyExportBtn').addEventListener('click', async () => {
     const date = document.getElementById('historyDate').value;
     if (!date) {
-      await showUiAlert('Lütfən tarixi seçin');
+      await showUiAlert('Lütfən tarixi seçin.');
       return;
     }
     window.location.href = `/api/exportExcel/${date}`;
@@ -80,8 +80,22 @@ function setupEventListeners() {
   
   // Export today's Excel
   const exportTodayBtn = document.getElementById('exportTodayExcelBtn');
-  if (exportTodayBtn) exportTodayBtn.addEventListener('click', () => {
-    window.location.href = `/api/exportExcel/${getTodayDate()}`;
+  if (exportTodayBtn) exportTodayBtn.addEventListener('click', async () => {
+    try {
+      const response = await fetch(`/api/data/${getTodayDate()}`);
+      const data = await response.json();
+      
+      // Check if there's any data (active + completed sessions)
+      if ((data.active.length + data.completed.length) === 0) {
+        await showUiAlert('Bu gün ixrac ediləcək məlumat yoxdur.');
+        return;
+      }
+      
+      window.location.href = `/api/exportExcel/${getTodayDate()}`;
+    } catch (error) {
+      console.error('Error checking data:', error);
+      window.location.href = `/api/exportExcel/${getTodayDate()}`;
+    }
   });
 
   // Settings button
@@ -365,7 +379,7 @@ async function addChild() {
   
   // Validation
   if (!name || !age || !playZone || !duration) {
-    await showUiAlert('Lütfən bütün tələb olunan sahələri doldurun (*)');
+    await showUiAlert('Lütfən bütün tələb olunan sahələri doldurun (*).');
     return;
   }
   
@@ -401,7 +415,7 @@ async function addChild() {
     loadData();
   } catch (error) {
     console.error('Error adding child:', error);
-    await showUiAlert('Uşaq əlavə edilərkən xəta');
+    await showUiAlert('Uşaq əlavə edilərkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 
@@ -679,7 +693,7 @@ async function openStatsModal() {
     document.getElementById('statsModal').classList.add('show');
   } catch (err) {
     console.error('Error loading stats:', err);
-    await showUiAlert('Statistikaları yükləyə bilmədim');
+    await showUiAlert('Statistikaları yükləmək mümkün olmadı.');
   }
 }
 
@@ -695,13 +709,13 @@ async function loadHistoryData() {
   const selectedDate = document.getElementById('historyDate').value;
   
   if (!selectedDate) {
-    await showUiAlert('Lütfən tarixi seçin');
+    await showUiAlert('Lütfən tarixi seçin.');
     return;
   }
   
   // Do not show current date in history
   if (selectedDate === getTodayDate()) {
-    await showUiAlert('Tarixçə yalnız dünən və əvvəlki tarixlər üçündür');
+    await showUiAlert('Tarixçə yalnız dünən və əvvəlki tarixlər üçündür.');
     return;
   }
   
@@ -712,7 +726,7 @@ async function loadHistoryData() {
     const contentDiv = document.getElementById('historyContent');
 
     if ((data.completed.length === 0)) {
-      contentDiv.innerHTML = '<p class="no-data-msg">Bu tarixdə heç bir məlumat yoxdur</p>';
+      contentDiv.innerHTML = '<p class="no-data-msg">Bu tarixdə heç bir məlumat yoxdur.</p>';
       return;
     }
 
@@ -730,8 +744,8 @@ async function loadHistoryData() {
               <th>Zona</th>
               <th>Müddət</th>
               <th>Qiymət</th>
-              <th>Başlama</th>
-              <th>Bitiş</th>
+              <th>Başlama Vaxtı</th>
+              <th>Bitmə Vaxtı</th>
             </tr>
           </thead>
           <tbody>
@@ -887,12 +901,12 @@ async function saveSettings() {
   const endDayHour = parseInt(document.getElementById('endDayHour').value);
 
   if (passTypes.length === 0) {
-    await showUiAlert('Ən azı bir bilet əlavə edin');
+    await showUiAlert('Ən azı bir bilet əlavə edin!');
     return;
   }
 
   if (isNaN(endDayHour) || endDayHour < 0 || endDayHour > 23) {
-    await showUiAlert('Günü bitirmə saati 0-23 arasında olmalıdır');
+    await showUiAlert('Günü bitirmə saati 0-23 arasında olmalıdır.');
     return;
   }
 
@@ -911,11 +925,11 @@ async function saveSettings() {
       closeSettingsModal();
       await showUiAlert('Ayarlar yadda saxlanıldı');
     } else {
-      await showUiAlert('Ayarlar saxlanarkən server xətası');
+      await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
     }
   } catch (err) {
     console.error('Error saving settings:', err);
-    await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi');
+    await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 

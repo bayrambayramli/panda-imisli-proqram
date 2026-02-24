@@ -13,10 +13,10 @@
     <div class="header">
       <h1>Panda İmişli uşaq əyləncə mərkəzi</h1>
       <div class="date-section">
-        <button id="todayBtn" type="button" class="today-date btn-info" onclick="openStatsModal()">Bugün: <span id="dateDisplay"></span></button>
+        <button id="todayBtn" type="button" class="today-date btn-info" onclick="openStatsModal()">Bu gün: <span id="dateDisplay"></span></button>
         <button id="settingsBtn" class="btn-history">⚙️ Ayarlar</button>
         <button id="historyBtn" class="btn-history">📅 Tarixçə</button>
-        <button id="exportTodayExcelBtn" class="btn-history">📤 Excel-ə Çıxış</button>
+        <button id="exportTodayExcelBtn" class="btn-history">📤 Excel-ə Çıxar</button>
       </div>
     </div>
 
@@ -96,7 +96,7 @@
               <!-- Rows will be added dynamically -->
             </tbody>
           </table>
-          <p id="noActiveMsg" class="no-data-msg">Aktiv seans yoxdur</p>
+          <p id="noActiveMsg" class="no-data-msg">Aktiv seans yoxdur.</p>
         </div>
       </section>
 
@@ -113,7 +113,7 @@
                 <th>Qiymət</th>
                 <th>Qeydlər</th>
                 <th>Başlama Vaxtı</th>
-                <th>Bitiş Vaxtı</th>
+                <th>Bitmə Vaxtı</th>
                 <th>Əməliyyatlar</th>
               </tr>
             </thead>
@@ -121,7 +121,7 @@
               <!-- Rows will be added dynamically -->
             </tbody>
           </table>
-          <p id="noCompletedMsg" class="no-data-msg">Bitmiş seans yoxdur</p>
+          <p id="noCompletedMsg" class="no-data-msg">Bitmiş seans yoxdur.</p>
         </div>
       </section>
     </div>
@@ -185,7 +185,7 @@
         <label for="historyDate">Tarixi seçin:</label>
         <input type="date" id="historyDate">
         <button id="loadHistoryBtn" class="btn-load-history">Yüklə</button>
-        <button id="historyExportBtn" class="btn-export">📥 Excel-ə Ixrac Et</button>
+        <button id="historyExportBtn" class="btn-export">📥 Excel-ə Çıxar</button>
       </div>
       <div id="historyContent" class="history-content">
         <p class="no-data-msg">Tarix seçin və yükləyin</p>
@@ -197,7 +197,7 @@
   <div id="statsModal" class="modal">
     <div class="modal-content">
       <span class="close" id="statsCloseBtn">&times;</span>
-      <h2>📊 Statistikalar (Bugün)</h2>
+      <h2>📊 Statistikalar (Bu gün)</h2>
       <div class="stats-grid" style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
         <div><strong>Ümumi qəbul edilən uşaqlar:</strong> <span id="statTotal">0</span></div>
         <div><strong>Aktiv:</strong> <span id="statActive">0</span></div>

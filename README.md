@@ -120,7 +120,7 @@ For each child in the Active Sessions table:
 ### Exporting Data
 
 1. Go to the date you want to export
-2. Click **"📥 Excel-ə Çıxış"** to export today's sessions
+2. Click **"📥 Excel-ə Çıxar"** to export today's sessions
 3. The Excel file will download automatically with all session data
 
 ## Project Structure
