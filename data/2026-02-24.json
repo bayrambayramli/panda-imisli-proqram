@@ -1,28 +1,5 @@
 {
-  "active": [
-    {
-      "id": 1771969859642,
-      "name": "dfedf",
-      "age": 4,
-      "playZone": "Lego",
-      "duration": "60",
-      "price": 5,
-      "notes": "ththt",
-      "startTime": "2026-02-24T21:50:59.642Z",
-      "endTime": null
-    },
-    {
-      "id": 1771970085831,
-      "name": "rtrtr",
-      "age": 4,
-      "playZone": "Əsas",
-      "duration": "unlimited",
-      "price": 8,
-      "notes": "ghth",
-      "startTime": "2026-02-24T21:54:45.831Z",
-      "endTime": null
-    }
-  ],
+  "active": [],
   "completed": [
     {
       "id": 1771969027441,
@@ -56,6 +33,28 @@
       "notes": "gb",
       "startTime": "2026-02-24T21:57:53.819Z",
       "endTime": "2026-02-24T21:58:01.671Z"
+    },
+    {
+      "id": 1771969859642,
+      "name": "dfedf",
+      "age": 4,
+      "playZone": "Lego",
+      "duration": "60",
+      "price": 5,
+      "notes": "ththt",
+      "startTime": "2026-02-24T21:50:59.642Z",
+      "endTime": "2026-02-24T22:00:38.913Z"
+    },
+    {
+      "id": 1771970085831,
+      "name": "rtrtr",
+      "age": 4,
+      "playZone": "Əsas",
+      "duration": "unlimited",
+      "price": 8,
+      "notes": "ghth",
+      "startTime": "2026-02-24T21:54:45.831Z",
+      "endTime": "2026-02-24T22:00:38.913Z"
     }
   ]
 }

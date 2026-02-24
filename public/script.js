@@ -60,7 +60,7 @@ async function startAutoEndPolling() {
         lastAutoEndTimestamp = event.timestamp;
         
         // Show auto-end message and reload data
-        await showUiAlert('Gün bitmiş. Bütün seanslar sonlandırılmışdır.');
+        await showUiAlert('Gün bitdi. Bütün seanslar sonlandırıldı.');
         loadData(); // Reload to show completed sessions
       }
     } catch (error) {
