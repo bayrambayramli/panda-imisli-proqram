@@ -69,9 +69,12 @@ function setupEventListeners() {
   document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
   document.getElementById('historyCloseBtn').addEventListener('click', closeHistoryModal);
   document.getElementById('loadHistoryBtn').addEventListener('click', loadHistoryData);
-  document.getElementById('historyExportBtn').addEventListener('click', () => {
+  document.getElementById('historyExportBtn').addEventListener('click', async () => {
     const date = document.getElementById('historyDate').value;
-    if (!date) return alert('Lütfən tarixi seçin');
+    if (!date) {
+      await showUiAlert('Lütfən tarixi seçin');
+      return;
+    }
     window.location.href = `/api/exportExcel/${date}`;
   });
   
@@ -103,7 +106,13 @@ function setupEventListeners() {
 
   // UI prompt modal buttons
   document.getElementById('uiPromptCancel').addEventListener('click', () => closeUiPrompt(false));
-  document.getElementById('uiPromptOk').addEventListener('click', () => closeUiPrompt(true));
+  document.getElementById('uiPromptOk').addEventListener('click', () => {
+    if (_uiAlertResolve) {
+      closeUiAlert();
+    } else if (_uiPromptResolve) {
+      closeUiPrompt(true);
+    }
+  });
   
   // Modal
   const modal = document.getElementById('editModal');
@@ -142,6 +151,39 @@ function toggleFullscreen(section) {
   }
 }
 
+// UI alert implementation (info/error only - just OK button)
+let _uiAlertResolve = null;
+function showUiAlert(message) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('uiPromptModal');
+    document.getElementById('uiPromptMessage').textContent = message;
+    const input = document.getElementById('uiPromptInput');
+    input.style.display = 'none';
+    
+    // Hide cancel button for alerts
+    const cancelBtn = document.getElementById('uiPromptCancel');
+    const okBtn = document.getElementById('uiPromptOk');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    if (okBtn) okBtn.style.display = 'block';
+    
+    modal.classList.add('show');
+    _uiAlertResolve = resolve;
+  });
+}
+
+function closeUiAlert() {
+  const modal = document.getElementById('uiPromptModal');
+  const cancelBtn = document.getElementById('uiPromptCancel');
+  const okBtn = document.getElementById('uiPromptOk');
+  modal.classList.remove('show');
+  if (cancelBtn) cancelBtn.style.display = 'block'; // restore for prompts
+  if (okBtn) okBtn.style.display = 'block';
+  if (_uiAlertResolve) {
+    _uiAlertResolve(true);
+    _uiAlertResolve = null;
+  }
+}
+
 // UI prompt implementation (returns Promise)
 let _uiPromptResolve = null;
 function showUiPrompt(message, options = { input: false, defaultValue: '' }) {
@@ -149,6 +191,13 @@ function showUiPrompt(message, options = { input: false, defaultValue: '' }) {
     const modal = document.getElementById('uiPromptModal');
     document.getElementById('uiPromptMessage').textContent = message;
     const input = document.getElementById('uiPromptInput');
+    const cancelBtn = document.getElementById('uiPromptCancel');
+    const okBtn = document.getElementById('uiPromptOk');
+    
+    // Show cancel button for prompts
+    if (cancelBtn) cancelBtn.style.display = 'block';
+    if (okBtn) okBtn.style.display = 'block';
+    
     if (options.input) {
       input.style.display = 'block';
       input.value = options.defaultValue || '';
@@ -316,7 +365,7 @@ async function addChild() {
   
   // Validation
   if (!name || !age || !playZone || !duration) {
-    alert('Lütfən bütün tələb olunan sahələri doldurun (*)');
+    await showUiAlert('Lütfən bütün tələb olunan sahələri doldurun (*)');
     return;
   }
   
@@ -352,7 +401,7 @@ async function addChild() {
     loadData();
   } catch (error) {
     console.error('Error adding child:', error);
-    alert('Uşaq əlavə edilərkən xəta');
+    await showUiAlert('Uşaq əlavə edilərkən xəta');
   }
 }
 
@@ -630,7 +679,7 @@ async function openStatsModal() {
     document.getElementById('statsModal').classList.add('show');
   } catch (err) {
     console.error('Error loading stats:', err);
-    alert('Statistikaları yükləyə bilmədim');
+    await showUiAlert('Statistikaları yükləyə bilmədim');
   }
 }
 
@@ -646,13 +695,13 @@ async function loadHistoryData() {
   const selectedDate = document.getElementById('historyDate').value;
   
   if (!selectedDate) {
-    alert('Lütfən tarixi seçin');
+    await showUiAlert('Lütfən tarixi seçin');
     return;
   }
   
   // Do not show current date in history
   if (selectedDate === getTodayDate()) {
-    alert('Tarixçə yalnız dünən və əvvəlki tarixlər üçündür');
+    await showUiAlert('Tarixçə yalnız dünən və əvvəlki tarixlər üçündür');
     return;
   }
   
@@ -741,11 +790,11 @@ function openSettingsModal() {
       row.innerHTML = `
         <input type="text" class="pass-name" placeholder="Adı" value="${pt.name}" data-id="${pt.id}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
         <select class="pass-duration" data-id="${pt.id}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
-          <option value="60" ${pt.duration === 60 ? 'selected' : ''}>1 Hour</option>
-          <option value="120" ${pt.duration === 120 ? 'selected' : ''}>2 Hours</option>
-          <option value="180" ${pt.duration === 180 ? 'selected' : ''}>3 Hours</option>
-          <option value="240" ${pt.duration === 240 ? 'selected' : ''}>4 Hours</option>
-          <option value="unlimited" ${pt.duration === 'unlimited' ? 'selected' : ''}>Unlimited</option>
+          <option value="60" ${pt.duration === 60 ? 'selected' : ''}>1 Saat</option>
+          <option value="120" ${pt.duration === 120 ? 'selected' : ''}>2 Saat</option>
+          <option value="180" ${pt.duration === 180 ? 'selected' : ''}>3 Saat</option>
+          <option value="240" ${pt.duration === 240 ? 'selected' : ''}>4 Saat</option>
+          <option value="unlimited" ${pt.duration === 'unlimited' ? 'selected' : ''}>Limitsiz</option>
         </select>
         <input type="number" class="pass-price" placeholder="Qiymət" value="${pt.price}" data-id="${pt.id}" step="0.01" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
         <button class="btn-delete" onclick="removePassType(${pt.id})" style="width:60px;padding:8px;border:1px solid #ddd;border-radius:4px;background:#ff6b6b;color:white;cursor:pointer;">Sil</button>
@@ -778,11 +827,11 @@ function addPassTypeRow() {
   row.innerHTML = `
     <input type="text" class="pass-name" placeholder="Adı" data-id="${newId}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
     <select class="pass-duration" data-id="${newId}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
-      <option value="60">1 Hour</option>
-      <option value="120">2 Hours</option>
-      <option value="180">3 Hours</option>
-      <option value="240">4 Hours</option>
-      <option value="unlimited">Unlimited</option>
+      <option value="60">1 Saat</option>
+      <option value="120">2 Saat</option>
+      <option value="180">3 Saat</option>
+      <option value="240">4 Saat</option>
+      <option value="unlimited">Limitsiz</option>
     </select>
     <input type="number" class="pass-price" placeholder="Qiymət" data-id="${newId}" step="0.01" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
     <button class="btn-delete" onclick="removePassType(${newId})" style="width:60px;padding:8px;border:1px solid #ddd;border-radius:4px;background:#ff6b6b;color:white;cursor:pointer;">Sil</button>
@@ -838,12 +887,12 @@ async function saveSettings() {
   const endDayHour = parseInt(document.getElementById('endDayHour').value);
 
   if (passTypes.length === 0) {
-    alert('Ən azı bir bilet əlavə edin');
+    await showUiAlert('Ən azı bir bilet əlavə edin');
     return;
   }
 
   if (isNaN(endDayHour) || endDayHour < 0 || endDayHour > 23) {
-    alert('Günü bitirmə saati 0-23 arasında olmalıdır');
+    await showUiAlert('Günü bitirmə saati 0-23 arasında olmalıdır');
     return;
   }
 
@@ -860,13 +909,13 @@ async function saveSettings() {
       updatePriceConfig();
       updateDurationDropdown();
       closeSettingsModal();
-      alert('Ayarlar yadda saxlanıldı');
+      await showUiAlert('Ayarlar yadda saxlanıldı');
     } else {
-      alert('Ayarlar saxlanarkən server xətası');
+      await showUiAlert('Ayarlar saxlanarkən server xətası');
     }
   } catch (err) {
     console.error('Error saving settings:', err);
-    alert('Ayarları yadda saxlayarkən xəta');
+    await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi');
   }
 }
 

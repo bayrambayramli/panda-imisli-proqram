@@ -833,3 +833,28 @@ body {
     font-size: 10px;
   }
 }
+
+/* Modal Z-Index Layering - Ensure all dialogs are on top */
+#uiPromptModal {
+  z-index: 9999 !important;
+}
+
+#settingsModal {
+  z-index: 5000 !important;
+}
+
+#editModal {
+  z-index: 4000 !important;
+}
+
+#historyModal {
+  z-index: 3500 !important;
+}
+
+#statsModal {
+  z-index: 3500 !important;
+}
+
+.fullscreen-section {
+  z-index: 2000 !important;
+}
