@@ -199,14 +199,14 @@ app.get('/api/exportExcel/:date', async (req, res) => {
   const sheet = workbook.addWorksheet('Sessions');
 
   sheet.columns = [
-    { header: 'Name', key: 'name', width: 20 },
-    { header: 'Age', key: 'age', width: 8 },
-    { header: 'Play Zone', key: 'playZone', width: 15 },
-    { header: 'Duration', key: 'duration', width: 12 },
-    { header: 'Price', key: 'price', width: 10 },
-    { header: 'Notes', key: 'notes', width: 30 },
-    { header: 'Start Time', key: 'startTime', width: 20 },
-    { header: 'End Time', key: 'endTime', width: 20 },
+    { header: 'Ad', key: 'name', width: 20 },
+    { header: 'Yaş', key: 'age', width: 8 },
+    { header: 'Oyun Alanı', key: 'playZone', width: 15 },
+    { header: 'Müddət', key: 'duration', width: 12 },
+    { header: 'Qiymət', key: 'price', width: 10 },
+    { header: 'Qeydlər', key: 'notes', width: 30 },
+    { header: 'Başlama Vaxtı', key: 'startTime', width: 20 },
+    { header: 'Bitiş Vaxtı', key: 'endTime', width: 20 },
     { header: 'Status', key: 'status', width: 12 }
   ];
 
@@ -220,7 +220,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
       notes: child.notes || '',
       startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
       endTime: child.endTime ? new Date(child.endTime).toLocaleString() : '',
-      status: data.active.find(c => c.id == child.id) ? 'Active' : 'Completed'
+      status: data.active.find(c => c.id == child.id) ? 'Aktivdə' : 'Tamamlanmış'
     });
   });
 
@@ -288,9 +288,9 @@ setInterval(() => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Amusement Center Admin app running at http://localhost:${PORT}`);
-  console.log('Press Ctrl+C to stop the server');
+  // console.log('Press Ctrl+C to stop the server');
   
   // Check on startup
   const settings = loadSettings();
-  console.log(`Auto-end sessions configured for ${settings.endDayHour}:00`);
+  // console.log(`Auto-end sessions configured for ${settings.endDayHour}:00`);
 });

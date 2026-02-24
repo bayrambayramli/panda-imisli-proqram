@@ -1,5 +1,6 @@
 # Files
 App.txt
+*.xlsx
 
 # Logs
 logs
