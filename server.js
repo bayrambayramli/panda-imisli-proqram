@@ -217,11 +217,14 @@ app.get('/api/exportExcel/:date', async (req, res) => {
   ];
 
   allChildren.forEach(child => {
+    // Translate unlimited duration to Azerbaijani
+    const durationDisplay = child.duration === 'unlimited' ? 'Limitsiz' : child.duration;
+    
     sheet.addRow({
       name: child.name,
       age: child.age,
       playZone: child.playZone,
-      duration: child.duration,
+      duration: durationDisplay,
       price: child.price,
       notes: child.notes || '',
       startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
