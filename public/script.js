@@ -346,13 +346,20 @@ function renderActiveSessions(children) {
     zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
   });
   
-  // Format count with zone breakdown
+  // Format count with zone breakdown: Total: X, Main: Y, Lego: Z
   let countText = children.length;
   if (children.length > 0) {
-    const zoneBreakdown = Object.entries(zoneCounts)
-      .map(([zone, num]) => `${zone}: ${num}`)
-      .join(', ');
-    countText = `${children.length} (${zoneBreakdown})`;
+    const parts = [`Cəmi: ${children.length}`];
+    
+    // Add zone counts with proper labels
+    if (zoneCounts['Əsas']) {
+      parts.push(`Əsas: ${zoneCounts['Əsas']}`);
+    }
+    if (zoneCounts['Lego']) {
+      parts.push(`Lego: ${zoneCounts['Lego']}`);
+    }
+    
+    countText = parts.join(', ');
   }
   count.textContent = countText;
   
@@ -386,13 +393,20 @@ function renderCompletedSessions(children) {
     zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
   });
   
-  // Format count with zone breakdown
+  // Format count with zone breakdown: Total: X, Main: Y, Lego: Z
   let countText = children.length;
   if (children.length > 0) {
-    const zoneBreakdown = Object.entries(zoneCounts)
-      .map(([zone, num]) => `${zone}: ${num}`)
-      .join(', ');
-    countText = `${children.length} (${zoneBreakdown})`;
+    const parts = [`Cəmi: ${children.length}`];
+    
+    // Add zone counts with proper labels
+    if (zoneCounts['Əsas']) {
+      parts.push(`Əsas: ${zoneCounts['Əsas']}`);
+    }
+    if (zoneCounts['Lego']) {
+      parts.push(`Lego: ${zoneCounts['Lego']}`);
+    }
+    
+    countText = parts.join(', ');
   }
   count.textContent = countText;
   
