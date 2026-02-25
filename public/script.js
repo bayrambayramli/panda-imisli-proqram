@@ -410,10 +410,10 @@ function createCompletedRow(child) {
     <td>${child.name}</td>
     <td>${child.age}</td>
     <td>${child.playZone}</td>
-    <td>${child.price} AZN</td>
-    <td>${notesContent}</td>
     <td>${startTime}</td>
     <td>${endTime}</td>
+    <td>${child.price} AZN</td>
+    <td>${notesContent}</td>
     <td>
       <div class="actions-cell">
         <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'completed')">Dəyişdir</button>

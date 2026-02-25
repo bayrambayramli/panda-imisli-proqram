@@ -283,7 +283,6 @@ body {
 }
 
 .sessions-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   position: sticky;
   top: 0;
@@ -291,11 +290,19 @@ body {
   font-weight: bold;
 }
 
+.active-sessions-section .sessions-table thead {
+  background: #07690a;
+}
+
+.completed-sessions-section .sessions-table thead {
+  background: #FF9800;
+}
+
 .sessions-table th {
   padding: 10px 8px;
   text-align: left;
   font-weight: 700;
-  border-right: 1px solid #555;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
   white-space: nowrap;
   font-size: 15px;
   color: #fff;
@@ -347,14 +354,17 @@ body {
 
 .timer-cell.timer-green {
   background-color: #4CAF50 !important;
+  border: 2px solid #e5ece6;
 }
 
 .timer-cell.timer-yellow {
   background-color: #FFC107 !important;
+  border: 2px solid #F57F17;
 }
 
 .timer-cell.timer-red {
   background-color: #f44336 !important;
+  border: 2px solid #C62828;
 }
 
 .timer {
@@ -373,11 +383,11 @@ body {
 }
 
 .timer.warning {
-  animation: pulse 0.5s infinite;
+  animation: pulse 1s infinite;
 }
 
 .timer.danger {
-  animation: flash 0.5s infinite;
+  animation: flash 1s infinite;
 }
 
 @keyframes pulse {
