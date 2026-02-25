@@ -1,0 +1,139 @@
+Develop a simple web-based software for a child amusement center admission management for children.
+The interface must be in Azerbaijani.
+I need a simple, beautiful UI with bigger fonts (not too big so that the app fits into my screen), shiny, colourful but professional looking interface.
+The app should work locally, not requiring any internect connection. Use "new-app" folder for files.
+You can develop a NodeJS based app.
+
+- There should be 3 sections in the horizontally divided screen: top is for adding new child, middle is for active sessions, bottom is for completed sessions.
+- Rows and columns should be easily visible, separated by outline or borders, buttons should be colourful
+- Entries should be editable, especially notes
+- Add child along with name, age, play zone, time, play duration or new/previously bought multi-pass, price, timer, and notes field.
+- In front of each row (child) green live, real time timer starts, auto-refreshes, turns yellow 5 minutes remaining, and at the end it turns red and flashes to indicate the end
+- Each rows has buttons to end the play or extend time by 30 min, decrease by 30 min (button should not be active if the time is less than 30min) and should update price
+- For now the price is 5 AZN for 1 hour, 8 AZN for unlimited. Price should be editable in case of change.
+- Implement a functionality to store data on daily basis, so that I can see the historical details by selecting date.
+- Also add start and end time for each child, also delete entry (child)
+- The new child entry fields should be cleared upon pressing "Add" button
+- All data can be exported to Excel or CSV
+- Make sure all buttons, fields, functionalities are working
+- Drop-downs should contain some data to select
+- "Add child panel" part of the app should be horizontally located at the top, not on sides.
+
+Improvements:
+- Translate the entire interface to Azerbaijani language
+- Age shoud be pre-populated drop down list with values 3 to 12
+- Play zones: Lego, Əsas
+- Remove "Pass Type"
+- Duration: 1 hour and Unlimited
+- Price shouldn't be editable, it must show 5 AZN for duration 1 hour, and 8 AZN for Unlimited.
+- No margins needed on the sides.
+- Bring Notes  and Add Child button to the same level/line with Name, Age, etc.
+- Move Export button to the bottom right, below the Completed sessions.
+- In Unlimited option, no need to show +30 / -30 minutes
+- In the duration add the price in the selection 5 AZN for duration 1 hour, and 8 AZN for Unlimited.
+- Remove the date picker / calendar and Today button, just show todays date, non editable.
+- Add a button to the top-right named "Tarixçə" which means history and it should show a new overlay page or new page with a date picker, to display the previous days' sessions.
+- Change +30 / -30 minutes to only +1 hour, ask for confirmation for increasing the duration.
+- Add a new column to show exact start time for the started sessions.
+- Move Extract to CSV to the History page. The history page doesn't have to show current sessions, only previous (yesterday and before) needed.
+- Squeeze the fields Name, Age, etc, so that the "Add" button can be on on the same line with them, not below.
+- Is it possible to convert the confirmation and question prompts for editing Notes increasing duration and others from Browser prompt to HTML/UI prompts or browser prompts are recommended?
+- Add 2 minutes as an option in Duration and price 1 azn.
+- Add option to make Active sessions Ended sessions tabs full screen
+- Add an "Extract to Excel" button next to History button to export today's current and ended sessions to Excel file
+- Convert "Export to CSV" button in the History page to "Export to Excel" and it should export the historical sessions to Excel file, not current, because we use the button in UI for current sessions.
+- Make sure the exported file name has a prefix "panda_imisli_" instead of admission_.
+- Show the "Full screen" (Tam Ekran) button on the right upper corner of the tab and after enterin Full screen, change the Button name to "Exit Full Screen" (Tam Ekrandan Çıx).
+- Today date format should be like: 21.02.2026 (DDMMYYY)
+- Convert Today (Bugün) to a button, show some statistics page on click: How many kids admitted in total, how many active, how many ended, how much money in total earned?
+- Looks like the statistics page doesn't display when Today button clicked, instead it shows overlayed when I click on History button, please fix it.
+- Don't calculate charges/money for partly started/ended hours, only for full hours.
+- Add confirmation for End (Bitir) button as well
+- Slightly increase fon size for entries in sessions, make names Bold, and add some accent/soft colors for lines
+Can you add a "Settings" button to the left of History to open panel, so that I can configure some features?
+Features includes:
+- I want to be able to add/remove ticket/pass types and respective duration and price. So in settings there should be add/remove buttons for a new pass types, and they should no longer be hard-coded.
+- Add a feature to define an hour (i.e. 22:00) to end all active sessions automatically every day and move them to Ended sessions. The Settings panel should include "End day" field to put that hour.
+- The Settings panel should contain Save and Cancel buttons with respective funcions.
+- Can you check if there is unnecessary "Export to CSV" funcion and/or related code exist and remove if not necessary? Because I need only Excel export.
+- Please check if there is/was any code prompt for a user on "Export to excel" buttons either in history or in Main page? If yes, you can removed them, I don't need a confirmation on export.
+- Make sure Export to Excel in History panel only includes "Completed/Ended Sessions" not active ones.
+No need to server restart, I will do it.
+- Can you you also make sure History panel only "SHOWS" completed sessions, not only exports?
+- In the Settings panel looks like the "Unlimited" option disappeared.
+Instead of manually entering the session name and duration, change the form so that there are predefined options drop-down to select and only allowing to set price for that option.
+Pass options:
+- 1 hour - set the duration 61 min
+- 2 hour - set the duration 121 min
+- Unlimited - set the duration Unlimited (make sure the math is correctly done for it)
+
+I think the Ticket types still need to change/improve.
+Follow this:
+Aadd "Add new ticket" button. When clicked:
+Line 1: Name: [], Duration: [Drop-down: 1 Hour, 2 Hours, Unlimited], Price: [] [Delete button]
+Line 2: ... [same goes here]
+Remove any oher options and related code.
+
+Good, that works.
+In the Settings in Duration drop-down add more options: 3 Hours, 4 Hours.
+In the Active session panel if the duration is Unlimited, show "Limitsiz" instead of infinity symbol.
+
+You're doing good.
+In the settings, can you add a column names for Name, Duration and Price?
+The alignment of the column names and actual columns are incorrect. Fix it please.
+
+Make sure the play zone name "Main" is translated to "Əsas" in all places.
+Check all code and remove unused parts. For example I see "2 dəq - 1 AZN" etc, I think it is leftover and can be removed. I you think otherwise, tell me.
+
+A bug:
+In the Full screen mode of Active and Completed sessions panels the the operation buttons like Edit, End, Delete shows the confirmation dialog in the back on the full screen panel, not on it. So when in full screen, the operations should also work in full screen and show dialog in there.
+
+Can you decorate/color "Yeni Bilet Əlavə Et" button?
+Make sure export to Excel in the main panel prompts a message if there is no current active sessions.
+Can you check if time is after End day (i.e. 22:00), show a nessage that the work day is over, new session cannot be added.
+Also if time reaches End day, show a message that "Day is over, all sessions is being ended" and end sessions.
+In the exported Excel files the duration for unlimited is in English, not Limitsiz in Azerbaijani. Can you fix it?
+
+NPM Stuff
+How to start node in the backgroun in Windows?
+How to write NPM logs to file?
+Can you write a script so that I can use it as an app shortcut to start the node app in the background, and automatically open default browser with app URL?
+The script should be able to work if I rerun it and the app is already running, i.e. stop and start the app, instead of giving port already in use error
+
+Can you move the "X" cloes button (if any) to the upper-right corner of the windows in all panels?
+Change checkAutoEnd interval to 1 minute
+Change "Tam Ekran" button background color to something colorful (greenish?)
+Can you put "panda_logo.png" logo to the left of "Panda İmişli uşaq əyləncə mərkəzi" title? The size shouldnt exceed the title bar height
+
+Can you draw a line graph based on the last 10 days of data using number of children admitted and the total amount of income for that day? So two lines in one graph.
+
+Can you Create a new button to the right of History button called "Statistika" and move the Graph from History panel to there in a new panel? It didn't look good under History.
+Can you add a full screen button to Statistika panel? Also, you can keep the function names and all related text in the code in English (i.e. statsModal or statisticsModal instead of StatistikaModal). You can do it for all code now.
+
+Make sure "Tam Ekran" and "Tam Ekrandan Çıx" buttons dont overlap with "X" buton, and in the full screen statistics panel, automatically resize the graph so no need for scroll.
+
+Can you make the statistics graph with sharp lines? no need for curves and gradual (round) changes.
+
+Is it possible to make the Remaining time (duration) of non-unlimited (limited) cells background color as progressive, like green at the beginning, yellow as it getting close to end of time and red when the time is UP? But consider filling up the whole cell color, not only text background.
+
+Show minutes (i.e. 23 min or 23 dəq) instead of precise duration with seconds.
+Color: if more than 15 minutes show green, if less, show yellow, if zero, show red and flashing warning message.
+Can you make the function efficient, not checking every seconds, instead check every minute for time and color change.
+
+Make unlimited always green, without that duration check funcion.
+
+You need to take a look at all buttons styles. Can you make sure the buttons have outline and some accent or pastel color, not too bright, but have proper hover colors?
+Make sure non of the color are the same with text rendering it unreadable. Make consistent button animations for all buttons in all app.
+
+Make"Add child" button solid green, no transparency, and text readable
+Can you check if the button consistency applied to buttons in History?
+In the Ended sessions panel move Qiymət and	Qeydlər between Bitmə Vaxtı and Əməliyyatlar
+
+Give the table title row (Ad, Yaş, Zona	Başlama, Vaxtı, etc.) different color to match the the panel in Active sessions.
+Now the Duration column header and remaining time cell have the same green color in Active sessions. Can you the cell slightly different? may be color may be border, up to you.
+
+Check all code and remove unused code, functions, CSS styles, etc. No need for flashing text if the duration is less than 15 min. Just background change is fine. You may need to remove timer.warning.
+
+
+Can you make the panel that opens to change data when clicked on "Dəyişdir" button in Active sessions panel a little larger?
+Also make Ad and Müddət fields wider to not wrap text too much in that panel.
