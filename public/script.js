@@ -645,7 +645,7 @@ async function editNotes(childId) {
   
   if (!child) return;
   
-  const newNotes = await showUiPrompt('Qeydlər daxil edin:', { input: true, defaultValue: child.notes || '' });
+  const newNotes = await showUiPrompt('Qeyd əlavə edin:', { input: true, defaultValue: child.notes || '' });
 
   if (newNotes !== false) {
     try {
