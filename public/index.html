@@ -20,7 +20,6 @@
         <button id="todayBtn" type="button" class="today-date btn-info" onclick="openStatsModal()">Bu gün: <span id="dateDisplay"></span></button>
         <button id="settingsBtn" class="btn-history">⚙️ Ayarlar</button>
         <button id="historyBtn" class="btn-history">📅 Tarixçə</button>
-        <button id="statisticsBtn" class="btn-history">📊 Statistika</button>
         <button id="reportsBtn" class="btn-history">📈 Hesabatlar</button>
         <button id="exportTodayExcelBtn" class="btn-history">📤 Excel-ə Çıxar</button>
       </div>
@@ -199,52 +198,6 @@
     </div>
   </div>
 
-  <!-- Statistics Modal -->
-  <div id="statisticsModal" class="modal">
-    <div class="modal-content" id="statisticsModalContent">
-      <span class="close" id="statisticsCloseBtn">&times;</span>
-      <button class="btn-section-fullscreen" id="statisticsFullBtn">Tam ekran</button>
-      <h2>📊 Statistika (Son 10 Gün)</h2>
-      
-      <!-- Filters -->
-      <div class="filter-section">
-        <div class="filter-group">
-          <label for="statZoneFilter">Oyun Zonası:</label>
-          <select id="statZoneFilter" onchange="updateFilteredStats()">
-            <option value="">Hamısı</option>
-            <option value="Lego">Lego</option>
-            <option value="Əsas">Əsas</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="statTicketFilter">Bilet Tipi:</label>
-          <select id="statTicketFilter" onchange="updateFilteredStats()">
-            <option value="">Hamısı</option>
-            <option value="1 saat">1 saat</option>
-            <option value="2 saat">2 saat</option>
-            <option value="3 saat">3 saat</option>
-            <option value="4 saat">4 saat</option>
-            <option value="unlimited">Limitsiz</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="statAgeFilter">Yaş Qrupu:</label>
-          <select id="statAgeFilter" onchange="updateFilteredStats()">
-            <option value="">Hamısı</option>
-            <option value="3-5">3-5 yaş</option>
-            <option value="6-8">6-8 yaş</option>
-            <option value="9-12">9-12 yaş</option>
-          </select>
-        </div>
-      </div>
-      
-      <!-- Analytics Chart -->
-      <div id="analyticsChartContainer" style="margin-top: 20px;">
-        <canvas id="analyticsChart" width="400" height="200"></canvas>
-      </div>
-    </div>
-  </div>
-
   <!-- Stats Modal -->
   <div id="statsModal" class="modal">
     <div class="modal-content">
@@ -307,17 +260,59 @@
 
   <!-- Reports Modal -->
   <div id="reportsModal" class="modal">
-    <div class="modal-content reports-modal">
-      <span class="close" id="reportsCloseBtn">&times;</span>
+    <div class="modal-content reports-modal" id="reportsModalContent">
+      <button class="btn-section-fullscreen" id="reportsFullBtn">Tam ekran</button>
       <h2>📈 Hesabatlar və Analitika</h2>
       
       <div class="reports-tabs">
-        <button class="report-tab-btn active" onclick="switchReportTab('monthly')">Aylıq</button>
+        <button class="report-tab-btn active" onclick="switchReportTab('statistics')">📊 Statistika</button>
+        <button class="report-tab-btn" onclick="switchReportTab('monthly')">Aylıq</button>
         <button class="report-tab-btn" onclick="switchReportTab('zones')">Oyun Zonası</button>
         <button class="report-tab-btn" onclick="switchReportTab('age')">Yaş Demoqrafiyası</button>
       </div>
 
-      <div id="monthlyReportTab" class="report-tab active">
+      <div id="statisticsReportTab" class="report-tab active">
+        <h3>📊 Statistika (Son 10 Gün)</h3>
+        
+        <!-- Filters -->
+        <div class="filter-section statistics-filters">
+          <div class="filter-group">
+            <label for="statZoneFilter">Oyun Zonası:</label>
+            <select id="statZoneFilter" onchange="updateFilteredStats()">
+              <option value="">Hamısı</option>
+              <option value="Lego">Lego</option>
+              <option value="Əsas">Əsas</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="statTicketFilter">Bilet Tipi:</label>
+            <select id="statTicketFilter" onchange="updateFilteredStats()">
+              <option value="">Hamısı</option>
+              <option value="60">1 Saat</option>
+              <option value="120">2 Saat</option>
+              <option value="180">3 Saat</option>
+              <option value="240">4 Saat</option>
+              <option value="unlimited">Limitsiz</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="statAgeFilter">Yaş Qrupu:</label>
+            <select id="statAgeFilter" onchange="updateFilteredStats()">
+              <option value="">Hamısı</option>
+              <option value="3-5">3-5 yaş</option>
+              <option value="6-8">6-8 yaş</option>
+              <option value="9-12">9-12 yaş</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Analytics Chart -->
+        <div id="analyticsChartContainer">
+          <canvas id="analyticsChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+
+      <div id="monthlyReportTab" class="report-tab">
         <h3>Aylıq Hesabat</h3>
         <div class="report-filter">
           <label for="monthlyMonthFilter">Ay seçin:</label>
@@ -351,7 +346,7 @@
       </div>
 
       <div class="modal-actions">
-        <button id="reportsCloseBtn" class="btn-cancel">Bağla</button>
+        <button class="btn-cancel" onclick="closeReportsModal()">Bağla</button>
       </div>
     </div>
   </div>

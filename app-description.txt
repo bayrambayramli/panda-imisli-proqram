@@ -17,7 +17,7 @@ ADMISSION FORM & SESSION MANAGEMENT
 ✓ Three-section horizontal layout: admission form (top), active sessions (middle), completed sessions (bottom)
 ✓ Child admission form with fields: Name, Age (3-12 dropdown), Play Zone (Lego/Əsas), Duration, Notes
 ✓ Dynamic pass type system (configurable via Settings panel)
-✓ Current pass types: 1 Hour (61 min, 5 AZN), 2 Hours (121 min, 10 AZN), 3 Hours, 4 Hours, Unlimited
+✓ Current pass types: 1 Hour (0 min, 5 AZN), 2 Hours (120 min, 10 AZN), 3 Hours, 4 Hours, Unlimited
 ✓ Non-editable price display based on selected duration
 ✓ Form fields cleared after adding child
 ✓ Editable notes field with faded placeholder (low contrast, transparent border)
