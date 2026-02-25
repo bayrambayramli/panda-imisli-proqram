@@ -142,6 +142,27 @@ function setupEventListeners() {
   const settingsCancelBtn = document.getElementById('settingsCancelBtn');
   if (settingsCancelBtn) settingsCancelBtn.addEventListener('click', closeSettingsModal);
 
+  // Reports button
+  const reportsBtn = document.getElementById('reportsBtn');
+  if (reportsBtn) reportsBtn.addEventListener('click', openReportsModal);
+  
+  // Reports close buttons - both X and Bağla button
+  const reportsCloseBtn = document.querySelector('#reportsModal .close');
+  if (reportsCloseBtn) reportsCloseBtn.addEventListener('click', closeReportsModal);
+  
+  const reportsCloseActionBtn = document.querySelector('#reportsModal .modal-actions button');
+  if (reportsCloseActionBtn) reportsCloseActionBtn.addEventListener('click', closeReportsModal);
+  
+  // Also close modal when clicking outside of modal content
+  const reportsModal = document.getElementById('reportsModal');
+  if (reportsModal) {
+    reportsModal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeReportsModal();
+      }
+    });
+  }
+
   // Fullscreen buttons
   const activeFullBtn = document.getElementById('activeFullBtn');
   const completedFullBtn = document.getElementById('completedFullBtn');
@@ -318,7 +339,22 @@ function renderActiveSessions(children) {
   const count = document.getElementById('activeCount');
   
   tbody.innerHTML = '';
-  count.textContent = children.length;
+  
+  // Count children by zone
+  const zoneCounts = {};
+  children.forEach(child => {
+    zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
+  });
+  
+  // Format count with zone breakdown
+  let countText = children.length;
+  if (children.length > 0) {
+    const zoneBreakdown = Object.entries(zoneCounts)
+      .map(([zone, num]) => `${zone}: ${num}`)
+      .join(', ');
+    countText = `${children.length} (${zoneBreakdown})`;
+  }
+  count.textContent = countText;
   
   if (children.length === 0) {
     noMsg.style.display = 'block';
@@ -343,7 +379,22 @@ function renderCompletedSessions(children) {
   const count = document.getElementById('completedCount');
   
   tbody.innerHTML = '';
-  count.textContent = children.length;
+  
+  // Count children by zone
+  const zoneCounts = {};
+  children.forEach(child => {
+    zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
+  });
+  
+  // Format count with zone breakdown
+  let countText = children.length;
+  if (children.length > 0) {
+    const zoneBreakdown = Object.entries(zoneCounts)
+      .map(([zone, num]) => `${zone}: ${num}`)
+      .join(', ');
+    countText = `${children.length} (${zoneBreakdown})`;
+  }
+  count.textContent = countText;
   
   if (children.length === 0) {
     noMsg.style.display = 'block';
@@ -1203,6 +1254,329 @@ function updateDurationDropdown() {
       // Try to restore previous value
       if (settings.passTypes.some(pt => pt.duration.toString() === currentValue)) {
         select.value = currentValue;
+      }
+    }
+  });
+}
+
+// ===== REPORTS & ANALYTICS FUNCTIONS =====
+
+// Open reports modal
+async function openReportsModal() {
+  const modal = document.getElementById('reportsModal');
+  if (!modal) return;
+  
+  modal.classList.add('show');
+  
+  // Load available months for all filters
+  await loadAvailableMonths();
+  
+  // Load all reports on first open
+  await loadMonthlyReport();
+}
+
+// Close reports modal
+function closeReportsModal(e) {
+  // Allow closing from event or direct call
+  if (e && e.stopPropagation) {
+    e.stopPropagation();
+  }
+  const modal = document.getElementById('reportsModal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+}
+
+// Load available months for filtering
+async function loadAvailableMonths() {
+  try {
+    const response = await fetch('/api/report/months');
+    const months = await response.json();
+    
+    // Populate all month filters
+    const filterSelectors = ['monthlyMonthFilter', 'zonesMonthFilter', 'ageMonthFilter'];
+    
+    filterSelectors.forEach(selector => {
+      const select = document.getElementById(selector);
+      if (select) {
+        // Clear existing options except "All"
+        const options = select.querySelectorAll('option');
+        options.forEach((opt, idx) => {
+          if (idx > 0) opt.remove();
+        });
+        
+        // Add new options
+        months.forEach(month => {
+          const option = document.createElement('option');
+          option.value = month;
+          
+          // Format month as YYYY-MM for display
+          const [year, monthNum] = month.split('-');
+          const monthName = new Date(year, monthNum - 1).toLocaleString('az-AZ', { year: 'numeric', month: 'long' });
+          option.textContent = monthName;
+          
+          select.appendChild(option);
+        });
+      }
+    });
+  } catch (err) {
+    console.error('Error loading available months:', err);
+  }
+}
+
+// Switch report tab
+function switchReportTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.report-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Remove active class from all buttons
+  document.querySelectorAll('.report-tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show selected tab
+  const tab = document.getElementById(`${tabName}ReportTab`);
+  if (tab) tab.classList.add('active');
+  
+  // Highlight selected button
+  event.target.classList.add('active');
+  
+  // Load report data
+  switch(tabName) {
+    case 'monthly':
+      loadMonthlyReport();
+      break;
+    case 'zones':
+      loadZonesReport();
+      break;
+    case 'age':
+      loadAgeReport();
+      break;
+  }
+}
+
+// Load monthly report
+async function loadMonthlyReport() {
+  try {
+    const month = document.getElementById('monthlyMonthFilter')?.value || '';
+    const url = month ? `/api/report/monthly?month=${month}` : '/api/report/monthly';
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    const container = document.getElementById('monthlyReportContent');
+    if (data.length === 0) {
+      container.innerHTML = '<p class="report-no-data">Məlumat yoxdur.</p>';
+      return;
+    }
+    
+    let html = '<table class="report-table"><thead><tr><th>Ay</th><th>Ümumi Uşaqlar</th><th>Günə Orta</th><th>Ümumi Gəlir (AZN)</th><th>Günə Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    
+    data.forEach(monthData => {
+      const [year, monthNum] = monthData.month.split('-');
+      const monthName = `${String(monthNum).padStart(2, '0')}/${year}`;
+      
+      html += `<tr>
+        <td>${monthName}</td>
+        <td>${monthData.totalChildren}</td>
+        <td>${monthData.avgChildrenPerDay}</td>
+        <td>${monthData.totalRevenue.toFixed(2)}</td>
+        <td>${monthData.avgRevenuePerDay}</td>
+      </tr>`;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('Error loading monthly report:', err);
+    document.getElementById('monthlyReportContent').innerHTML = '<p class="report-no-data">Hesabat yükləməkdə xəta.</p>';
+  }
+}
+
+// Load play zones report
+async function loadZonesReport() {
+  try {
+    const month = document.getElementById('zonesMonthFilter')?.value || '';
+    const url = month ? `/api/report/play-zones?month=${month}` : '/api/report/play-zones';
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    const container = document.getElementById('zonesReportContent');
+    if (data.length === 0) {
+      container.innerHTML = '<p class="report-no-data">Məlumat yoxdur.</p>';
+      return;
+    }
+    
+    let html = '<table class="report-table"><thead><tr><th>Oyun Zonası</th><th>Ümumi Uşaqlar</th><th>Populyarlıq</th><th>Ümumi Gəlir (AZN)</th><th>Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    
+    data.forEach(zone => {
+      html += `<tr>
+        <td>${zone.zone}</td>
+        <td>${zone.totalChildren}</td>
+        <td>${zone.percentageOfTotal}%</td>
+        <td>${zone.totalRevenue.toFixed(2)}</td>
+        <td>${zone.avgRevenuePerChild}</td>
+      </tr>`;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('Error loading zones report:', err);
+    document.getElementById('zonesReportContent').innerHTML = '<p class="report-no-data">Hesabat yükləməkdə xəta.</p>';
+  }
+}
+
+// Load age demographics report
+async function loadAgeReport() {
+  try {
+    const month = document.getElementById('ageMonthFilter')?.value || '';
+    const url = month ? `/api/report/age-demographics?month=${month}` : '/api/report/age-demographics';
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    const container = document.getElementById('ageReportContent');
+    if (data.length === 0) {
+      container.innerHTML = '<p class="report-no-data">Məlumat yoxdur.</p>';
+      return;
+    }
+    
+    let html = '<table class="report-table"><thead><tr><th>Yaş Qrupu</th><th>Ümumi Uşaqlar</th><th>Populyarlıq</th><th>Ümumi Gəlir (AZN)</th><th>Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    
+    data.forEach(age => {
+      html += `<tr>
+        <td>${age.range} yaş</td>
+        <td>${age.count}</td>
+        <td>${age.percentageOfTotal}%</td>
+        <td>${age.revenue.toFixed(2)}</td>
+        <td>${age.avgRevenuePerChild}</td>
+      </tr>`;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('Error loading age report:', err);
+    document.getElementById('ageReportContent').innerHTML = '<p class="report-no-data">Hesabat yükləməkdə xəta.</p>';
+  }
+}
+
+// Update filtered statistics
+async function updateFilteredStats() {
+  const zone = document.getElementById('statZoneFilter')?.value || '';
+  const ticketType = document.getElementById('statTicketFilter')?.value || '';
+  const ageRange = document.getElementById('statAgeFilter')?.value || '';
+  
+  try {
+    const params = new URLSearchParams();
+    if (zone) params.append('zone', zone);
+    if (ticketType) params.append('ticketType', ticketType);
+    if (ageRange) params.append('ageRange', ageRange);
+    
+    const response = await fetch(`/api/stats/filtered-10days?${params}`);
+    const data = await response.json();
+    
+    // Update chart with filtered data
+    updateFilteredChart(data);
+  } catch (err) {
+    console.error('Error updating filtered stats:', err);
+  }
+}
+
+// Update filtered analytics chart
+function updateFilteredChart(stats) {
+  const days = stats.map(s => {
+    const date = new Date(s.date + 'T00:00:00');
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${day}.${month}`;
+  });
+  
+  const childrenCounts = stats.map(s => s.children);
+  const incomeCounts = stats.map(s => s.income);
+  
+  const ctx = document.getElementById('analyticsChart');
+  if (!ctx) return;
+  
+  if (analyticsChart) {
+    analyticsChart.destroy();
+  }
+  
+  analyticsChart = new Chart(ctx.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        {
+          label: 'Qəbul Edilən Uşaqlar',
+          data: childrenCounts,
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0,
+          pointRadius: 5,
+          pointBackgroundColor: '#4CAF50',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Gəlir (AZN)',
+          data: incomeCounts,
+          borderColor: '#2196F3',
+          backgroundColor: 'rgba(33, 150, 243, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0,
+          pointRadius: 5,
+          pointBackgroundColor: '#2196F3',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            font: { size: 12, weight: 'bold' },
+            color: '#333',
+            padding: 15
+          }
+        }
+      },
+      scales: {
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          title: {
+            display: true,
+            text: 'Uşaq Sayı'
+          }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Gəlir (AZN)'
+          },
+          grid: {
+            drawOnChartArea: false,
+          }
+        }
       }
     }
   });

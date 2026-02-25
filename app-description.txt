@@ -60,6 +60,16 @@ STATISTICS & ANALYTICS
   - Sharp lines without curves (Chart.js implementation)
   - Dual Y-axis: number of children admitted + total income
   - Auto-resizes in full-screen mode (no scroll needed)
+✓ Reports panel with filterable statistics:
+  - Monthly summary reports (total revenue, total children, monthly breakdown)
+  - Play zone comparison (Lego vs Əsas popularity metrics)
+  - Age demographics (track which age groups visit most)
+  - Month selection filter: Optional dropdown to filter all 3 reports by specific month (YYYY-MM format)
+  - Default: All reports show comprehensive all-time data when no month is selected
+✓ Filter statistics graph by:
+  - Play zone (Lego / Əsas)
+  - Ticket type (1 Hour / 2 Hours / 3 Hours / 4 Hours / Unlimited)
+  - Age range (3-5, 6-8, 9-12 years)
 
 SETTINGS PANEL
 ✓ Settings button to configure:

@@ -21,6 +21,7 @@
         <button id="settingsBtn" class="btn-history">⚙️ Ayarlar</button>
         <button id="historyBtn" class="btn-history">📅 Tarixçə</button>
         <button id="statisticsBtn" class="btn-history">📊 Statistika</button>
+        <button id="reportsBtn" class="btn-history">📈 Hesabatlar</button>
         <button id="exportTodayExcelBtn" class="btn-history">📤 Excel-ə Çıxar</button>
       </div>
     </div>
@@ -205,6 +206,38 @@
       <button class="btn-section-fullscreen" id="statisticsFullBtn">Tam ekran</button>
       <h2>📊 Statistika (Son 10 Gün)</h2>
       
+      <!-- Filters -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="statZoneFilter">Oyun Zonası:</label>
+          <select id="statZoneFilter" onchange="updateFilteredStats()">
+            <option value="">Hamısı</option>
+            <option value="Lego">Lego</option>
+            <option value="Əsas">Əsas</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="statTicketFilter">Bilet Tipi:</label>
+          <select id="statTicketFilter" onchange="updateFilteredStats()">
+            <option value="">Hamısı</option>
+            <option value="1 saat">1 saat</option>
+            <option value="2 saat">2 saat</option>
+            <option value="3 saat">3 saat</option>
+            <option value="4 saat">4 saat</option>
+            <option value="unlimited">Limitsiz</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="statAgeFilter">Yaş Qrupu:</label>
+          <select id="statAgeFilter" onchange="updateFilteredStats()">
+            <option value="">Hamısı</option>
+            <option value="3-5">3-5 yaş</option>
+            <option value="6-8">6-8 yaş</option>
+            <option value="9-12">9-12 yaş</option>
+          </select>
+        </div>
+      </div>
+      
       <!-- Analytics Chart -->
       <div id="analyticsChartContainer" style="margin-top: 20px;">
         <canvas id="analyticsChart" width="400" height="200"></canvas>
@@ -268,6 +301,57 @@
       <div class="modal-actions">
         <button id="settingsSaveBtn" class="btn-save">Yadda Saxla</button>
         <button id="settingsCancelBtn" class="btn-cancel">Ləğv Et</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Modal -->
+  <div id="reportsModal" class="modal">
+    <div class="modal-content reports-modal">
+      <span class="close" id="reportsCloseBtn">&times;</span>
+      <h2>📈 Hesabatlar və Analitika</h2>
+      
+      <div class="reports-tabs">
+        <button class="report-tab-btn active" onclick="switchReportTab('monthly')">Aylıq</button>
+        <button class="report-tab-btn" onclick="switchReportTab('zones')">Oyun Zonası</button>
+        <button class="report-tab-btn" onclick="switchReportTab('age')">Yaş Demoqrafiyası</button>
+      </div>
+
+      <div id="monthlyReportTab" class="report-tab active">
+        <h3>Aylıq Hesabat</h3>
+        <div class="report-filter">
+          <label for="monthlyMonthFilter">Ay seçin:</label>
+          <select id="monthlyMonthFilter" onchange="loadMonthlyReport()">
+            <option value="">Hamısı</option>
+          </select>
+        </div>
+        <div id="monthlyReportContent" class="report-content"></div>
+      </div>
+
+      <div id="zonesReportTab" class="report-tab">
+        <h3>Oyun Zonası Müqayisəsi</h3>
+        <div class="report-filter">
+          <label for="zonesMonthFilter">Ay seçin:</label>
+          <select id="zonesMonthFilter" onchange="loadZonesReport()">
+            <option value="">Hamısı</option>
+          </select>
+        </div>
+        <div id="zonesReportContent" class="report-content"></div>
+      </div>
+
+      <div id="ageReportTab" class="report-tab">
+        <h3>Yaş Demoqrafiyası</h3>
+        <div class="report-filter">
+          <label for="ageMonthFilter">Ay seçin:</label>
+          <select id="ageMonthFilter" onchange="loadAgeReport()">
+            <option value="">Hamısı</option>
+          </select>
+        </div>
+        <div id="ageReportContent" class="report-content"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="reportsCloseBtn" class="btn-cancel">Bağla</button>
       </div>
     </div>
   </div>

@@ -1,28 +1,5 @@
 {
-  "active": [
-    {
-      "id": 1772040487317,
-      "name": "Vali",
-      "age": 5,
-      "playZone": "Lego",
-      "duration": "60",
-      "price": 5,
-      "notes": "Qeydf",
-      "startTime": "2026-02-25T17:28:07.317Z",
-      "endTime": null
-    },
-    {
-      "id": 1772040569683,
-      "name": "Yeni",
-      "age": 6,
-      "playZone": "Əsas",
-      "duration": "61",
-      "price": 5,
-      "notes": "hjhjhjhjhjh",
-      "startTime": "2026-02-25T17:29:29.683Z",
-      "endTime": null
-    }
-  ],
+  "active": [],
   "completed": [
     {
       "id": 1772016743837,
@@ -144,6 +121,28 @@
       "notes": "",
       "startTime": "2026-02-25T16:53:25.569Z",
       "endTime": "2026-02-25T17:27:49.633Z"
+    },
+    {
+      "id": 1772040487317,
+      "name": "Vali",
+      "age": 5,
+      "playZone": "Lego",
+      "duration": "60",
+      "price": 5,
+      "notes": "Qeydf",
+      "startTime": "2026-02-25T17:28:07.317Z",
+      "endTime": "2026-02-25T18:40:35.448Z"
+    },
+    {
+      "id": 1772040569683,
+      "name": "Yeni",
+      "age": 6,
+      "playZone": "Əsas",
+      "duration": "61",
+      "price": 5,
+      "notes": "hjhjhjhjhjh",
+      "startTime": "2026-02-25T17:29:29.683Z",
+      "endTime": "2026-02-25T18:40:36.925Z"
     }
   ]
 }
