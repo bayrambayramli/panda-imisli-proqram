@@ -571,11 +571,6 @@ body {
   transform: translateY(-2px);
 }
 
-.btn-cancel {
-  background-color: #666;
-  color: white;
-}
-
 .btn-cancel:hover {
   background-color: #333;
   transform: translateY(-2px);
