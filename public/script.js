@@ -1054,10 +1054,10 @@ function openSettingsModal() {
       row.innerHTML = `
         <input type="text" class="pass-name" placeholder="Adı" value="${pt.name}" data-id="${pt.id}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
         <select class="pass-duration" data-id="${pt.id}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
-          <option value="60" ${pt.duration === 60 ? 'selected' : ''}>1 Saat</option>
-          <option value="120" ${pt.duration === 120 ? 'selected' : ''}>2 Saat</option>
-          <option value="180" ${pt.duration === 180 ? 'selected' : ''}>3 Saat</option>
-          <option value="240" ${pt.duration === 240 ? 'selected' : ''}>4 Saat</option>
+          <option value="61" ${pt.duration === 61 ? 'selected' : ''}>1 Saat</option>
+          <option value="121" ${pt.duration === 121 ? 'selected' : ''}>2 Saat</option>
+          <option value="181" ${pt.duration === 181 ? 'selected' : ''}>3 Saat</option>
+          <option value="241" ${pt.duration === 241 ? 'selected' : ''}>4 Saat</option>
           <option value="unlimited" ${pt.duration === 'unlimited' ? 'selected' : ''}>Limitsiz</option>
         </select>
         <input type="number" class="pass-price" placeholder="Qiymət" value="${pt.price}" data-id="${pt.id}" step="0.01" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
@@ -1091,10 +1091,10 @@ function addPassTypeRow() {
   row.innerHTML = `
     <input type="text" class="pass-name" placeholder="Adı" data-id="${newId}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
     <select class="pass-duration" data-id="${newId}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
-      <option value="60">1 Saat</option>
-      <option value="120">2 Saat</option>
-      <option value="180">3 Saat</option>
-      <option value="240">4 Saat</option>
+      <option value="61">1 Saat</option>
+      <option value="121">2 Saat</option>
+      <option value="181">3 Saat</option>
+      <option value="241">4 Saat</option>
       <option value="unlimited">Limitsiz</option>
     </select>
     <input type="number" class="pass-price" placeholder="Qiymət" data-id="${newId}" step="0.01" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
