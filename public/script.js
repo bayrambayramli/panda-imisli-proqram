@@ -378,7 +378,7 @@ function createActiveRow(child) {
     <td>${child.age}</td>
     <td>${child.playZone}</td>
     <td>${startTimeStr}</td>
-    <td><span id="timer-${child.id}" class="timer">--:--</span></td>
+    <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>
@@ -488,44 +488,70 @@ async function addChild() {
 // Timer functionality
 function startTimer(childId, durationValue, startTimeISO) {
   const timerEl = document.getElementById(`timer-${childId}`);
+  const timerCellEl = document.getElementById(`timer-cell-${childId}`);
   if (!timerEl) return;
 
   if (durationValue === 'unlimited') {
     timerEl.textContent = 'Limitsiz';
     timerEl.classList.remove('warning', 'danger');
+    if (timerCellEl) {
+      timerCellEl.classList.add('timer-green');
+    }
     return;
   }
 
   const durationMinutes = parseInt(durationValue) || 0;
+  const totalDuration = durationMinutes * 60 * 1000; // Total duration in milliseconds
   const startMs = startTimeISO ? new Date(startTimeISO).getTime() : Date.now();
-  let endTime = startMs + durationMinutes * 60 * 1000;
+  let endTime = startMs + totalDuration;
+  let lastDisplayedMinute = -1; // Track last displayed minute to reduce updates
 
   function updateTimer() {
     const now = Date.now();
     const remaining = Math.max(0, endTime - now);
     const minutes = Math.floor(remaining / 60000);
-    const seconds = Math.floor((remaining % 60000) / 1000);
 
     if (!timerEl) {
       clearInterval(timerIntervals[childId]);
       return;
     }
 
-    timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    timerEl.classList.remove('warning', 'danger');
+    // Only update if minute has changed
+    if (minutes !== lastDisplayedMinute) {
+      lastDisplayedMinute = minutes;
+      
+      // Display minutes with "dəq" label
+      if (minutes === 0) {
+        timerEl.textContent = '0 dəq';
+      } else {
+        timerEl.textContent = `${minutes} dəq`;
+      }
+      
+      timerEl.classList.remove('warning', 'danger');
 
-    if (remaining === 0) {
-      timerEl.classList.add('danger');
-      timerEl.textContent = 'VAXT BİTDİ!';
-    } else if (remaining < 5 * 60 * 1000) {
-      timerEl.classList.add('warning');
+      // Apply color based on remaining minutes: >15 (green), ≤15 (yellow), 0 (red)
+      if (timerCellEl) {
+        timerCellEl.classList.remove('timer-green', 'timer-yellow', 'timer-red');
+        
+        if (minutes === 0) {
+          timerCellEl.classList.add('timer-red');
+          timerEl.classList.add('danger');
+          timerEl.textContent = 'VAXT BİTDİ!';
+        } else if (minutes > 15) {
+          timerCellEl.classList.add('timer-green');
+        } else {
+          timerCellEl.classList.add('timer-yellow');
+          timerEl.classList.add('warning');
+        }
+      }
     }
   }
 
   updateTimer();
 
   if (timerIntervals[childId]) clearInterval(timerIntervals[childId]);
-  timerIntervals[childId] = setInterval(updateTimer, 1000);
+  // Check every 60 seconds (1 minute) for efficiency
+  timerIntervals[childId] = setInterval(updateTimer, 60000);
 }
 
 // Extend time by 1 hour (confirm first)
