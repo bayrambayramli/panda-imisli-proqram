@@ -66,7 +66,7 @@ async function startAutoEndPolling() {
     } catch (error) {
       console.error('Error checking auto-end event:', error);
     }
-  }, 10000); // Check every 10 seconds
+  }, 60000); // Check every 1 minute
 }
 
 // Initialize date display
@@ -350,7 +350,7 @@ function createActiveRow(child) {
     <td>${notesContent}</td>
     <td>
       <div class="actions-cell">
-        <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'active')">Redaktə Et</button>
+        <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'active')">Dəyişdir</button>
         ${timeButtonsHtml}
         <button class="btn-action btn-end" onclick="endSession('${child.id}')">Bitir</button>
         <button class="btn-action btn-delete" onclick="deleteChild('${child.id}', 'active')">Sil</button>
@@ -383,7 +383,7 @@ function createCompletedRow(child) {
     <td>${endTime}</td>
     <td>
       <div class="actions-cell">
-        <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'completed')">Redaktə Et</button>
+        <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'completed')">Dəyişdir</button>
         <button class="btn-action btn-delete" onclick="deleteChild('${child.id}', 'completed')">Sil</button>
       </div>
     </td>

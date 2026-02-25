@@ -11,7 +11,10 @@
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>Panda İmişli uşaq əyləncə mərkəzi</h1>
+      <div class="title-section">
+        <img src="images/panda_logo.png" alt="Panda Logo" class="header-logo">
+        <h1>Panda İmişli uşaq əyləncə mərkəzi</h1>
+      </div>
       <div class="date-section">
         <button id="todayBtn" type="button" class="today-date btn-info" onclick="openStatsModal()">Bu gün: <span id="dateDisplay"></span></button>
         <button id="settingsBtn" class="btn-history">⚙️ Ayarlar</button>
@@ -131,7 +134,7 @@
   <div id="editModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2>Uşaq Məlumatını Redaktə Et</h2>
+      <h2>Uşaq Məlumatını Dəyiş</h2>
       <div class="form-grid">
         <div class="form-group">
           <label for="editName">Ad</label>
@@ -153,7 +156,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="editPlayZone">Oyun Bölgəsi</label>
+          <label for="editPlayZone">Oyun Zonası</label>
           <select id="editPlayZone">
             <option value="Lego">Lego</option>
             <option value="Əsas">Əsas</option>
