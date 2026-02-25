@@ -365,7 +365,7 @@ function createActiveRow(child) {
   
   const notesContent = child.notes ? 
     `<span class="editable-field" onclick="editNotes('${child.id}')">${child.notes}</span>` : 
-    `<span class="editable-field" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
+    `<span class="editable-field editable-placeholder" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
   
   // Only show +30/-30 buttons if not unlimited
   const isUnlimited = child.duration === 'unlimited';
@@ -401,7 +401,7 @@ function createCompletedRow(child) {
   
   const notesContent = child.notes ? 
     `<span class="editable-field" onclick="editNotes('${child.id}')">${child.notes}</span>` : 
-    `<span class="editable-field" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
+    `<span class="editable-field editable-placeholder" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
   
   const startTime = new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
   const endTime = child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';

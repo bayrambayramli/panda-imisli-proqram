@@ -315,7 +315,7 @@ setInterval(() => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Amusement Center Admin app running at http://localhost:${PORT}`);
+  console.log(`Panda Imisli app running at http://localhost:${PORT}`);
   
   // Check on startup
   const settings = loadSettings();

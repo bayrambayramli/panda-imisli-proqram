@@ -299,7 +299,7 @@ body {
 }
 
 .sessions-table th {
-  padding: 10px 8px;
+  padding: 8px 4px;
   text-align: left;
   font-weight: 700;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
@@ -313,7 +313,7 @@ body {
 }
 
 .sessions-table td {
-  padding: 4px 4px;
+  padding: 4px 2px;
   border-bottom: 1px solid #e0e0e0;
   border-right: 1px solid #e0e0e0;
   font-size: 16px;
@@ -391,12 +391,18 @@ body {
 /* Editable Fields */
 .editable-field {
   padding: 6px;
-  border: 1px solid #999;
+  border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
   font-weight: 500;
   color: #000;
+}
+
+.editable-field.editable-placeholder {
+  color: #7a7a7a;
+  font-style: italic;
+  border-color: transparent;
 }
 
 .editable-field:hover {
