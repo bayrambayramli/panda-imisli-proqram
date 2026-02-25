@@ -245,12 +245,12 @@ body {
 }
 
 .completed-sessions-section {
-  border: 2px solid #FF9800;
+  border: 2px solid #90A4AE;
 }
 
 .completed-sessions-section h2 {
-  color: #FF9800;
-  border-bottom-color: #FF9800;
+  color: #607D8B;
+  border-bottom-color: #90A4AE;
 }
 
 
@@ -295,7 +295,7 @@ body {
 }
 
 .completed-sessions-section .sessions-table thead {
-  background: #FF9800;
+  background: #78909C;
 }
 
 .sessions-table th {
@@ -658,6 +658,7 @@ body {
 }
 
 /* Fullscreen section */
+/* Fullscreen for sessions sections */
 .fullscreen-section {
   position: fixed;
   top: 0;
@@ -701,6 +702,14 @@ body {
   right: 20px;
   margin: 0;
   z-index: 10000;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fullscreen-modal .modal-actions .btn-cancel {
+  margin: 0 !important;
 }
 
 .fullscreen-modal .report-tab {
@@ -1038,9 +1047,6 @@ body {
   z-index: 3500 !important;
 }
 
-.fullscreen-section {
-  z-index: 2000 !important;
-}
 /* ===== FILTER STYLES ===== */
 .filter-section {
   display: flex;

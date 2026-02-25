@@ -761,50 +761,22 @@ async function saveEdit() {
 }
 
 
-// Analytics Chart Functions
-async function loadAnalyticsData() {
-  try {
-    // Get last 10 days of data
-    const days = [];
-    const childrenCounts = [];
-    const incomeCounts = [];
-    
-    const today = new Date();
-    
-    for (let i = 9; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      
-      const response = await fetch(`/api/data/${dateStr}`);
-      const data = await response.json();
-      
-      // Count total children admitted
-      const totalChildren = data.completed.length + data.active.length;
-      childrenCounts.push(totalChildren);
-      
-      // Calculate total income for the day (only completed sessions)
-      let income = 0;
-      data.completed.forEach(child => {
-        income += parseFloat(child.price) || 0;
-      });
-      incomeCounts.push(income);
-      
-      // Format date as DD.MM
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      days.push(`${day}.${month}`);
-    }
-    
-    return { days, childrenCounts, incomeCounts };
-  } catch (error) {
-    console.error('Error loading analytics data:', error);
-    return { days: [], childrenCounts: [], incomeCounts: [] };
-  }
-}
+// ===== ANALYTICS CHART FUNCTIONS =====
 
 async function updateAnalyticsChart() {
-  const { days, childrenCounts, incomeCounts } = await loadAnalyticsData();
+  // Load last 10 days data from backend
+  try {
+    const response = await fetch('/api/stats/filtered-10days');
+    const stats = await response.json();
+    
+    const days = stats.map(s => {
+      const date = new Date(s.date + 'T00:00:00');
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return `${day}.${month}`;
+    });
+    const childrenCounts = stats.map(s => s.children);
+    const incomeCounts = stats.map(s => s.income);
   
   const chartContainer = document.getElementById('analyticsChartContainer');
   
@@ -899,8 +871,10 @@ async function updateAnalyticsChart() {
       }
     }
   });
+  } catch (error) {
+    console.error('Error loading analytics data:', error);
+  }
 }
-
 
 // History Modal Functions
 function openHistoryModal() {
@@ -1265,8 +1239,21 @@ function closeReportsModal(e) {
     e.stopPropagation();
   }
   const modal = document.getElementById('reportsModal');
+  const modalContent = document.getElementById('reportsModalContent');
+  const fullscreenBtn = document.getElementById('reportsFullBtn');
+  
   if (modal) {
     modal.classList.remove('show');
+    modal.classList.remove('modal-fullscreen-parent');
+  }
+  
+  if (modalContent) {
+    modalContent.classList.remove('fullscreen-modal');
+  }
+  
+  // Reset fullscreen button text if needed
+  if (fullscreenBtn) {
+    fullscreenBtn.textContent = 'Tam ekran';
   }
 }
 
@@ -1323,8 +1310,13 @@ function switchReportTab(tabName) {
   const tab = document.getElementById(`${tabName}ReportTab`);
   if (tab) tab.classList.add('active');
   
-  // Highlight selected button
-  if (event && event.target) event.target.classList.add('active');
+  // Find and highlight the button that matches this tab by checking onclick
+  const buttons = document.querySelectorAll('.report-tab-btn');
+  buttons.forEach(btn => {
+    if (btn.getAttribute('onclick').includes(`'${tabName}'`)) {
+      btn.classList.add('active');
+    }
+  });
   
   // Load report data
   switch(tabName) {
@@ -1488,14 +1480,14 @@ function updateFilteredChart(stats) {
   const childrenCounts = stats.map(s => s.children);
   const incomeCounts = stats.map(s => s.income);
   
-  const ctx = document.getElementById('analyticsChart');
-  if (!ctx) return;
-  
-  if (analyticsChart) {
-    analyticsChart.destroy();
-  }
-  
-  analyticsChart = new Chart(ctx.getContext('2d'), {
+    const ctx = document.getElementById('analyticsChart');
+    if (!ctx) return;
+    
+    if (analyticsChart) {
+      analyticsChart.destroy();
+    }
+    
+    analyticsChart = new Chart(ctx.getContext('2d'), {
     type: 'line',
     data: {
       labels: days,
