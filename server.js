@@ -350,7 +350,7 @@ app.get('/api/report/monthly', (req, res) => {
 
     const result = Object.values(monthlyData).map(monthData => ({
       ...monthData,
-      avgChildrenPerDay: monthData.days > 0 ? (monthData.totalChildren / monthData.days).toFixed(2) : 0,
+      avgChildrenPerDay: monthData.days > 0 ? Math.round(monthData.totalChildren / monthData.days) : 0,
       avgRevenuePerDay: monthData.days > 0 ? (monthData.totalRevenue / monthData.days).toFixed(2) : 0
     })).sort((a, b) => b.month.localeCompare(a.month));
 

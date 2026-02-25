@@ -1310,9 +1310,9 @@ async function loadAvailableMonths() {
           const option = document.createElement('option');
           option.value = month;
           
-          // Format month as YYYY-MM for display
+          // Format month as MM/YYYY
           const [year, monthNum] = month.split('-');
-          const monthName = new Date(year, monthNum - 1).toLocaleString('az-AZ', { year: 'numeric', month: 'long' });
+          const monthName = `${String(monthNum).padStart(2, '0')}/${year}`;
           option.textContent = monthName;
           
           select.appendChild(option);
@@ -1371,7 +1371,7 @@ async function loadMonthlyReport() {
       return;
     }
     
-    let html = '<table class="report-table"><thead><tr><th>Ay</th><th>Ümumi Uşaqlar</th><th>Günə Orta</th><th>Ümumi Gəlir (AZN)</th><th>Günə Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    let html = '<table class="report-table"><thead><tr><th>Ay</th><th>Ümumi Uşaqlar</th><th>Günə Orta Uşaq Sayı</th><th>Ümumi Gəlir (AZN)</th><th>Günə Orta Gəlir (AZN)</th></tr></thead><tbody>';
     
     data.forEach(monthData => {
       const [year, monthNum] = monthData.month.split('-');
@@ -1381,8 +1381,8 @@ async function loadMonthlyReport() {
         <td>${monthName}</td>
         <td>${monthData.totalChildren}</td>
         <td>${monthData.avgChildrenPerDay}</td>
-        <td>${monthData.totalRevenue.toFixed(2)}</td>
-        <td>${monthData.avgRevenuePerDay}</td>
+        <td>${Math.round(monthData.totalRevenue)}</td>
+        <td>${Math.round(monthData.avgRevenuePerDay)}</td>
       </tr>`;
     });
     
@@ -1414,9 +1414,9 @@ async function loadZonesReport() {
       html += `<tr>
         <td>${zone.zone}</td>
         <td>${zone.totalChildren}</td>
-        <td>${zone.percentageOfTotal}%</td>
-        <td>${zone.totalRevenue.toFixed(2)}</td>
-        <td>${zone.avgRevenuePerChild}</td>
+        <td>${Math.round(zone.percentageOfTotal)}%</td>
+        <td>${Math.round(zone.totalRevenue)}</td>
+        <td>${Math.round(zone.avgRevenuePerChild)}</td>
       </tr>`;
     });
     
@@ -1448,9 +1448,9 @@ async function loadAgeReport() {
       html += `<tr>
         <td>${age.range} yaş</td>
         <td>${age.count}</td>
-        <td>${age.percentageOfTotal}%</td>
-        <td>${age.revenue.toFixed(2)}</td>
-        <td>${age.avgRevenuePerChild}</td>
+        <td>${Math.round(age.percentageOfTotal)}%</td>
+        <td>${Math.round(age.revenue)}</td>
+        <td>${Math.round(age.avgRevenuePerChild)}</td>
       </tr>`;
     });
     
