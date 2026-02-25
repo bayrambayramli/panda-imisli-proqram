@@ -5,6 +5,7 @@ let editingChildId = null;
 let editingSource = null; // 'active' or 'completed'
 let settings = null; // Will be loaded from backend
 let PRICE_CONFIG = {}; // Will be populated from settings
+let analyticsChart = null; // Will hold chart instance
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
@@ -101,6 +102,16 @@ function setupEventListeners() {
     window.location.href = `/api/exportExcel/${date}`;
   });
   
+  // Statistics button
+  document.getElementById('statisticsBtn').addEventListener('click', openStatisticsModal);
+  document.getElementById('statisticsCloseBtn').addEventListener('click', closeStatisticsModal);
+  
+  // Statistics fullscreen button
+  const statsFullBtn = document.getElementById('statisticsFullBtn');
+  if (statsFullBtn) {
+    statsFullBtn.addEventListener('click', () => toggleStatisticsFullscreen(statsFullBtn));
+  }
+  
   // Export today's Excel
   const exportTodayBtn = document.getElementById('exportTodayExcelBtn');
   if (exportTodayBtn) exportTodayBtn.addEventListener('click', async () => {
@@ -186,6 +197,28 @@ function toggleFullscreen(section) {
     const btn = document.getElementById('completedFullBtn');
     if (btn) btn.textContent = isNow ? 'Tam Ekrandan Çıx' : 'Tam Ekran';
   }
+}
+
+function toggleStatisticsFullscreen(btn) {
+  const modalContent = document.getElementById('statisticsModalContent');
+  if (!modalContent) return;
+  
+  const isFullscreen = modalContent.classList.toggle('fullscreen-modal');
+  btn.textContent = isFullscreen ? 'Tam Ekrandan Çıx' : 'Tam ekran';
+  
+  // Trigger chart resize when toggling fullscreen
+  setTimeout(() => {
+    if (analyticsChart) {
+      analyticsChart.resize();
+    }
+  }, 100);
+  
+  // Second resize to ensure proper fit
+  setTimeout(() => {
+    if (analyticsChart) {
+      analyticsChart.resize();
+    }
+  }, 500);
 }
 
 // UI alert implementation (info/error only - just OK button)
@@ -671,22 +704,181 @@ async function saveEdit() {
 }
 
 
+// Analytics Chart Functions
+async function loadAnalyticsData() {
+  try {
+    // Get last 10 days of data
+    const days = [];
+    const childrenCounts = [];
+    const incomeCounts = [];
+    
+    const today = new Date();
+    
+    for (let i = 9; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const response = await fetch(`/api/data/${dateStr}`);
+      const data = await response.json();
+      
+      // Count total children admitted
+      const totalChildren = data.completed.length + data.active.length;
+      childrenCounts.push(totalChildren);
+      
+      // Calculate total income for the day (only completed sessions)
+      let income = 0;
+      data.completed.forEach(child => {
+        income += parseFloat(child.price) || 0;
+      });
+      incomeCounts.push(income);
+      
+      // Format date as DD.MM
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      days.push(`${day}.${month}`);
+    }
+    
+    return { days, childrenCounts, incomeCounts };
+  } catch (error) {
+    console.error('Error loading analytics data:', error);
+    return { days: [], childrenCounts: [], incomeCounts: [] };
+  }
+}
+
+async function updateAnalyticsChart() {
+  const { days, childrenCounts, incomeCounts } = await loadAnalyticsData();
+  
+  const chartContainer = document.getElementById('analyticsChartContainer');
+  
+  if (days.length === 0) {
+    chartContainer.style.display = 'none';
+    return;
+  }
+  
+  chartContainer.style.display = 'block';
+  const ctx = document.getElementById('analyticsChart').getContext('2d');
+  
+  // Destroy existing chart if it exists
+  if (analyticsChart) {
+    analyticsChart.destroy();
+  }
+  
+  analyticsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        {
+          label: 'Qəbul Edilən Uşaqlar',
+          data: childrenCounts,
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 5,
+          pointBackgroundColor: '#4CAF50',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Gəlir (AZN)',
+          data: incomeCounts,
+          borderColor: '#2196F3',
+          backgroundColor: 'rgba(33, 150, 243, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 5,
+          pointBackgroundColor: '#2196F3',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            font: { size: 12, weight: 'bold' },
+            color: '#333',
+            padding: 15
+          }
+        }
+      },
+      scales: {
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          title: {
+            display: true,
+            text: 'Uşaq Sayı',
+            font: { size: 12, weight: 'bold' }
+          },
+          grid: { color: 'rgba(0, 0, 0, 0.05)' }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Gəlir (AZN)',
+            font: { size: 12, weight: 'bold' }
+          },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+
 // History Modal Functions
 function openHistoryModal() {
   // ensure stats modal is closed when opening history
   closeStatsModal();
+  closeStatisticsModal();
   const today = getTodayDate();
   document.getElementById('historyDate').value = today;
   document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Tarix seçin və yükləyin</p>';
   document.getElementById('historyModal').classList.add('show');
 }
 
+// Statistics Modal Functions
+function openStatisticsModal() {
+  // ensure other modals are closed
+  closeStatsModal();
+  closeHistoryModal();
+  
+  document.getElementById('statisticsModal').classList.add('show');
+  
+  // Load and display analytics chart
+  updateAnalyticsChart();
+}
+
+function closeStatisticsModal() {
+  document.getElementById('statisticsModal').classList.remove('show');
+}
+
 // Stats Modal Functions
 async function openStatsModal() {
   const date = currentDate;
   try {
-    // make sure history modal is closed
+    // make sure other modals are closed
     closeHistoryModal();
+    closeStatisticsModal();
 
     const resp = await fetch(`/api/data/${date}`);
     const data = await resp.json();

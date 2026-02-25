@@ -6,6 +6,7 @@
   <title>Panda İmişli</title>
   <link rel="icon" type="image/x-icon" href="images/favicon.ico">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="container">
@@ -19,6 +20,7 @@
         <button id="todayBtn" type="button" class="today-date btn-info" onclick="openStatsModal()">Bu gün: <span id="dateDisplay"></span></button>
         <button id="settingsBtn" class="btn-history">⚙️ Ayarlar</button>
         <button id="historyBtn" class="btn-history">📅 Tarixçə</button>
+        <button id="statisticsBtn" class="btn-history">📊 Statistika</button>
         <button id="exportTodayExcelBtn" class="btn-history">📤 Excel-ə Çıxar</button>
       </div>
     </div>
@@ -192,6 +194,20 @@
       </div>
       <div id="historyContent" class="history-content">
         <p class="no-data-msg">Tarix seçin və yükləyin</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Modal -->
+  <div id="statisticsModal" class="modal">
+    <div class="modal-content" id="statisticsModalContent">
+      <span class="close" id="statisticsCloseBtn">&times;</span>
+      <button class="btn-section-fullscreen" id="statisticsFullBtn">Tam ekran</button>
+      <h2>📊 Statistika (Son 10 Gün)</h2>
+      
+      <!-- Analytics Chart -->
+      <div id="analyticsChartContainer" style="margin-top: 20px;">
+        <canvas id="analyticsChart" width="400" height="200"></canvas>
       </div>
     </div>
   </div>
