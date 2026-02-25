@@ -1009,7 +1009,7 @@ function openSettingsModal() {
     
     // Add header row
     const headerRow = document.createElement('div');
-    headerRow.className = 'pass-type-row pass-type-header';
+    headerRow.className = 'pass-type-row';
     headerRow.style.display = 'flex';
     headerRow.style.gap = '8px';
     headerRow.innerHTML = `

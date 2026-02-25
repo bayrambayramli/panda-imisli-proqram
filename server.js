@@ -316,9 +316,7 @@ setInterval(() => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Amusement Center Admin app running at http://localhost:${PORT}`);
-  // console.log('Press Ctrl+C to stop the server');
   
   // Check on startup
   const settings = loadSettings();
-  // console.log(`Auto-end sessions configured for ${settings.endDayHour}:00`);
 });
