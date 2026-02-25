@@ -354,17 +354,14 @@ body {
 
 .timer-cell.timer-green {
   background-color: #4CAF50 !important;
-  border: 2px solid #e5ece6;
 }
 
 .timer-cell.timer-yellow {
-  background-color: #FFC107 !important;
-  border: 2px solid #F57F17;
+  background-color: #f0b812 !important;
 }
 
 .timer-cell.timer-red {
   background-color: #f44336 !important;
-  border: 2px solid #C62828;
 }
 
 .timer {
@@ -382,17 +379,8 @@ body {
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.timer.warning {
-  animation: pulse 1s infinite;
-}
-
 .timer.danger {
   animation: flash 1s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
 }
 
 @keyframes flash {

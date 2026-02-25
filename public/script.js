@@ -541,7 +541,6 @@ function startTimer(childId, durationValue, startTimeISO) {
           timerCellEl.classList.add('timer-green');
         } else {
           timerCellEl.classList.add('timer-yellow');
-          timerEl.classList.add('warning');
         }
       }
     }
