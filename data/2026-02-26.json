@@ -1,20 +1,6 @@
 {
   "active": [
     {
-      "id": 1772118068963,
-      "name": "Usaq 2",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": "120",
-      "price": 5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 60,
-      "notes": "2",
-      "startTime": "2026-02-26T15:01:08.963Z",
-      "endTime": null
-    },
-    {
       "id": 1772118111121,
       "name": "Usaq 3",
       "age": 8,
@@ -27,7 +13,36 @@
       "notes": "3",
       "startTime": "2026-02-26T15:01:51.121Z",
       "endTime": null
+    },
+    {
+      "id": 1772125616740,
+      "name": "Usaq",
+      "age": 9,
+      "playZone": "Əsas",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "extendedTime": 0,
+      "notes": "",
+      "startTime": "2026-02-26T17:06:56.740Z",
+      "endTime": null
     }
   ],
-  "completed": []
+  "completed": [
+    {
+      "id": 1772118068963,
+      "name": "Usaq 2",
+      "age": 4,
+      "playZone": "Körpə",
+      "duration": "120",
+      "price": 5,
+      "passTypeId": 3,
+      "passTypeName": "1 saat 50% Endirim",
+      "extendedTime": 60,
+      "notes": "2",
+      "startTime": "2026-02-26T15:01:08.963Z",
+      "endTime": "2026-02-26T17:05:49.727Z"
+    }
+  ]
 }
