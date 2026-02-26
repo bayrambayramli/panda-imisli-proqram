@@ -631,15 +631,15 @@ async function extendTime(childId) {
   try {
     const response = await fetch(`/api/data/${currentDate}`);
     const data = await response.json();
-    
+
     const child = data.active.find(c => c.id == childId);
     if (!child) return;
-    
+
     if (child.duration === 'unlimited') return;
-    
+
     const current = parseInt(child.duration) || 0;
     const newDuration = current + 60;
-    const newPrice = parseFloat(((newDuration / 60) * 5).toFixed(2));
+    const newPrice = parseFloat((PRICE_CONFIG[newDuration.toString()] || PRICE_CONFIG[current] * 1.5).toFixed(2));
     
     const confirmResult = await showUiPrompt(`Seansı ${newDuration} dəq-ə artırmaq istəyirsiniz? Yeni qiymət: ${newPrice} AZN`);
     if (!confirmResult) return;
@@ -806,7 +806,6 @@ async function saveEdit() {
   }
 }
 
-
 // ===== ANALYTICS CHART FUNCTIONS =====
 
 async function updateAnalyticsChart() {
@@ -924,7 +923,7 @@ async function updateAnalyticsChart() {
 
 // History Modal Functions
 function openHistoryModal() {
-  // ensure stats modal is closed when opening history
+  // Ensure stats modal is closed when opening history
   closeStatsModal();
   const today = getTodayDate();
   document.getElementById('historyDate').value = today;
@@ -1081,7 +1080,7 @@ function openSettingsModal() {
   closeHistoryModal();
   closeStatsModal();
 
-  // Populate all pass types as editable rows in container
+  // Populate pass types as editable rows
   const container = document.getElementById('passTypesContainer');
   if (container) {
     container.innerHTML = '';
@@ -1120,7 +1119,7 @@ function openSettingsModal() {
   // Set end day hour
   document.getElementById('endDayHour').value = settings.endDayHour;
 
-  // Populate all play zones as editable rows in container
+  // Populate play zones as editable rows
   const zonesContainer = document.getElementById('playZonesContainer');
   if (zonesContainer) {
     zonesContainer.innerHTML = '';

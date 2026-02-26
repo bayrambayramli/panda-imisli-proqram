@@ -111,6 +111,15 @@ app.post('/api/children', (req, res) => {
   const { date } = req.query;
   const currentDate = date || getTodayDate();
   
+  // Validate input
+  const { name, age, playZone, duration, price } = req.body;
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+  if (!age || !playZone || !duration) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+  
   const data = loadData(currentDate);
   
   const newChild = {
@@ -194,6 +203,12 @@ app.delete('/api/children/:id', (req, res) => {
 // Export to Excel - for history (completed sessions only)
 app.get('/api/exportExcel/:date', async (req, res) => {
   const { date } = req.params;
+  
+  // Validate date format
+  if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return res.status(400).json({ error: 'Invalid date format' });
+  }
+  
   const data = loadData(date);
   // Only export completed sessions
   const allChildren = data.completed;
