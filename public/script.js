@@ -503,7 +503,7 @@ async function addChild() {
   const name = document.getElementById('childName').value.trim();
   const age = document.getElementById('childAge').value;
   const playZone = document.getElementById('playZone').value;
-  const duration = document.getElementById('duration').value;
+  const passTypeId = document.getElementById('duration').value;
   const notes = document.getElementById('notesInput').value.trim();
   
   // Check if work day is over
@@ -517,13 +517,17 @@ async function addChild() {
   }
   
   // Validation
-  if (!name || !age || !playZone || !duration) {
+  if (!name || !age || !playZone || !passTypeId) {
     await showUiAlert('Lütfən bütün tələb olunan sahələri doldurun (*).');
     return;
   }
   
-  // Calculate price based on duration
-  const price = PRICE_CONFIG[duration];
+  // Get pass type details
+  const passType = settings.passTypes.find(pt => pt.id.toString() === passTypeId);
+  if (!passType) {
+    await showUiAlert('Seçilmiş bilet tipi tapılmadı.');
+    return;
+  }
   
   try {
     const response = await fetch(`/api/children?date=${currentDate}`, {
@@ -535,8 +539,10 @@ async function addChild() {
         name,
         age: parseInt(age),
         playZone,
-        duration,
-        price,
+        duration: passType.duration,
+        price: passType.price,
+        passTypeId: passType.id,
+        passTypeName: passType.name,
         notes
       })
     });
@@ -637,9 +643,50 @@ async function extendTime(childId) {
 
     if (child.duration === 'unlimited') return;
 
-    const current = parseInt(child.duration) || 0;
-    const newDuration = current + 60;
-    const newPrice = parseFloat((PRICE_CONFIG[newDuration.toString()] || PRICE_CONFIG[current] * 1.5).toFixed(2));
+    const currentDuration = parseInt(child.duration) || 0;
+    const newDuration = currentDuration + 60;
+    
+    // Get the original pass type using passTypeId or passTypeName
+    let originalPassType = null;
+    if (child.passTypeId && settings.passTypes) {
+      originalPassType = settings.passTypes.find(pt => pt.id === child.passTypeId);
+    } else if (child.passTypeName && settings.passTypes) {
+      originalPassType = settings.passTypes.find(pt => pt.name === child.passTypeName);
+    }
+    
+    // If pass type not found, try to find by current duration (fallback)
+    if (!originalPassType && settings.passTypes) {
+      originalPassType = settings.passTypes.find(pt => typeof pt.duration === 'number' && pt.duration === currentDuration);
+    }
+    
+    let newPrice = null;
+
+    // Option 1: Find exact pass type match for new duration from same pricing tier
+    if (originalPassType && originalPassType.duration !== 'unlimited') {
+      // Calculate rate from original pass type
+      const ratePerMinute = originalPassType.price / originalPassType.duration;
+      
+      // Check if there's an exact pass type for the new duration
+      const exactMatch = settings.passTypes.find(pt => 
+        typeof pt.duration === 'number' && 
+        pt.duration === newDuration
+      );
+      
+      if (exactMatch) {
+        // Prefer exact match
+        newPrice = exactMatch.price;
+      } else {
+        // Calculate proportionally using the original pass type's rate
+        newPrice = parseFloat((ratePerMinute * newDuration).toFixed(2));
+      }
+    } else if (PRICE_CONFIG[currentDuration]) {
+      // Fallback: calculate based on PRICE_CONFIG
+      const ratePerMinute = PRICE_CONFIG[currentDuration] / currentDuration;
+      newPrice = parseFloat((ratePerMinute * newDuration).toFixed(2));
+    } else {
+      // Last resort: use 1.5x current price
+      newPrice = parseFloat((child.price * 1.5).toFixed(2));
+    }
     
     const confirmResult = await showUiPrompt(`Seansı ${newDuration} dəq-ə artırmaq istəyirsiniz? Yeni qiymət: ${newPrice} AZN`);
     if (!confirmResult) return;
@@ -762,8 +809,21 @@ async function openEditModal(childId, source) {
   document.getElementById('editName').value = child.name;
   document.getElementById('editAge').value = child.age;
   document.getElementById('editPlayZone').value = child.playZone;
-  document.getElementById('editDuration').value = child.duration;
   document.getElementById('editNotes').value = child.notes || '';
+  
+  // Find and set the correct pass type in the dropdown
+  if (child.passTypeId && settings.passTypes) {
+    const passType = settings.passTypes.find(pt => pt.id === child.passTypeId);
+    if (passType) {
+      document.getElementById('editDuration').value = passType.id;
+    }
+  } else if (child.duration && settings.passTypes) {
+    // Fallback: find by duration
+    const passType = settings.passTypes.find(pt => pt.duration === child.duration);
+    if (passType) {
+      document.getElementById('editDuration').value = passType.id;
+    }
+  }
   
   // Show modal
   document.getElementById('editModal').classList.add('show');
@@ -780,15 +840,23 @@ function closeModal() {
 async function saveEdit() {
   if (!editingChildId) return;
   
-  const duration = document.getElementById('editDuration').value;
-  const price = PRICE_CONFIG[duration];
+  const passTypeId = document.getElementById('editDuration').value;
+  
+  // Get pass type details
+  const passType = settings.passTypes.find(pt => pt.id.toString() === passTypeId);
+  if (!passType) {
+    await showUiAlert('Seçilmiş bilet tipi tapılmadı.');
+    return;
+  }
   
   const updates = {
     name: document.getElementById('editName').value,
     age: parseInt(document.getElementById('editAge').value),
     playZone: document.getElementById('editPlayZone').value,
-    duration: duration,
-    price: price,
+    duration: passType.duration,
+    price: passType.price,
+    passTypeId: passType.id,
+    passTypeName: passType.name,
     notes: document.getElementById('editNotes').value
   };
   
@@ -1339,13 +1407,13 @@ function updateDurationDropdown() {
       
       settings.passTypes.forEach(pt => {
         const option = document.createElement('option');
-        option.value = pt.duration;
+        option.value = pt.id; // Use pass type ID as value
         option.textContent = `${pt.name} - ${pt.price} AZN`;
         select.appendChild(option);
       });
       
       // Try to restore previous value
-      if (settings.passTypes.some(pt => pt.duration.toString() === currentValue)) {
+      if (settings.passTypes.some(pt => pt.id.toString() === currentValue)) {
         select.value = currentValue;
       }
     }
