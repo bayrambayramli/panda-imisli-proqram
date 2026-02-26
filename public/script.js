@@ -1049,6 +1049,7 @@ async function openStatsModal() {
 
     // Revenue: only count full hours. 'unlimited' uses stored price.
     let revenueSum = 0;
+    const passTypes = settings && settings.passTypes ? settings.passTypes : [];
     const all = [...data.active, ...data.completed];
     const nowMs = Date.now();
 
@@ -1065,7 +1066,32 @@ async function openStatsModal() {
       const elapsedMs = (endMs || nowMs) - startMs;
       const elapsedMinutes = Math.floor(elapsedMs / 60000);
       const fullHours = Math.floor(elapsedMinutes / 60);
-      revenueSum += fullHours * 5; // 5 AZN per full hour
+
+      if (fullHours <= 0) return;
+
+      const durationMinutes = parseInt(c.duration, 10);
+      let ratePerHour = null;
+
+      const passTypeById = passTypes.find(pt => pt.id === c.passTypeId);
+      if (passTypeById && typeof passTypeById.duration === 'number' && passTypeById.duration > 0) {
+        ratePerHour = passTypeById.price / (passTypeById.duration / 60);
+      } else if (passTypes.length && durationMinutes > 0) {
+        const passTypeByDuration = passTypes.find(pt => pt.duration === durationMinutes);
+        if (passTypeByDuration && typeof passTypeByDuration.duration === 'number' && passTypeByDuration.duration > 0) {
+          ratePerHour = passTypeByDuration.price / (passTypeByDuration.duration / 60);
+        }
+      }
+
+      if (ratePerHour === null && durationMinutes > 0) {
+        const sessionPrice = parseFloat(c.price);
+        if (!isNaN(sessionPrice)) {
+          ratePerHour = sessionPrice / (durationMinutes / 60);
+        }
+      }
+
+      if (ratePerHour !== null && !isNaN(ratePerHour)) {
+        revenueSum += fullHours * ratePerHour;
+      }
     });
 
     const revenue = revenueSum.toFixed(2);
