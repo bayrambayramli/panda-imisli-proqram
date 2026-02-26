@@ -515,6 +515,7 @@ body {
   color: #C62828;
   border-color: #f44336;
   font-size: 16px;
+  min-width: 60px;
 }
 
 .btn-delete:hover {
@@ -630,12 +631,25 @@ body {
   color: #000;
 }
 
+.modal-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.modal-header-row h2 {
+  margin: 0 !important;
+  flex: 1;
+}
+
 .modal-header-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-bottom: 15px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .btn-close-x {
@@ -829,7 +843,7 @@ body {
 
 .btn-section-fullscreen {
   position: absolute;
-  top: 12px;
+  top: 20px;
   right: 65px;
   padding: 6px 10px;
   background: #E8F5E9;
@@ -896,7 +910,7 @@ body {
   align-items: center;
   gap: 6px;
   margin: 0;
-  padding: 6px;
+  padding: 1px;
   background: white;
   border-bottom: 1px solid #e0e0e0;
   border-radius: 0;
@@ -906,7 +920,7 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 700;
-  padding: 8px 6px;
+  padding: 4px 10px;
   border-bottom: 2px solid #555;
 }
 
@@ -951,7 +965,7 @@ body {
   align-items: center;
   gap: 6px;
   margin: 0;
-  padding: 6px;
+  padding: 1px;
   background: white;
   border-bottom: 1px solid #e0e0e0;
   border-radius: 0;
@@ -961,7 +975,7 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 700;
-  padding: 8px 6px;
+  padding: 4px 10px;
   border-bottom: 2px solid #555;
 }
 
