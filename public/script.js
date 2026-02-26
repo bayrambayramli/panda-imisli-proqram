@@ -1334,7 +1334,7 @@ function updateDurationDropdown() {
       
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
-      defaultOption.textContent = 'Müddət seçin';
+      defaultOption.textContent = 'Bilet seçin';
       select.appendChild(defaultOption);
       
       settings.passTypes.forEach(pt => {

@@ -14,9 +14,9 @@
     },
     {
       "id": 3,
-      "name": "2 saat",
-      "duration": 120,
-      "price": 6
+      "name": "1 saat 50% Endirim",
+      "duration": 60,
+      "price": 2.5
     }
   ],
   "playZones": [
