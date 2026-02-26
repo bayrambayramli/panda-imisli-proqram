@@ -230,7 +230,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
       notes: child.notes || '',
       startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
       endTime: child.endTime ? new Date(child.endTime).toLocaleString() : '',
-      status: data.active.find(c => c.id == child.id) ? 'Aktiv' : 'Bitib'
+      status: 'Bitib'
     });
   });
 
@@ -534,7 +534,5 @@ app.get('/api/stats/filtered-10days', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Panda Imisli app running at http://localhost:${PORT}`);
-  
-  // Check on startup
-  const settings = loadSettings();
+  console.log(`Settings loaded: ${settingsFilePath}`);
 });
