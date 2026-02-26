@@ -92,14 +92,34 @@ function setupEventListeners() {
   // History button
   document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
   document.getElementById('historyCloseBtn').addEventListener('click', closeHistoryModal);
-  document.getElementById('loadHistoryBtn').addEventListener('click', loadHistoryData);
+  document.getElementById('loadHistoryBtn').addEventListener('click', () => loadHistoryData(true));
   document.getElementById('historyExportBtn').addEventListener('click', async () => {
     const date = document.getElementById('historyDate').value;
     if (!date) {
       await showUiAlert('Lütfən tarixi seçin.');
       return;
     }
-    window.location.href = `/api/exportExcel/${date}`;
+    try {
+      const response = await fetch(`/api/exportExcel/${date}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        await showUiAlert(errorData.error || 'Excel fayly yuklenemedi.');
+        return;
+      }
+      // If successful, download the file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `panda_imisli_${date}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Export error:', error);
+      await showUiAlert('Excel fayly yuklemerken xeta bas verdi.');
+    }
   });
   
   // Reports button
@@ -112,23 +132,36 @@ function setupEventListeners() {
     reportsFullBtn.addEventListener('click', () => toggleReportsFullscreen(reportsFullBtn));
   }
 
+  // Reports close button
+  const reportsCloseBtn = document.getElementById('reportsCloseBtn');
+  if (reportsCloseBtn) {
+    reportsCloseBtn.addEventListener('click', closeReportsModal);
+  }
+
   // Export today's Excel
   const exportTodayBtn = document.getElementById('exportTodayExcelBtn');
   if (exportTodayBtn) exportTodayBtn.addEventListener('click', async () => {
     try {
-      const response = await fetch(`/api/data/${getTodayDate()}`);
-      const data = await response.json();
-      
-      // Check if there's any data (active + completed sessions)
-      if ((data.active.length + data.completed.length) === 0) {
-        await showUiAlert('Bu gün ixrac ediləcək məlumat yoxdur.');
+      const date = getTodayDate();
+      const response = await fetch(`/api/exportExcel/${date}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        await showUiAlert(errorData.error || 'Excel fayly yuklenemedi.');
         return;
       }
-      
-      window.location.href = `/api/exportExcel/${getTodayDate()}`;
+      // If successful, download the file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `panda_imisli_${date}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
-      console.error('Error checking data:', error);
-      window.location.href = `/api/exportExcel/${getTodayDate()}`;
+      console.error('Export error:', error);
+      await showUiAlert('Excel fayly yuklemerken xeta bas verdi.');
     }
   });
 
@@ -667,8 +700,8 @@ async function editNotes(childId) {
   const response = await fetch(`/api/data/${currentDate}`);
   const data = await response.json();
   
-  let child = data.active.find(c => c.id == childId);
-  let source = 'active';
+  let child;
+  let source;
   
   if (!child) {
     child = data.completed.find(c => c.id == childId);
@@ -882,8 +915,10 @@ function openHistoryModal() {
   closeStatsModal();
   const today = getTodayDate();
   document.getElementById('historyDate').value = today;
-  document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Tarix seçin və yükləyin</p>';
   document.getElementById('historyModal').classList.add('show');
+  
+  // Automatically load today's data (without showing alert on modal open)
+  loadHistoryData(false);
 }
 
 // Toggle Reports fullscreen
@@ -963,17 +998,11 @@ function closeHistoryModal() {
   document.getElementById('historyModal').classList.remove('show');
 }
 
-async function loadHistoryData() {
+async function loadHistoryData(showAlertIfEmpty = false) {
   const selectedDate = document.getElementById('historyDate').value;
   
   if (!selectedDate) {
     await showUiAlert('Lütfən tarixi seçin.');
-    return;
-  }
-  
-  // Do not show current date in history
-  if (selectedDate === getTodayDate()) {
-    await showUiAlert('Tarixçə yalnız dünən və əvvəlki tarixlər üçündür.');
     return;
   }
   
@@ -982,51 +1011,55 @@ async function loadHistoryData() {
     const data = await response.json();
     
     const contentDiv = document.getElementById('historyContent');
-
-    if ((data.completed.length === 0)) {
-      contentDiv.innerHTML = '<p class="no-data-msg">Bu tarixdə heç bir məlumat yoxdur.</p>';
-      return;
-    }
-
     let html = '';
-
+    
     // Completed sessions only
-    html += `
-      <div class="history-section">
-        <h3>✅ Bitmiş Seanslar (${data.completed.length})</h3>
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Ad</th>
-              <th>Yaş</th>
-              <th>Zona</th>
-              <th>Müddət</th>
-              <th>Qiymət</th>
-              <th>Başlama Vaxtı</th>
-              <th>Bitmə Vaxtı</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data.completed.map(child => `
+    const completed = data.completed || [];
+    
+    if (completed.length === 0) {
+      // Show alert only if Load button was clicked (showAlertIfEmpty = true)
+      if (showAlertIfEmpty) {
+        await showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.');
+      }
+      // Always show static message in panel
+      html = '<p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.</p>';
+    } else {
+      html += `
+        <div class="history-section">
+          <h3>✅ Bitmiş Seanslar (${completed.length})</h3>
+          <table class="history-table">
+            <thead>
               <tr>
-                <td>${child.name}</td>
-                <td>${child.age}</td>
-                <td>${child.playZone}</td>
-                <td>${child.duration === 'unlimited' ? 'Limitsiz' : (child.duration + ' dəq')}</td>
-                <td>${child.price} AZN</td>
-                <td>${child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-                <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                <th>Ad</th>
+                <th>Yaş</th>
+                <th>Zona</th>
+                <th>Müddət</th>
+                <th>Qiymət</th>
+                <th>Başlama Vaxtı</th>
+                <th>Bitmə Vaxtı</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-
+            </thead>
+            <tbody>
+              ${completed.map(child => `
+                <tr>
+                  <td>${child.name}</td>
+                  <td>${child.age}</td>
+                  <td>${child.playZone}</td>
+                  <td>${child.duration === 'unlimited' ? 'Limitsiz' : (child.duration + ' dəq')}</td>
+                  <td>${child.price} AZN</td>
+                  <td>${child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                  <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
     contentDiv.innerHTML = html;
   } catch (error) {
     console.error('Error loading history:', error);
-    document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta</p>';
+    document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta baş verdi.</p>';
   }
 }
 
@@ -1374,7 +1407,7 @@ async function loadMonthlyReport() {
     container.innerHTML = html;
   } catch (err) {
     console.error('Error loading monthly report:', err);
-    document.getElementById('monthlyReportContent').innerHTML = '<p class="report-no-data">Hesabat yükləməkdə xəta.</p>';
+    document.getElementById('monthlyReportContent').innerHTML = '<p class="report-no-data">Hesabat yüklənərkən xəta baş verdi.</p>';
   }
 }
 
@@ -1408,7 +1441,7 @@ async function loadZonesReport() {
     container.innerHTML = html;
   } catch (err) {
     console.error('Error loading zones report:', err);
-    document.getElementById('zonesReportContent').innerHTML = '<p class="report-no-data">Hesabat yükləməkdə xəta.</p>';
+    document.getElementById('zonesReportContent').innerHTML = '<p class="report-no-data">Hesabat yüklənərkən xəta baş verdi.</p>';
   }
 }
 
@@ -1442,7 +1475,7 @@ async function loadAgeReport() {
     container.innerHTML = html;
   } catch (err) {
     console.error('Error loading age report:', err);
-    document.getElementById('ageReportContent').innerHTML = '<p class="report-no-data">Hesabat yükləməkdə xəta.</p>';
+    document.getElementById('ageReportContent').innerHTML = '<p class="report-no-data">Hesabat yüklənərkən xəta baş verdi.</p>';
   }
 }
 

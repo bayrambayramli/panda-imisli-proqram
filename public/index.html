@@ -193,7 +193,7 @@
         <button id="historyExportBtn" class="btn-export">📥 Excel-ə Çıxar</button>
       </div>
       <div id="historyContent" class="history-content">
-        <p class="no-data-msg">Tarix seçin və yükləyin</p>
+        <p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.</p>
       </div>
     </div>
   </div>
@@ -217,8 +217,8 @@
 
   <!-- UI Prompt Modal (confirm/prompt replacement) -->
   <div id="uiPromptModal" class="modal">
-    <div class="modal-content" id="uiPromptContent">
-      <p id="uiPromptMessage" style="color:#000;font-size:18px;font-weight:600;margin-bottom:15px;line-height:1.5;"></p>
+    <div class="modal-content ui-prompt-content" id="uiPromptContent">
+      <p id="uiPromptMessage"></p>
       <input type="text" id="uiPromptInput" style="display:none;margin-top:10px;padding:10px;border:2px solid #999;border-radius:6px;width:100%;font-size:15px;font-weight:500;color:#000;" />
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:15px;">
         <button id="uiPromptCancel" class="btn-cancel">Ləğv Et</button>
@@ -261,7 +261,10 @@
   <!-- Reports Modal -->
   <div id="reportsModal" class="modal">
     <div class="modal-content reports-modal" id="reportsModalContent">
-      <button class="btn-section-fullscreen" id="reportsFullBtn">Tam ekran</button>
+      <div class="modal-header-actions">
+        <button class="btn-section-fullscreen" id="reportsFullBtn">Tam ekran</button>
+        <button class="btn-close-x" id="reportsCloseBtn" onclick="closeReportsModal()">&times;</button>
+      </div>
       <h2>📈 Hesabatlar və Analitika</h2>
       
       <div class="reports-tabs">
@@ -308,7 +311,7 @@
         
         <!-- Analytics Chart -->
         <div id="analyticsChartContainer">
-          <canvas id="analyticsChart" width="400" height="200"></canvas>
+          <canvas id="analyticsChart" width="400" height="150"></canvas>
         </div>
       </div>
 
@@ -343,10 +346,6 @@
           </select>
         </div>
         <div id="ageReportContent" class="report-content"></div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeReportsModal()">Bağla</button>
       </div>
     </div>
   </div>

@@ -198,7 +198,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
   const allChildren = data.completed;
 
   if (allChildren.length === 0) {
-    return res.status(404).json({ error: 'No data to export' });
+    return res.status(404).json({ error: 'Bu tarixdə bitmiş seans yoxdur.' });
   }
 
   const workbook = new ExcelJS.Workbook();
