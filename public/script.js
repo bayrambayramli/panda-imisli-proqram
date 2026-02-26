@@ -1074,6 +1074,8 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     console.error('Error loading history:', error);
     document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta baş verdi.</p>';
   }
+}
+
 // Settings Modal Functions
 function openSettingsModal() {
   closeHistoryModal();
