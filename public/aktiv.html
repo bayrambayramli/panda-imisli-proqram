@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aktiv Seanslar</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <section class="section active-sessions-section">
+      <h2>🎮 Aktiv Seanslar</h2>
+      <div class="table-wrapper">
+        <table class="sessions-table" id="activeOnlyTable">
+          <thead>
+            <tr>
+              <th>Ad</th>
+              <th>Yaş</th>
+              <th>Zona</th>
+              <th>Başlama Vaxtı</th>
+              <th>Qalan Vaxt</th>
+            </tr>
+          </thead>
+          <tbody id="activeOnlyTableBody">
+            <!-- Rows will be added dynamically -->
+          </tbody>
+        </table>
+        <p id="noActiveOnlyMsg" class="no-data-msg">Aktiv seans yoxdur.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="aktiv.js"></script>
+</body>
+</html>
