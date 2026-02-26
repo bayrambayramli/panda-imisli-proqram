@@ -446,6 +446,8 @@ function createActiveRow(child) {
 
   const startTimeStr = child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
 
+  const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
+
   row.innerHTML = `
     <td>${child.name}</td>
     <td>${child.age}</td>
@@ -453,6 +455,7 @@ function createActiveRow(child) {
     <td>${startTimeStr}</td>
     <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
     <td>${child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq')}</td>
+    <td>${extendedTimeDisplay}</td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>
@@ -479,6 +482,7 @@ function createCompletedRow(child) {
   
   const startTime = new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
   const endTime = child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
+  const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
   
   row.innerHTML = `
     <td>${child.name}</td>
@@ -487,6 +491,7 @@ function createCompletedRow(child) {
     <td>${startTime}</td>
     <td>${endTime}</td>
     <td>${child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq')}</td>
+    <td>${extendedTimeDisplay}</td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>
@@ -545,6 +550,7 @@ async function addChild() {
         price: passType.price,
         passTypeId: passType.id,
         passTypeName: passType.name,
+        extendedTime: 0,
         notes
       })
     });
@@ -690,15 +696,19 @@ async function extendTime(childId) {
       newPrice = parseFloat((child.price * 1.5).toFixed(2));
     }
     
-    const confirmResult = await showUiPrompt(`Seansı ${newDuration} dəq-ə artırmaq istəyirsiniz? Yeni qiymət: ${newPrice} AZN`);
+    const confirmResult = await showUiPrompt(`Seansı ${newDuration} dəq-ə artırmaq istəyirsiniz? Yeni məbləğ: ${newPrice} AZN`);
     if (!confirmResult) return;
+
+    const extendedMinutes = 60;
+    const currentExtendedTime = child.extendedTime || 0;
 
     await fetch(`/api/children/${childId}?date=${currentDate}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         duration: newDuration.toString(),
-        price: newPrice
+        price: newPrice,
+        extendedTime: currentExtendedTime + extendedMinutes
       })
     });
 
@@ -1116,7 +1126,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
                 <th>Yaş</th>
                 <th>Zona</th>
                 <th>Müddət</th>
-                <th>Qiymət</th>
+                <th>Məbləğ</th>
                 <th>Başlama Vaxtı</th>
                 <th>Bitmə Vaxtı</th>
               </tr>
