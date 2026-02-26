@@ -26,6 +26,25 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
+const logsDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+const errorLogPath = path.join(logsDir, 'error.log');
+
+function logError(message, err) {
+  console.error(message, err);
+  try {
+    const timestamp = new Date().toISOString();
+    const details = err && err.stack ? err.stack : (err ? JSON.stringify(err) : '');
+    const line = details ? `[${timestamp}] ${message} - ${details}\n` : `[${timestamp}] ${message}\n`;
+    fs.appendFileSync(errorLogPath, line, 'utf8');
+  } catch (logErr) {
+    console.error('Error writing error log:', logErr);
+  }
+}
+
 // Get today's date in YYYY-MM-DD format
 function getTodayDate() {
   const today = new Date();
@@ -39,7 +58,7 @@ function loadSettings() {
       return JSON.parse(fs.readFileSync(settingsFilePath, 'utf8'));
     }
   } catch (err) {
-    console.error('Error loading settings:', err);
+    logError('Error loading settings:', err);
   }
   return {
     passTypes: [],
@@ -53,7 +72,7 @@ function saveSettings(settings) {
   try {
     fs.writeFileSync(settingsFilePath, JSON.stringify(settings, null, 2), 'utf8');
   } catch (err) {
-    console.error('Error saving settings:', err);
+    logError('Error saving settings:', err);
   }
 }
 
@@ -69,7 +88,7 @@ function loadData(date) {
     try {
       return JSON.parse(fs.readFileSync(filePath, 'utf8'));
     } catch (err) {
-      console.error('Error reading data file:', err);
+      logError('Error reading data file:', err);
       return { active: [], completed: [] };
     }
   }
@@ -82,7 +101,7 @@ function saveData(date, data) {
   try {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.error('Error writing data file:', err);
+    logError('Error writing data file:', err);
   }
 }
 
@@ -266,13 +285,13 @@ app.get('/api/exportExcel/:date', async (req, res) => {
   try {
     await workbook.xlsx.writeFile(filePath);
     res.download(filePath, fileName, (err) => {
-      if (err) console.error('Error downloading file:', err);
+      if (err) logError('Error downloading file:', err);
       setTimeout(() => {
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       }, 1000);
     });
   } catch (err) {
-    console.error('Error writing Excel:', err);
+    logError('Error writing Excel:', err);
     res.status(500).json({ error: 'Failed to export Excel' });
   }
 });
@@ -383,7 +402,7 @@ app.get('/api/report/monthly', (req, res) => {
 
     res.json(result);
   } catch (err) {
-    console.error('Error generating monthly report:', err);
+    logError('Error generating monthly report:', err);
     res.status(500).json({ error: 'Failed to generate report' });
   }
 });
@@ -453,7 +472,7 @@ app.get('/api/report/play-zones', (req, res) => {
       return b.totalChildren - a.totalChildren;
     }));
   } catch (err) {
-    console.error('Error generating play zone report:', err);
+    logError('Error generating play zone report:', err);
     res.status(500).json({ error: 'Failed to generate report' });
   }
 });
@@ -503,7 +522,7 @@ app.get('/api/report/age-demographics', (req, res) => {
 
     res.json(result.sort((a, b) => a.range.localeCompare(b.range)));
   } catch (err) {
-    console.error('Error generating age demographics:', err);
+    logError('Error generating age demographics:', err);
     res.status(500).json({ error: 'Failed to generate report' });
   }
 });
@@ -523,7 +542,7 @@ app.get('/api/report/months', (req, res) => {
     const result = Array.from(months).sort().reverse();
     res.json(result);
   } catch (err) {
-    console.error('Error getting available months:', err);
+    logError('Error getting available months:', err);
     res.status(500).json({ error: 'Failed to get months' });
   }
 });
@@ -572,7 +591,7 @@ app.get('/api/stats/filtered-10days', (req, res) => {
 
     res.json(stats);
   } catch (err) {
-    console.error('Error getting filtered statistics:', err);
+    logError('Error getting filtered statistics:', err);
     res.status(500).json({ error: 'Failed to get statistics' });
   }
 });

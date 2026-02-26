@@ -109,7 +109,7 @@ function setupEventListeners() {
       const response = await fetch(`/api/exportExcel/${date}`);
       if (!response.ok) {
         const errorData = await response.json();
-        await showUiAlert(errorData.error || 'Excel fayly yuklenemedi.');
+        await showUiAlert(errorData.error || 'Excel faylını yükləmək mümkün olmadı.');
         return;
       }
       // If successful, download the file
@@ -124,7 +124,7 @@ function setupEventListeners() {
       document.body.removeChild(a);
     } catch (error) {
       console.error('Export error:', error);
-      await showUiAlert('Excel fayly yuklemerken xeta bas verdi.');
+      await showUiAlert('Excel faylını yükləyərkən xəta baş verdi.');
     }
   });
   
@@ -152,7 +152,7 @@ function setupEventListeners() {
       const response = await fetch(`/api/exportExcel/${date}`);
       if (!response.ok) {
         const errorData = await response.json();
-        await showUiAlert(errorData.error || 'Excel fayly yuklenemedi.');
+        await showUiAlert(errorData.error || 'Excel faylını yükləmək mümkün olmadı.');
         return;
       }
       // If successful, download the file
@@ -167,7 +167,7 @@ function setupEventListeners() {
       document.body.removeChild(a);
     } catch (error) {
       console.error('Export error:', error);
-      await showUiAlert('Excel fayly yuklemerken xeta bas verdi.');
+      await showUiAlert('Excel faylını yükləyərkən xəta baş verdi.');
     }
   });
 
