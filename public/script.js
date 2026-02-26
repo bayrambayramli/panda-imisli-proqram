@@ -22,11 +22,16 @@ async function loadSettings() {
   try {
     const response = await fetch('/api/settings');
     settings = await response.json();
+    // Ensure playZones exists for backwards compatibility with old settings.json
+    if (!settings.playZones) {
+      settings.playZones = [];
+    }
     updatePriceConfig();
   } catch (err) {
     console.error('Error loading settings:', err);
     settings = {
       passTypes: [],
+      playZones: [],
       endDayHour: 22
     };
     updatePriceConfig();
@@ -703,7 +708,12 @@ async function editNotes(childId) {
   let child;
   let source;
   
-  if (!child) {
+  // Search active sessions first
+  child = data.active.find(c => c.id == childId);
+  if (child) {
+    source = 'active';
+  } else {
+    // Then search completed sessions
     child = data.completed.find(c => c.id == childId);
     source = 'completed';
   }
@@ -1111,6 +1121,37 @@ function openSettingsModal() {
   // Set end day hour
   document.getElementById('endDayHour').value = settings.endDayHour;
 
+  // Populate all play zones as editable rows in container
+  const zonesContainer = document.getElementById('playZonesContainer');
+  if (zonesContainer) {
+    zonesContainer.innerHTML = '';
+    
+    // Add header row
+    const headerRow = document.createElement('div');
+    headerRow.className = 'play-zone-row';
+    headerRow.style.display = 'flex';
+    headerRow.style.gap = '8px';
+    headerRow.innerHTML = `
+      <div style="font-weight:bold;flex:1;">Zona Adı</div>
+      <div style="font-weight:bold;width:60px;"></div>
+    `;
+    zonesContainer.appendChild(headerRow);
+    
+    const playZones = settings.playZones || [];
+    playZones.forEach(zone => {
+      const row = document.createElement('div');
+      row.className = 'play-zone-row';
+      row.style.display = 'flex';
+      row.style.gap = '8px';
+      row.setAttribute('data-id', zone.id);
+      row.innerHTML = `
+        <input type="text" class="play-zone-name" placeholder="Zona adı" value="${zone.name}" data-id="${zone.id}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
+        <button class="btn-delete" onclick="removePlayZone(${zone.id})" style="width:60px;padding:8px;border:1px solid #ddd;border-radius:4px;background:#ff6b6b;color:white;cursor:pointer;">Sil</button>
+      `;
+      zonesContainer.appendChild(row);
+    });
+  }
+
   document.getElementById('settingsModal').classList.add('show');
 }
 
@@ -1167,6 +1208,50 @@ function removePassType(idOrElem) {
   }
 }
 
+function addPlayZoneRow() {
+  const container = document.getElementById('playZonesContainer');
+  if (!container) return;
+
+  const playZones = settings.playZones || [];
+  const newId = Math.max(...playZones.map(z => z.id || 0), 0) + 1;
+
+  const row = document.createElement('div');
+  row.className = 'play-zone-row';
+  row.style.display = 'flex';
+  row.style.gap = '8px';
+  row.setAttribute('data-id', newId);
+  row.innerHTML = `
+    <input type="text" class="play-zone-name" placeholder="Zona adı" data-id="${newId}" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" />
+    <button class="btn-delete" onclick="removePlayZone(${newId})" style="width:60px;padding:8px;border:1px solid #ddd;border-radius:4px;background:#ff6b6b;color:white;cursor:pointer;">Sil</button>
+  `;
+  container.appendChild(row);
+}
+
+function removePlayZone(idOrElem) {
+  // idOrElem can be numeric id or element (button passed via 'this')
+  let id = null;
+  if (typeof idOrElem === 'number') {
+    id = idOrElem;
+    const row = document.querySelector('.play-zone-row[data-id="' + id + '"]');
+    if (row) row.remove();
+    if (!settings.playZones) settings.playZones = [];
+    settings.playZones = settings.playZones.filter(z => z.id !== id);
+    return;
+  }
+
+  // If element (e.g., this from onclick), find row
+  const row = idOrElem && idOrElem.closest ? idOrElem.closest('.play-zone-row') : null;
+  if (row) {
+    const attr = row.getAttribute('data-id');
+    if (attr) {
+      id = parseInt(attr);
+      if (!settings.playZones) settings.playZones = [];
+      settings.playZones = settings.playZones.filter(z => z.id !== id);
+    }
+    row.remove();
+  }
+}
+
 async function saveSettings() {
   // Gather all pass rows from container
   const rows = document.querySelectorAll('#passTypesContainer .pass-type-row');
@@ -1189,10 +1274,31 @@ async function saveSettings() {
     }
   });
 
+  // Gather all play zone rows from container
+  const zoneRows = document.querySelectorAll('#playZonesContainer .play-zone-row');
+  const playZones = [];
+
+  zoneRows.forEach(row => {
+    const idAttr = row.getAttribute('data-id');
+    const id = idAttr ? parseInt(idAttr) : (Math.max(...playZones.map(z => z.id || 0), 0) + 1);
+    const nameEl = row.querySelector('.play-zone-name');
+    
+    const name = nameEl ? nameEl.value.trim() : '';
+
+    if (name) {
+      playZones.push({ id, name });
+    }
+  });
+
   const endDayHour = parseInt(document.getElementById('endDayHour').value);
 
   if (passTypes.length === 0) {
     await showUiAlert('Ən azı bir bilet əlavə edin!');
+    return;
+  }
+
+  if (playZones.length === 0) {
+    await showUiAlert('Ən azı bir oyun zonası əlavə edin!');
     return;
   }
 
@@ -1205,7 +1311,7 @@ async function saveSettings() {
     const response = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passTypes, endDayHour })
+      body: JSON.stringify({ passTypes, playZones, endDayHour })
     });
 
     if (response.ok) {
@@ -1213,6 +1319,7 @@ async function saveSettings() {
       settings = result.settings;
       updatePriceConfig();
       updateDurationDropdown();
+      updatePlayZoneDropdown();
       closeSettingsModal();
       await showUiAlert('Ayarlar yadda saxlanıldı.');
     } else {
@@ -1234,6 +1341,11 @@ function updateDurationDropdown() {
       const currentValue = select.value;
       select.innerHTML = '';
       
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Müddət seçin';
+      select.appendChild(defaultOption);
+      
       settings.passTypes.forEach(pt => {
         const option = document.createElement('option');
         option.value = pt.duration;
@@ -1243,6 +1355,39 @@ function updateDurationDropdown() {
       
       // Try to restore previous value
       if (settings.passTypes.some(pt => pt.duration.toString() === currentValue)) {
+        select.value = currentValue;
+      }
+    }
+  });
+}
+
+// Update play zone dropdowns with dynamic zones
+function updatePlayZoneDropdown() {
+  const playZoneSelect = document.getElementById('playZone');
+  const editPlayZoneSelect = document.getElementById('editPlayZone');
+  const playZones = settings.playZones || [];
+  
+  [playZoneSelect, editPlayZoneSelect].forEach(select => {
+    if (select) {
+      const currentValue = select.value;
+      select.innerHTML = '';
+      
+      if (select.id === 'playZone') {
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Zona seçin';
+        select.appendChild(defaultOption);
+      }
+      
+      playZones.forEach(zone => {
+        const option = document.createElement('option');
+        option.value = zone.name;
+        option.textContent = zone.name;
+        select.appendChild(option);
+      });
+      
+      // Try to restore previous value
+      if (playZones.some(z => z.name === currentValue)) {
         select.value = currentValue;
       }
     }

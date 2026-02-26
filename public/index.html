@@ -57,8 +57,6 @@
             <label for="playZone">Oyun Zonası *</label>
             <select id="playZone" required>
               <option value="">Zona seçin</option>
-              <option value="Lego">Lego</option>
-              <option value="Əsas">Əsas</option>
             </select>
           </div>
           
@@ -160,8 +158,6 @@
         <div class="form-group">
           <label for="editPlayZone">Oyun Zonası</label>
           <select id="editPlayZone">
-            <option value="Lego">Lego</option>
-            <option value="Əsas">Əsas</option>
           </select>
         </div>
         <div class="form-group">
@@ -238,6 +234,13 @@
         <h3>Bilet Tipləri</h3>
         <div id="passTypesContainer" style="border:1px solid #ddd;padding:8px;border-radius:6px;min-height:60px;margin-bottom:10px;"></div>
         <button onclick="addPassTypeRow()" class="btn btn-add-ticket">Yeni Bilet Əlavə Et</button>
+      </div>
+
+      <!-- Play Zones Management -->
+      <div class="settings-section">
+        <h3>Oyun Zonaları</h3>
+        <div id="playZonesContainer" style="border:1px solid #ddd;padding:8px;border-radius:6px;min-height:60px;margin-bottom:10px;"></div>
+        <button onclick="addPlayZoneRow()" class="btn btn-add-ticket">Yeni Zona Əlavə Et</button>
       </div>
 
       <!-- Auto-End Sessions Time -->

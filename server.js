@@ -43,6 +43,7 @@ function loadSettings() {
   }
   return {
     passTypes: [],
+    playZones: [],
     endDayHour: 22
   };
 }
@@ -261,8 +262,8 @@ app.get('/api/checkAutoEnd', (req, res) => {
 });
 
 app.post('/api/settings', (req, res) => {
-  const { passTypes, endDayHour } = req.body;
-  const settings = { passTypes, endDayHour };
+  const { passTypes, playZones, endDayHour } = req.body;
+  const settings = { passTypes, playZones, endDayHour };
   saveSettings(settings);
   
   // Auto-end sessions at the specified hour

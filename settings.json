@@ -13,5 +13,15 @@
       "price": 8
     }
   ],
+  "playZones": [
+    {
+      "id": 1,
+      "name": "Əsas"
+    },
+    {
+      "id": 1,
+      "name": "Körpə"
+    }
+  ],
   "endDayHour": 23
 }
