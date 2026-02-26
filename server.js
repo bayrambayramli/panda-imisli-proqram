@@ -379,8 +379,20 @@ app.get('/api/report/monthly', (req, res) => {
 app.get('/api/report/play-zones', (req, res) => {
   try {
     const { month } = req.query; // Format: YYYY-MM
+    const settings = loadSettings();
     const files = fs.readdirSync(dataDir).filter(f => f.match(/\d{4}-\d{2}-\d{2}\.json/));
+    
+    // Initialize all zones from settings with 0 values
     const zoneData = {};
+    if (settings.playZones && Array.isArray(settings.playZones)) {
+      settings.playZones.forEach(zone => {
+        zoneData[zone.name] = {
+          zone: zone.name,
+          totalChildren: 0,
+          totalRevenue: 0
+        };
+      });
+    }
 
     files.forEach(file => {
       const date = file.replace('.json', '');
@@ -393,16 +405,18 @@ app.get('/api/report/play-zones', (req, res) => {
       (data.completed || []).forEach(child => {
         const zone = child.playZone || 'Unknown';
         
-        if (!zoneData[zone]) {
-          zoneData[zone] = {
-            zone: zone,
-            totalChildren: 0,
-            totalRevenue: 0
-          };
+        // Only count zones that exist in settings
+        if (settings.playZones && settings.playZones.some(z => z.name === zone)) {
+          if (!zoneData[zone]) {
+            zoneData[zone] = {
+              zone: zone,
+              totalChildren: 0,
+              totalRevenue: 0
+            };
+          }
+          zoneData[zone].totalChildren++;
+          zoneData[zone].totalRevenue += child.price || 0;
         }
-        
-        zoneData[zone].totalChildren++;
-        zoneData[zone].totalRevenue += child.price || 0;
       });
     });
 
@@ -418,7 +432,13 @@ app.get('/api/report/play-zones', (req, res) => {
       z.percentageOfTotal = totalChildren > 0 ? ((z.totalChildren / totalChildren) * 100).toFixed(2) : 0;
     });
 
-    res.json(result.sort((a, b) => b.totalChildren - a.totalChildren));
+    // Sort by totalChildren descending, but keep settings order for zones with 0 children
+    res.json(result.sort((a, b) => {
+      if (a.totalChildren === 0 && b.totalChildren === 0) {
+        return settings.playZones.findIndex(z => z.name === a.zone) - settings.playZones.findIndex(z => z.name === b.zone);
+      }
+      return b.totalChildren - a.totalChildren;
+    }));
   } catch (err) {
     console.error('Error generating play zone report:', err);
     res.status(500).json({ error: 'Failed to generate report' });

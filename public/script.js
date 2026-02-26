@@ -1091,7 +1091,7 @@ function openSettingsModal() {
     headerRow.innerHTML = `
       <div style="flex:1.2;">Ad</div>
       <div style="flex:1;">Müddət</div>
-      <div style="flex:0.8;">Qiymət</div>
+      <div style="flex:0.8;">Qiymət (AZN)</div>
       <div style="width:50px;"></div>
     `;
     container.appendChild(headerRow);
@@ -1310,6 +1310,7 @@ async function saveSettings() {
       updatePriceConfig();
       updateDurationDropdown();
       updatePlayZoneDropdown();
+      populateDynamicFilters();
       closeSettingsModal();
       await showUiAlert('Ayarlar yadda saxlanıldı.');
     } else {
@@ -1396,6 +1397,9 @@ async function openReportsModal() {
   // Load available months for all filters
   await loadAvailableMonths();
   
+  // Populate dynamic filters from settings
+  populateDynamicFilters();
+  
   // Load statistics report on first open (default tab)
   await loadStatisticsReport();
 }
@@ -1459,6 +1463,48 @@ async function loadAvailableMonths() {
     });
   } catch (err) {
     console.error('Error loading available months:', err);
+  }
+}
+
+// Populate play zones and ticket types filters from settings
+function populateDynamicFilters() {
+  if (!settings) return;
+
+  // Populate Play Zones filter
+  const zoneFilter = document.getElementById('statZoneFilter');
+  if (zoneFilter && settings.playZones) {
+    // Clear existing options except "All"
+    const options = zoneFilter.querySelectorAll('option');
+    options.forEach((opt, idx) => {
+      if (idx > 0) opt.remove();
+    });
+
+    // Add play zones from settings
+    settings.playZones.forEach(zone => {
+      const option = document.createElement('option');
+      option.value = zone.name;
+      option.textContent = zone.name;
+      zoneFilter.appendChild(option);
+    });
+  }
+
+  // Populate Ticket Types filter
+  const ticketFilter = document.getElementById('statTicketFilter');
+  if (ticketFilter && settings.passTypes) {
+    // Clear existing options except "All"
+    const options = ticketFilter.querySelectorAll('option');
+    options.forEach((opt, idx) => {
+      if (idx > 0) opt.remove();
+    });
+
+    // Add ticket types from settings
+    settings.passTypes.forEach(pt => {
+      const option = document.createElement('option');
+      option.value = pt.duration;
+      const durationDisplay = pt.duration === 'unlimited' ? 'Limitsiz' : `${pt.duration} dəq`;
+      option.textContent = `${pt.name} (${durationDisplay})`;
+      ticketFilter.appendChild(option);
+    });
   }
 }
 

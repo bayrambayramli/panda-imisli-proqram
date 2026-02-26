@@ -11,6 +11,12 @@
       "name": "Limitsiz",
       "duration": "unlimited",
       "price": 8
+    },
+    {
+      "id": 3,
+      "name": "2 saat",
+      "duration": 120,
+      "price": 6
     }
   ],
   "playZones": [
@@ -19,9 +25,9 @@
       "name": "Əsas"
     },
     {
-      "id": 1,
+      "id": 2,
       "name": "Körpə"
     }
   ],
-  "endDayHour": 23
+  "endDayHour": 22
 }
