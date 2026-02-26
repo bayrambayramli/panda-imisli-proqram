@@ -452,6 +452,7 @@ function createActiveRow(child) {
     <td>${child.playZone}</td>
     <td>${startTimeStr}</td>
     <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
+    <td>${child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq')}</td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>
@@ -485,6 +486,7 @@ function createCompletedRow(child) {
     <td>${child.playZone}</td>
     <td>${startTime}</td>
     <td>${endTime}</td>
+    <td>${child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq')}</td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>

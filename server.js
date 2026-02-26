@@ -148,7 +148,14 @@ app.put('/api/children/:id', (req, res) => {
     saveData(currentDate, data);
     res.json(data.active[childIndex]);
   } else {
-    res.status(404).json({ error: 'Child not found' });
+    const completedIndex = data.completed.findIndex(c => c.id == id);
+    if (completedIndex !== -1) {
+      data.completed[completedIndex] = { ...data.completed[completedIndex], ...req.body };
+      saveData(currentDate, data);
+      res.json(data.completed[completedIndex]);
+    } else {
+      res.status(404).json({ error: 'Child not found' });
+    }
   }
 });
 
