@@ -666,6 +666,8 @@ body {
   justify-content: center;
   font-weight: bold;
   transition: color 0.2s;
+  top: 12px;
+  position: absolute;
 }
 
 .btn-close-x:hover {
@@ -843,7 +845,7 @@ body {
 
 .btn-section-fullscreen {
   position: absolute;
-  top: 20px;
+  top: 12px;
   right: 65px;
   padding: 6px 10px;
   background: #E8F5E9;
