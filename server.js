@@ -213,8 +213,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     { header: 'Qiymət', key: 'price', width: 10 },
     { header: 'Qeydlər', key: 'notes', width: 30 },
     { header: 'Başlama Vaxtı', key: 'startTime', width: 20 },
-    { header: 'Bitmə Vaxtı', key: 'endTime', width: 20 },
-    { header: 'Status', key: 'status', width: 12 }
+    { header: 'Bitmə Vaxtı', key: 'endTime', width: 20 }
   ];
 
   allChildren.forEach(child => {
@@ -229,8 +228,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
       price: child.price,
       notes: child.notes || '',
       startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
-      endTime: child.endTime ? new Date(child.endTime).toLocaleString() : '',
-      status: 'Bitib'
+      endTime: child.endTime ? new Date(child.endTime).toLocaleString() : ''
     });
   });
 
