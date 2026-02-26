@@ -45,6 +45,7 @@ function updatePriceConfig() {
     PRICE_CONFIG[pt.duration.toString()] = pt.price;
   });
   updateDurationDropdown();
+  updatePlayZoneDropdown();
 }
 
 // Get today's date in YYYY-MM-DD format
