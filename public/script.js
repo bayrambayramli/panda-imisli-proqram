@@ -1401,7 +1401,7 @@ async function saveSettings() {
   }
 
   if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
-    await showUiAlert('Lütfən günü bitirmə vaxtını HH:MM formatında daxil edin.');
+    await showUiAlert('Lütfən günü bitirmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
     return;
   }
 

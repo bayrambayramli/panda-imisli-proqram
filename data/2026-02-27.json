@@ -1,34 +1,5 @@
 {
-  "active": [
-    {
-      "id": 1772231079704,
-      "name": "Ali",
-      "age": 5,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-02-27T22:24:39.704Z",
-      "endTime": null
-    },
-    {
-      "id": 1772231642580,
-      "name": "Çüğəş",
-      "age": 7,
-      "playZone": "Əsas",
-      "duration": 60,
-      "price": 2.5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 0,
-      "notes": "Qeyd",
-      "startTime": "2026-02-27T22:34:02.580Z",
-      "endTime": null
-    }
-  ],
+  "active": [],
   "completed": [
     {
       "id": 1772191293268,
@@ -113,6 +84,34 @@
       "notes": "Qeyd",
       "startTime": "2026-02-27T21:44:36.531Z",
       "endTime": "2026-02-27T22:00:09.427Z"
+    },
+    {
+      "id": 1772231079704,
+      "name": "Ali",
+      "age": 5,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "extendedTime": 0,
+      "notes": "",
+      "startTime": "2026-02-27T22:24:39.704Z",
+      "endTime": "2026-02-27T22:44:05.505Z"
+    },
+    {
+      "id": 1772231642580,
+      "name": "Çüğəş",
+      "age": 7,
+      "playZone": "Əsas",
+      "duration": 60,
+      "price": 2.5,
+      "passTypeId": 3,
+      "passTypeName": "1 saat 50% Endirim",
+      "extendedTime": 0,
+      "notes": "Qeyd",
+      "startTime": "2026-02-27T22:34:02.580Z",
+      "endTime": "2026-02-27T22:44:05.505Z"
     }
   ]
 }
