@@ -525,7 +525,7 @@ async function addChild() {
   
   // Validation
   if (!name || !age || !playZone || !passTypeId) {
-    await showUiAlert('Lütfən bütün tələb olunan sahələri doldurun (*).');
+    await showUiAlert('Lütfən bütün tələb olunan xanaları doldurun (*).');
     return;
   }
   
