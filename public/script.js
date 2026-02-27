@@ -32,7 +32,7 @@ async function loadSettings() {
     settings = {
       passTypes: [],
       playZones: [],
-      endDayHour: 22
+      endDayHour: '22:00'
     };
     updatePriceConfig();
   }
@@ -515,11 +515,13 @@ async function addChild() {
   
   // Check if work day is over
   const now = new Date();
-  const currentHour = now.getHours();
-  const endDayHour = settings.endDayHour || 22;
+  const currentHour = String(now.getHours()).padStart(2, '0');
+  const currentMinute = String(now.getMinutes()).padStart(2, '0');
+  const currentTimeStr = `${currentHour}:${currentMinute}`;
+  const endDayTime = settings.endDayHour || '22:00';
   
-  if (currentHour >= endDayHour) {
-    await showUiAlert(`İş günü bitib. Saat ${endDayHour}:00-dan sonra yeni seans əlavə etmək mümkün deyil. Zəhmət olmasa, "Ayarlar"-dan günün bitmə saatını dəyişdirin.`);
+  if (currentTimeStr >= endDayTime) {
+    await showUiAlert(`İş günü bitib. Saat ${endDayTime}-dan sonra yeni seans əlavə etmək mümkün deyil. Zəhmət olmasa, "Ayarlar"-dan günün bitmə vaxtını dəyişdirin.`);
     return;
   }
   
@@ -1223,7 +1225,7 @@ function openSettingsModal() {
   }
 
   // Set end day hour
-  document.getElementById('endDayHour').value = settings.endDayHour;
+  document.getElementById('endDayHour').value = settings.endDayHour || '22:00';
 
   // Populate play zones as editable rows
   const zonesContainer = document.getElementById('playZonesContainer');
@@ -1386,7 +1388,7 @@ async function saveSettings() {
     }
   });
 
-  const endDayHour = parseInt(document.getElementById('endDayHour').value);
+  const endDayTime = document.getElementById('endDayHour').value;
 
   if (passTypes.length === 0) {
     await showUiAlert('Ən azı bir bilet əlavə edin!');
@@ -1398,8 +1400,8 @@ async function saveSettings() {
     return;
   }
 
-  if (isNaN(endDayHour) || endDayHour < 0 || endDayHour > 23) {
-    await showUiAlert('Günü bitirmə saatı 0-23 arasında olmalıdır.');
+  if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
+    await showUiAlert('Lütfən günü bitirmə vaxtını HH:MM formatında daxil edin.');
     return;
   }
 
@@ -1407,7 +1409,7 @@ async function saveSettings() {
     const response = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passTypes, playZones, endDayHour })
+      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime })
     });
 
     if (response.ok) {

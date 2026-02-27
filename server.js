@@ -63,7 +63,7 @@ function loadSettings() {
   return {
     passTypes: [],
     playZones: [],
-    endDayHour: 22
+    endDayHour: '22:00'
   };
 }
 
@@ -308,6 +308,10 @@ app.get('/api/checkAutoEnd', (req, res) => {
 
 app.post('/api/settings', (req, res) => {
   const { passTypes, playZones, endDayHour } = req.body;
+  // Validate endDayHour format
+  if (!endDayHour || !endDayHour.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
+    return res.status(400).json({ error: 'Invalid endDayHour format. Use HH:MM.' });
+  }
   const settings = { passTypes, playZones, endDayHour };
   saveSettings(settings);
   
@@ -317,12 +321,15 @@ app.post('/api/settings', (req, res) => {
   res.json({ success: true, settings });
 });
 
-// Auto-end sessions at specified hour
+// Auto-end sessions at specified time (HH:MM format)
 function checkAndAutoEndSessions(endDayHour) {
   const now = new Date();
-  const currentHour = now.getHours();
+  const currentHour = String(now.getHours()).padStart(2, '0');
+  const currentMinute = String(now.getMinutes()).padStart(2, '0');
+  const currentTimeStr = `${currentHour}:${currentMinute}`;
+  const endTime = endDayHour || '22:00';
   
-  if (currentHour === endDayHour) {
+  if (currentTimeStr === endTime) {
     const date = getTodayDate();
     const data = loadData(date);
     
@@ -343,7 +350,7 @@ function checkAndAutoEndSessions(endDayHour) {
         sessionCount: data.completed.length
       };
       
-      console.log(`Auto-ended all sessions at ${endDayHour}:00`);
+      console.log(`Auto-ended all sessions at ${endTime}`);
       
       // Clear the flag after 2 minutes so it's only shown once
       setTimeout(() => {

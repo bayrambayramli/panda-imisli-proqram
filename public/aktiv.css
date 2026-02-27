@@ -1,0 +1,284 @@
+/* Aktiv.html Independent Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #07690a 0%, #04440e 100%);
+  color: #333;
+  min-height: 100vh;
+  padding: 20px;
+  margin: 0;
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 40px);
+  overflow: hidden;
+}
+
+/* Section */
+.section {
+  border: 2px solid #07690a;
+  border-radius: 12px;
+  padding: 10px;
+  background: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  height: 100%;
+}
+
+.section h2 {
+  color: #07690a;
+  margin-bottom: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  border-bottom: 4px solid #07690a;
+  padding-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Active Sessions Section */
+.active-sessions-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #07690a;
+  border-radius: 8px;
+  background: white;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Sessions Table */
+.sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+
+.sessions-table thead {
+  background: #07690a;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-weight: bold;
+}
+
+.sessions-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 700;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  white-space: nowrap;
+  font-size: 26px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.sessions-table th:last-child {
+  border-right: none;
+  border-bottom: 2px solid #fff;
+}
+
+.sessions-table td {
+  padding: 6px 8px;
+  border-bottom: 2px solid #999;
+  border-right: 2px solid #999;
+  font-size: 28px;
+  color: #000;
+  font-weight: 600;
+}
+
+.sessions-table td:last-child {
+  border-right: none;
+}
+
+/* .sessions-table tbody tr:hover {
+  background-color: #e8f5e9;
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+} */
+
+.sessions-table tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+.sessions-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.sessions-table td:first-child {
+  font-weight: 700;
+  color: #07690a;
+}
+
+/* Timer Cell and Timer Styles */
+.timer-cell {
+  text-align: center;
+  transition: background-color 0.5s ease;
+}
+
+.timer-cell.timer-green {
+  background-color: #4CAF50 !important;
+}
+
+.timer-cell.timer-yellow {
+  background-color: #f0b812 !important;
+}
+
+.timer-cell.timer-red {
+  background-color: #f44336 !important;
+}
+
+.timer {
+  font-weight: bold;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: transparent;
+  color: white;
+  min-width: 120px;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 24px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.timer.danger {
+  animation: flash 1s infinite;
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* No Data Message */
+.no-data-msg {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 22px;
+  font-style: italic;
+  display: none;
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 1200px) {
+  .section h2 {
+    font-size: 26px;
+  }
+
+  .sessions-table {
+    font-size: 16px;
+  }
+
+  .sessions-table th {
+    font-size: 24px;
+    padding: 8px 10px;
+  }
+
+  .sessions-table td {
+    font-size: 26px;
+    padding: 6px 6px;
+  }
+
+  .timer {
+    font-size: 20px;
+    padding: 8px 14px;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    min-height: calc(100vh - 20px);
+  }
+
+  .section {
+    padding: 15px;
+  }
+
+  .section h2 {
+    font-size: 24px;
+  }
+
+  .sessions-table {
+    font-size: 14px;
+  }
+
+  .sessions-table th {
+    font-size: 20px;
+    padding: 6px 6px;
+  }
+
+  .sessions-table td {
+    font-size: 22px;
+    padding: 4px 4px;
+  }
+
+  .timer {
+    font-size: 16px;
+    padding: 6px 10px;
+    min-width: 80px;
+  }
+
+  .no-data-msg {
+    font-size: 18px;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section h2 {
+    font-size: 20px;
+  }
+
+  .sessions-table {
+    font-size: 12px;
+  }
+
+  .sessions-table th {
+    font-size: 18px;
+    padding: 6px 4px;
+  }
+
+  .sessions-table td {
+    font-size: 20px;
+    padding: 4px 3px;
+  }
+
+  .timer {
+    font-size: 14px;
+    padding: 4px 8px;
+    min-width: 70px;
+  }
+
+  .no-data-msg {
+    font-size: 16px;
+    padding: 20px;
+  }
+}
