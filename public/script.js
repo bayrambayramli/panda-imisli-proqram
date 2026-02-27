@@ -1418,13 +1418,13 @@ async function saveSettings() {
       updatePlayZoneDropdown();
       populateDynamicFilters();
       closeSettingsModal();
-      await showUiAlert('Ayarlar yadda saxlanıldı.');
+      await showUiAlert('Dəyişikliklər yadda saxlanıldı.');
     } else {
-      await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
+      await showUiAlert('Dəyişiklikləri yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
     }
   } catch (err) {
     console.error('Error saving settings:', err);
-    await showUiAlert('Ayarları yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
+    await showUiAlert('Dəyişiklikləri yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 
