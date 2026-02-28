@@ -1,5 +1,11 @@
 const timerIntervals = {};
 
+// Pagination variables
+let currentPage = 1;
+const rowsPerPage = 8;
+let totalPages = 1;
+let autoRotationInterval = null;
+
 function getTodayDate() {
   const today = new Date();
   return today.toISOString().split('T')[0];
@@ -78,14 +84,23 @@ function renderActiveSessions(children) {
 
   if (!children || children.length === 0) {
     noMsg.style.display = 'block';
+    updatePageIndicator(0, 0);
+    stopAutoRotation();
     return;
   }
 
   noMsg.style.display = 'none';
 
-  children.forEach(child => {
+  // Calculate total pages
+  const newTotalPages = Math.ceil(children.length / rowsPerPage);
+  
+  children.forEach((child, index) => {
     const row = document.createElement('tr');
     const startTimeStr = formatTime(child.startTime);
+    
+    // Calculate which page this row belongs to (1-indexed)
+    const pageNumber = Math.floor(index / rowsPerPage) + 1;
+    row.setAttribute('data-page', pageNumber);
 
     row.innerHTML = `
       <td>${child.name}</td>
@@ -98,6 +113,75 @@ function renderActiveSessions(children) {
     tbody.appendChild(row);
     startTimer(child);
   });
+  
+  // Preserve current page if possible, otherwise reset to 1
+  if (currentPage > newTotalPages) {
+    currentPage = 1;
+  }
+  
+  // Update totalPages
+  const pagesChanged = totalPages !== newTotalPages;
+  totalPages = newTotalPages;
+  
+  // Switch to current page and restart rotation only if pages changed
+  switchToPage(currentPage);
+  if (pagesChanged || !autoRotationInterval) {
+    startAutoRotation();
+  }
+}
+
+// Switch to a specific page
+function switchToPage(pageNum) {
+  const rows = document.querySelectorAll('#activeOnlyTableBody tr');
+  
+  rows.forEach(row => {
+    const rowPage = parseInt(row.getAttribute('data-page'));
+    if (rowPage === pageNum) {
+      row.classList.remove('page-hidden');
+    } else {
+      row.classList.add('page-hidden');
+    }
+  });
+  
+  updatePageIndicator(pageNum, totalPages);
+}
+
+// Update page indicator
+function updatePageIndicator(current, total) {
+  const indicator = document.getElementById('pageIndicator');
+  if (indicator) {
+    if (total <= 1) {
+      indicator.style.display = 'none';
+    } else {
+      indicator.style.display = 'block';
+      indicator.textContent = `Səhifə ${current} / ${total}`;
+    }
+  }
+}
+
+// Start auto-rotation through pages
+function startAutoRotation() {
+  stopAutoRotation(); // Clear any existing interval
+  
+  if (totalPages <= 1) {
+    return; // No need to rotate if only 1 page
+  }
+  
+  autoRotationInterval = setInterval(() => {
+    currentPage++;
+    if (currentPage > totalPages) {
+      currentPage = 1;
+    }
+    switchToPage(currentPage);
+  }, 5000); // 5 seconds
+}
+
+// Stop auto-rotation
+function stopAutoRotation() {
+  if (autoRotationInterval) {
+    clearInterval(autoRotationInterval);
+    autoRotationInterval = null;
+  }
 }
 
 async function loadActiveSessions() {
