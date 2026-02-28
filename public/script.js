@@ -442,7 +442,9 @@ function createActiveRow(child) {
   
   // Only show +30/-30 buttons if not unlimited
   const isUnlimited = child.duration === 'unlimited';
-  const timeButtonsHtml = isUnlimited ? '' : `<button class="btn-action btn-extend" onclick="extendTime('${child.id}')">+1 saat</button>`;
+  // COMMENTED OUT FOR NOW: +1 saat button
+  // const timeButtonsHtml = isUnlimited ? '' : `<button class="btn-action btn-extend" onclick="extendTime('${child.id}')">+1 saat</button>`;
+  const timeButtonsHtml = '';
 
   const startTimeStr = child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
 
@@ -642,7 +644,8 @@ function startTimer(childId, durationValue, startTimeISO) {
   timerIntervals[childId] = setInterval(updateTimer, 60000);
 }
 
-// Extend time by 1 hour (confirm first)
+// COMMENTED OUT FOR NOW: Extend time by 1 hour functionality
+/*
 async function extendTime(childId) {
   try {
     const response = await fetch(`/api/data/${currentDate}`);
@@ -719,6 +722,7 @@ async function extendTime(childId) {
     console.error('Error extending time:', error);
   }
 }
+*/
 
 // End session
 async function endSession(childId) {
@@ -1049,51 +1053,14 @@ async function openStatsModal() {
     const completedCount = data.completed.length;
     const total = activeCount + completedCount;
 
-    // Revenue: only count full hours. 'unlimited' uses stored price.
+    // Revenue: use stored price for completed sessions, regardless of duration completed.
+    // For active sessions, use stored price as well (full price charged upon session completion).
     let revenueSum = 0;
-    const passTypes = settings && settings.passTypes ? settings.passTypes : [];
     const all = [...data.active, ...data.completed];
-    const nowMs = Date.now();
 
     all.forEach(c => {
-      if (c.duration === 'unlimited') {
-        revenueSum += parseFloat(c.price) || 0;
-        return;
-      }
-
-      // For numeric durations (minutes) compute elapsed minutes from start to end (or now if active)
-      const startMs = c.startTime ? new Date(c.startTime).getTime() : null;
-      const endMs = c.endTime ? new Date(c.endTime).getTime() : null;
-      if (!startMs) return;
-      const elapsedMs = (endMs || nowMs) - startMs;
-      const elapsedMinutes = Math.floor(elapsedMs / 60000);
-      const fullHours = Math.floor(elapsedMinutes / 60);
-
-      if (fullHours <= 0) return;
-
-      const durationMinutes = parseInt(c.duration, 10);
-      let ratePerHour = null;
-
-      const passTypeById = passTypes.find(pt => pt.id === c.passTypeId);
-      if (passTypeById && typeof passTypeById.duration === 'number' && passTypeById.duration > 0) {
-        ratePerHour = passTypeById.price / (passTypeById.duration / 60);
-      } else if (passTypes.length && durationMinutes > 0) {
-        const passTypeByDuration = passTypes.find(pt => pt.duration === durationMinutes);
-        if (passTypeByDuration && typeof passTypeByDuration.duration === 'number' && passTypeByDuration.duration > 0) {
-          ratePerHour = passTypeByDuration.price / (passTypeByDuration.duration / 60);
-        }
-      }
-
-      if (ratePerHour === null && durationMinutes > 0) {
-        const sessionPrice = parseFloat(c.price);
-        if (!isNaN(sessionPrice)) {
-          ratePerHour = sessionPrice / (durationMinutes / 60);
-        }
-      }
-
-      if (ratePerHour !== null && !isNaN(ratePerHour)) {
-        revenueSum += fullHours * ratePerHour;
-      }
+      // Use the stored price for all sessions
+      revenueSum += parseFloat(c.price) || 0;
     });
 
     const revenue = revenueSum.toFixed(2);
