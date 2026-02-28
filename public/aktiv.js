@@ -130,20 +130,36 @@ function renderActiveSessions(children) {
   }
 }
 
-// Switch to a specific page
+// Switch to a specific page with smooth animation
 function switchToPage(pageNum) {
+  const tableContent = document.getElementById('tableContent');
   const rows = document.querySelectorAll('#activeOnlyTableBody tr');
   
-  rows.forEach(row => {
-    const rowPage = parseInt(row.getAttribute('data-page'));
-    if (rowPage === pageNum) {
-      row.classList.remove('page-hidden');
-    } else {
-      row.classList.add('page-hidden');
-    }
-  });
+  // Add animation class to trigger fade out
+  if (tableContent) {
+    tableContent.classList.remove('fade-in');
+    tableContent.classList.add('fade-out');
+  }
   
-  updatePageIndicator(pageNum, totalPages);
+  // Wait for fade out animation to complete, then switch rows and fade in
+  setTimeout(() => {
+    rows.forEach(row => {
+      const rowPage = parseInt(row.getAttribute('data-page'));
+      if (rowPage === pageNum) {
+        row.classList.remove('page-hidden');
+      } else {
+        row.classList.add('page-hidden');
+      }
+    });
+    
+    // Trigger fade in animation
+    if (tableContent) {
+      tableContent.classList.remove('fade-out');
+      tableContent.classList.add('fade-in');
+    }
+    
+    updatePageIndicator(pageNum, totalPages);
+  }, 250); // Half of animation duration
 }
 
 // Update page indicator
