@@ -99,6 +99,10 @@ function setupEventListeners() {
   document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
   document.getElementById('historyCloseBtn').addEventListener('click', closeHistoryModal);
   document.getElementById('loadHistoryBtn').addEventListener('click', () => loadHistoryData(true));
+  const historyNameSearch = document.getElementById('historyNameSearch');
+  if (historyNameSearch) {
+    historyNameSearch.addEventListener('input', () => loadHistoryData(false));
+  }
   document.getElementById('historyExportBtn').addEventListener('click', async () => {
     const date = document.getElementById('historyDate').value;
     if (!date) {
@@ -1013,6 +1017,10 @@ function openHistoryModal() {
   closeStatsModal();
   const today = getTodayDate();
   document.getElementById('historyDate').value = today;
+  const nameSearchInput = document.getElementById('historyNameSearch');
+  if (nameSearchInput) {
+    nameSearchInput.value = '';
+  }
   document.getElementById('historyModal').classList.add('show');
   
   // Automatically load today's data (without showing alert on modal open)
@@ -1087,6 +1095,8 @@ function closeHistoryModal() {
 
 async function loadHistoryData(showAlertIfEmpty = false) {
   const selectedDate = document.getElementById('historyDate').value;
+  const nameSearchInput = document.getElementById('historyNameSearch');
+  const searchTerm = nameSearchInput ? nameSearchInput.value.trim().toLowerCase() : '';
   
   if (!selectedDate) {
     await showUiAlert('Lütfən tarixi seçin.');
@@ -1102,6 +1112,9 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     
     // Completed sessions only
     const completed = data.completed || [];
+    const filteredCompleted = searchTerm
+      ? completed.filter(child => (child.name || '').toLowerCase().includes(searchTerm))
+      : completed;
     
     if (completed.length === 0) {
       // Show alert only if Load button was clicked (showAlertIfEmpty = true)
@@ -1110,10 +1123,12 @@ async function loadHistoryData(showAlertIfEmpty = false) {
       }
       // Always show static message in panel
       html = '<p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.</p>';
+    } else if (filteredCompleted.length === 0) {
+      html = '<p class="no-data-msg">Axtarışa uyğun bitmiş seans tapılmadı.</p>';
     } else {
       html += `
         <div class="history-section">
-          <h3>✅ Bitmiş Seanslar (${completed.length})</h3>
+          <h3>✅ Bitmiş Seanslar (${filteredCompleted.length})</h3>
           <table class="history-table">
             <thead>
               <tr>
@@ -1127,7 +1142,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
               </tr>
             </thead>
             <tbody>
-              ${completed.map(child => `
+              ${filteredCompleted.map(child => `
                 <tr>
                   <td>${child.name}</td>
                   <td>${child.age}</td>
