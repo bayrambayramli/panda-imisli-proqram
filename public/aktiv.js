@@ -22,6 +22,32 @@ function formatTime(isoString) {
   });
 }
 
+// Auto-adjust font size to fit content without scrolling
+function adjustCustomMessageFontSize(element) {
+  if (!element || !element.textContent.trim()) return;
+  
+  // Start with maximum font size
+  let fontSize = 80;
+  const minFontSize = 20;
+  const step = 2;
+  
+  // Reset to initial large size
+  element.style.fontSize = fontSize + 'px';
+  
+  // Check if content overflows and reduce font size until it fits
+  while (fontSize > minFontSize && element.scrollHeight > element.clientHeight) {
+    fontSize -= step;
+    element.style.fontSize = fontSize + 'px';
+  }
+  
+  // If still overflowing at minimum size, allow scroll as last resort
+  if (element.scrollHeight > element.clientHeight) {
+    element.style.overflow = 'auto';
+  } else {
+    element.style.overflow = 'hidden';
+  }
+}
+
 function updateTimer(childId, durationValue, startTimeISO) {
   const timerEl = document.getElementById(`timer-${childId}`);
   const timerCellEl = document.getElementById(`timer-cell-${childId}`);
@@ -97,6 +123,7 @@ function renderActiveSessions(children) {
       customMessagePage.innerHTML = tvCustomMessage;
       customMessagePage.style.display = 'flex';
       customMessagePage.classList.remove('page-hidden');
+      adjustCustomMessageFontSize(customMessagePage);
       stopAutoRotation();
       return;
     }
@@ -194,6 +221,7 @@ function switchToPage(pageNum) {
         customMessagePage.style.display = 'flex';
         customMessagePage.classList.remove('fade-out');
         customMessagePage.classList.add('fade-in');
+        adjustCustomMessageFontSize(customMessagePage);
       }
     } else {
       // Show table page
@@ -308,4 +336,12 @@ async function loadSettings() {
 loadSettings().then(() => {
   loadActiveSessions();
   setInterval(loadActiveSessions, 30000);
+});
+
+// Re-adjust custom message font size on window resize
+window.addEventListener('resize', () => {
+  const customMessagePage = document.getElementById('customMessagePage');
+  if (customMessagePage && customMessagePage.style.display === 'flex') {
+    adjustCustomMessageFontSize(customMessagePage);
+  }
 });

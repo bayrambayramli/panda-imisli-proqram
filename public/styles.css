@@ -184,8 +184,8 @@ body {
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  padding: 15px;
-  gap: 15px;
+  padding: 4px;
+  gap: 4px;
   margin: 0;
 }
 
@@ -1715,7 +1715,7 @@ body {
 }
 
 .form-label-spaced {
-  margin-left: 10px;
+  margin-left: 2px;
 }
 
 .input-helper-text {

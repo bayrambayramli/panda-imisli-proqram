@@ -29,8 +29,8 @@
       "name": "Körpə"
     }
   ],
-  "endDayHour": "22:00",
+  "endDayHour": "23:59",
   "tvPaginationFrequency": 5,
-  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\n\nOyun zonasının qimətləri:\n1 uşaq 1 saat: 5 manat\n1 uşaq limitsiz: 8 manat\n\nBizi sosial şəbəkələrdə izləyin:\nTikTok: panda.imisli\nInstagram: panda.imisli",
+  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\n\nOyun zonasının qimətləri:\n1 uşaq 1 saat: 5 manat\n1 uşaq limitsiz: 8 manat",
   "tvCustomMessageEnabled": true
 }
