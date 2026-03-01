@@ -3,8 +3,6 @@
   /* Primary Colors */
   --primary-purple: #667eea;
   --primary-purple-dark: #764ba2;
-  --primary-purple-darker: #5a3a8a;
-  --primary-indigo: #1a237e;
   
   /* Semantic Colors */
   --color-success: #4CAF50;
@@ -23,9 +21,7 @@
   --color-danger-light: #FFEBEE;
   --color-danger-lighter: #FFCDD2;
   
-  --color-warning: #FF9800;
-  --color-warning-dark: #E65100;
-  --color-warning-light: #FFE0B2;
+
   
   --color-green-primary: #07690a;
   --color-green-dark: #04440e;
@@ -103,7 +99,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--spacing-md);
-  border-bottom: 3px solid var(--primary-purple-darker);
+  border-bottom: 3px solid var(--primary-purple-dark);
 }
 
 .header h1 {
@@ -587,11 +583,17 @@ body {
   line-height: 1.2;
 }
 
+.btn-edit,
+.btn-restore,
+.btn-end,
+.btn-delete {
+  font-size: 14px;
+}
+
 .btn-edit {
   background-color: #E3F2FD;
   color: #1565C0;
   border-color: #2196F3;
-  font-size: 16px;
 }
 
 .btn-edit:hover {
@@ -601,25 +603,10 @@ body {
   box-shadow: 0 3px 6px rgba(21, 101, 192, 0.2);
 }
 
-.btn-extend {
-  background-color: #E8F5E9;
-  color: #2E7D32;
-  border-color: #4CAF50;
-  font-size: 16px;
-}
-
-.btn-extend:hover {
-  background-color: #C8E6C9;
-  border-color: #2E7D32;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 6px rgba(46, 125, 50, 0.2);
-}
-
 .btn-restore {
   background-color: #E0F2F1;
   color: #00695C;
   border-color: #26A69A;
-  font-size: 16px;
 }
 
 .btn-restore:hover {
@@ -634,7 +621,6 @@ body {
   color: #fff;
   border-color: #B71C1C;
   font-weight: 600;
-  font-size: 16px;
 }
 
 .btn-end:hover {
@@ -642,14 +628,12 @@ body {
   border-color: #7F1313;
   transform: translateY(-3px);
   box-shadow: 0 5px 12px rgba(211, 47, 47, 0.4);
-  font-weight: 600;
 }
 
 .btn-delete {
   background-color: #FFEBEE;
   color: #C62828;
   border-color: #f44336;
-  font-size: 16px;
   min-width: 60px;
 }
 
@@ -1108,6 +1092,31 @@ body {
   padding: 6px 8px;
   font-size: 12px;
   flex-shrink: 0;
+}
+
+/* Flex utility classes for settings rows */
+.flex-1 {
+  flex: 1;
+}
+
+.flex-1-2 {
+  flex: 1.2;
+}
+
+.flex-1-5 {
+  flex: 1.5;
+}
+
+.flex-0-8 {
+  flex: 0.8;
+}
+
+.flex-0-5 {
+  flex: 0.5;
+}
+
+.width-50 {
+  width: 50px;
 }
 
 .play-zone-row {
@@ -1594,6 +1603,11 @@ body {
   margin-top: 10px;
 }
 
+/* Form Label Top Margin - used for textarea labels in settings */
+.form-label-topmargin {
+  margin-top: 8px;
+}
+
 /* UI Prompt Modal */
 .ui-prompt-input {
   display: none;
@@ -1731,12 +1745,6 @@ body {
   cursor: pointer;
 }
 
-/* Buttons */
-.btn-add-ticket {
-  white-space: nowrap;
-}
-
-/* Modal Header */
 .modal-header-row {
   display: flex;
   justify-content: space-between;

@@ -4,7 +4,6 @@ let timerIntervals = {};
 let editingChildId = null;
 let editingSource = null; // 'active' or 'completed'
 let settings = null; // Will be loaded from backend
-let PRICE_CONFIG = {}; // Will be populated from settings
 let analyticsChart = null; // Will hold chart instance
 
 // Initialize app
@@ -39,12 +38,8 @@ async function loadSettings() {
   }
 }
 
-// Update PRICE_CONFIG from settings
+// Update price-related dropdowns from settings
 function updatePriceConfig() {
-  PRICE_CONFIG = {};
-  settings.passTypes.forEach(pt => {
-    PRICE_CONFIG[pt.duration.toString()] = pt.price;
-  });
   updateDurationDropdown();
   updatePlayZoneDropdown();
 }
@@ -463,15 +458,9 @@ function createActiveRow(child) {
     `<span class="editable-field" onclick="editNotes('${child.id}')">${child.notes}</span>` : 
     `<span class="editable-field editable-placeholder" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
   
-  // Only show +30/-30 buttons if not unlimited
-  const isUnlimited = child.duration === 'unlimited';
-  // COMMENTED OUT FOR NOW: +1 saat button
-  // const timeButtonsHtml = isUnlimited ? '' : `<button class="btn-action btn-extend" onclick="extendTime('${child.id}')">+1 saat</button>`;
-  const timeButtonsHtml = '';
-
   const startTimeStr = child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
-
   const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
+  const timeButtonsHtml = '';
 
   row.innerHTML = `
     <td>${child.name}</td>
@@ -1145,10 +1134,10 @@ function openSettingsModal() {
     const headerRow = document.createElement('div');
     headerRow.className = 'pass-type-row';
     headerRow.innerHTML = `
-      <div style="flex:1;">Ad</div>
-      <div style="flex:1;">Müddət</div>
-      <div style="flex:1;">Qiymət (AZN)</div>
-      <div style="width:50px;"></div>
+      <div class="flex-1">Ad</div>
+      <div class="flex-1">Müddət</div>
+      <div class="flex-1">Qiymət (AZN)</div>
+      <div class="width-50"></div>
     `;
     container.appendChild(headerRow);
     
@@ -1157,15 +1146,15 @@ function openSettingsModal() {
       row.className = 'pass-type-row';
       row.setAttribute('data-id', pt.id);
       row.innerHTML = `
-        <input type="text" class="pass-name" placeholder="Adı" value="${pt.name}" data-id="${pt.id}" style="flex:1.2;" />
-        <select class="pass-duration" data-id="${pt.id}" style="flex:1;">
+        <input type="text" class="pass-name flex-1-2" placeholder="Adı" value="${pt.name}" data-id="${pt.id}" />
+        <select class="pass-duration flex-1" data-id="${pt.id}">
           <option value="60" ${pt.duration === 60 ? 'selected' : ''}>1 Saat</option>
           <option value="120" ${pt.duration === 120 ? 'selected' : ''}>2 Saat</option>
           <option value="180" ${pt.duration === 180 ? 'selected' : ''}>3 Saat</option>
           <option value="240" ${pt.duration === 240 ? 'selected' : ''}>4 Saat</option>
           <option value="unlimited" ${pt.duration === 'unlimited' ? 'selected' : ''}>Limitsiz</option>
         </select>
-        <input type="number" class="pass-price" placeholder="Qiymət" value="${pt.price}" data-id="${pt.id}" step="0.01" style="flex:0.8;" />
+        <input type="number" class="pass-price flex-0-8" placeholder="Qiymət" value="${pt.price}" data-id="${pt.id}" step="0.01" />
         <button class="btn-delete" onclick="removePassType(${pt.id})">Sil</button>
       `;
       container.appendChild(row);
@@ -1202,8 +1191,8 @@ function openSettingsModal() {
     const headerRow = document.createElement('div');
     headerRow.className = 'play-zone-row';
     headerRow.innerHTML = `
-      <div style="flex:1;">Zona Adı</div>
-      <div style="width:50px;"></div>
+      <div class="flex-1">Zona Adı</div>
+      <div class="width-50"></div>
     `;
     zonesContainer.appendChild(headerRow);
     
@@ -1237,15 +1226,15 @@ function addPassTypeRow() {
   row.className = 'pass-type-row';
   row.setAttribute('data-id', newId);
   row.innerHTML = `
-    <input type="text" class="pass-name" placeholder="Adı" data-id="${newId}" style="flex:1.5;" />
-    <select class="pass-duration" data-id="${newId}" style="flex:1;">
+    <input type="text" class="pass-name flex-1-5" placeholder="Adı" data-id="${newId}" />
+    <select class="pass-duration flex-1" data-id="${newId}">
       <option value="60">1 Saat</option>
       <option value="120">2 Saat</option>
       <option value="180">3 Saat</option>
       <option value="240">4 Saat</option>
       <option value="unlimited">Limitsiz</option>
     </select>
-    <input type="number" class="pass-price" placeholder="Qiymət" data-id="${newId}" step="0.01" style="flex:0.5;" />
+    <input type="number" class="pass-price flex-0-5" placeholder="Qiymət" data-id="${newId}" step="0.01" />
     <button class="btn-delete" onclick="removePassType(${newId})">Sil</button>
   `;
   container.appendChild(row);
@@ -1285,7 +1274,7 @@ function addPlayZoneRow() {
   row.className = 'play-zone-row';
   row.setAttribute('data-id', newId);
   row.innerHTML = `
-    <input type="text" class="play-zone-name" placeholder="Zona adı" data-id="${newId}" style="flex:1;" />
+    <input type="text" class="play-zone-name flex-1" placeholder="Zona adı" data-id="${newId}" />
     <button class="btn-delete" onclick="removePlayZone(${newId})">Sil</button>
   `;
   container.appendChild(row);
