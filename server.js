@@ -65,7 +65,8 @@ function loadSettings() {
     playZones: [],
     endDayHour: '22:00',
     tvPaginationFrequency: 5,
-    tvCustomMessage: ''
+    tvCustomMessage: '',
+    tvCustomMessageEnabled: true
   };
 }
 
@@ -309,7 +310,7 @@ app.get('/api/checkAutoEnd', (req, res) => {
 });
 
 app.post('/api/settings', (req, res) => {
-  const { passTypes, playZones, endDayHour, tvPaginationFrequency, tvCustomMessage } = req.body;
+  const { passTypes, playZones, endDayHour, tvPaginationFrequency, tvCustomMessage, tvCustomMessageEnabled } = req.body;
   // Validate endDayHour format
   if (!endDayHour || !endDayHour.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
     return res.status(400).json({ error: 'Invalid endDayHour format. Use HH:MM.' });
@@ -319,7 +320,7 @@ app.post('/api/settings', (req, res) => {
   if (frequency < 2) {
     return res.status(400).json({ error: 'TV pagination frequency must be at least 2 seconds.' });
   }
-  const settings = { passTypes, playZones, endDayHour, tvPaginationFrequency: frequency, tvCustomMessage: tvCustomMessage || '' };
+  const settings = { passTypes, playZones, endDayHour, tvPaginationFrequency: frequency, tvCustomMessage: tvCustomMessage || '', tvCustomMessageEnabled: tvCustomMessageEnabled === true };
   saveSettings(settings);
   
   // Auto-end sessions at the specified hour

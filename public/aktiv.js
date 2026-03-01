@@ -7,6 +7,7 @@ let totalPages = 1;
 let autoRotationInterval = null;
 let tvPaginationFrequency = 5; // Default value, will be loaded from settings
 let tvCustomMessage = ''; // Custom message for last page
+let tvCustomMessageEnabled = false; // Toggle for custom message display
 
 function getTodayDate() {
   const today = new Date();
@@ -81,21 +82,40 @@ function startTimer(child) {
 function renderActiveSessions(children) {
   const tbody = document.getElementById('activeOnlyTableBody');
   const noMsg = document.getElementById('noActiveOnlyMsg');
+  const customMessagePage = document.getElementById('customMessagePage');
+  const sectionTitle = document.querySelector('.section h2');
+  const pageIndicator = document.getElementById('pageIndicator');
 
   tbody.innerHTML = '';
 
   if (!children || children.length === 0) {
+    // If custom message is enabled and not empty, show it instead of empty table
+    if (tvCustomMessageEnabled && tvCustomMessage.trim()) {
+      noMsg.style.display = 'none';
+      if (sectionTitle) sectionTitle.style.display = 'none';
+      if (pageIndicator) pageIndicator.style.display = 'none';
+      customMessagePage.innerHTML = tvCustomMessage;
+      customMessagePage.style.display = 'flex';
+      customMessagePage.classList.remove('page-hidden');
+      stopAutoRotation();
+      return;
+    }
+    
     noMsg.style.display = 'block';
+    customMessagePage.style.display = 'none';
+    if (sectionTitle) sectionTitle.style.display = 'block';
     updatePageIndicator(0, 0);
     stopAutoRotation();
     return;
   }
 
   noMsg.style.display = 'none';
+  customMessagePage.style.display = 'none';
+  if (sectionTitle) sectionTitle.style.display = 'block';
 
-  // Calculate total pages (add 1 if custom message is set)
+  // Calculate total pages (add 1 if custom message is enabled and set)
   const dataPagesCount = Math.ceil(children.length / rowsPerPage);
-  const newTotalPages = tvCustomMessage.trim() ? dataPagesCount + 1 : dataPagesCount;
+  const newTotalPages = (tvCustomMessageEnabled && tvCustomMessage.trim()) ? dataPagesCount + 1 : dataPagesCount;
   
   children.forEach((child, index) => {
     const row = document.createElement('tr');
@@ -141,7 +161,7 @@ function switchToPage(pageNum) {
   
   // Determine if this is the custom message page
   const dataPagesCount = Math.ceil(rows.length / rowsPerPage);
-  const isCustomMessagePage = tvCustomMessage.trim() && pageNum > dataPagesCount;
+  const isCustomMessagePage = (tvCustomMessageEnabled && tvCustomMessage.trim()) && pageNum > dataPagesCount;
   
   // Add animation class to trigger fade out
   if (tableContent) {
@@ -269,6 +289,9 @@ async function loadSettings() {
     }
     if (settings.tvCustomMessage) {
       tvCustomMessage = settings.tvCustomMessage;
+    }
+    if (settings.tvCustomMessageEnabled !== undefined) {
+      tvCustomMessageEnabled = settings.tvCustomMessageEnabled;
     }
   } catch (error) {
     console.error('Error loading settings:', error);
