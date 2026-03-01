@@ -127,20 +127,6 @@
       "endTime": null
     },
     {
-      "id": 1772324560224,
-      "name": "99",
-      "age": 7,
-      "playZone": "Əsas",
-      "duration": "unlimited",
-      "price": 8,
-      "passTypeId": 2,
-      "passTypeName": "Limitsiz",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:22:40.224Z",
-      "endTime": null
-    },
-    {
       "id": 1772324573048,
       "name": "12",
       "age": 4,
@@ -251,7 +237,36 @@
       "notes": "",
       "startTime": "2026-03-01T00:24:39.489Z",
       "endTime": null
+    },
+    {
+      "id": 1772326437083,
+      "name": "65656",
+      "age": 6,
+      "playZone": "Əsas",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "extendedTime": 0,
+      "notes": "",
+      "startTime": "2026-03-01T00:53:57.083Z",
+      "endTime": null
     }
   ],
-  "completed": []
+  "completed": [
+    {
+      "id": 1772324560224,
+      "name": "99",
+      "age": 7,
+      "playZone": "Əsas",
+      "duration": "unlimited",
+      "price": 8,
+      "passTypeId": 2,
+      "passTypeName": "Limitsiz",
+      "extendedTime": 0,
+      "notes": "",
+      "startTime": "2026-03-01T00:22:40.224Z",
+      "endTime": "2026-03-01T00:54:03.306Z"
+    }
+  ]
 }

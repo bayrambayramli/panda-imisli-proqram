@@ -30,5 +30,6 @@
     }
   ],
   "endDayHour": "22:00",
-  "tvPaginationFrequency": 5
+  "tvPaginationFrequency": 20,
+  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\nÜnvan: Heydər Əliyev pr. 23\nTel: 051 446 30 60"
 }

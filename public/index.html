@@ -267,16 +267,33 @@
         </div>
       </div>
 
-      <!-- TV Screen Pagination Frequency -->
-      <div class="settings-section">
-        <h3>TV Ekranı Səhifə Keçidi</h3>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <label for="tvPaginationFrequency" style="white-space:nowrap;">Keçid tezliyi:</label>
-          <div style="display:flex;align-items:center;gap:5px;">
-            <input type="number" id="tvPaginationFrequency" min="2" step="1" style="width:80px;padding:8px;border:1px solid #ddd;border-radius:6px;" />
-            <span style="white-space:nowrap;">saniyə</span>
+      <!-- TV Screen Settings - Side by Side -->
+      <div style="display:flex;gap:40px;margin-bottom:20px;">
+        <!-- TV Screen Pagination Frequency -->
+        <div class="settings-section" style="flex:0 0 45%;">
+          <h3>TV Ekranı Səhifə Keçidi</h3>
+          <div style="display:flex;align-items:center;gap:10px;flex-direction:column;">
+            <div style="display:flex;align-items:center;gap:10px;width:100%;">
+              <label for="tvPaginationFrequency" style="white-space:nowrap;">Keçid tezliyi:</label>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <input type="number" id="tvPaginationFrequency" min="2" step="1" style="width:80px;padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                <span style="white-space:nowrap;">saniyə</span>
+              </div>
+            </div>
+            <span style="font-size:12px;color:#666;align-self:flex-start;">(Minimum: 2 saniyə)</span>
           </div>
-          <span style="font-size:12px;color:#666;">(Minimum: 2 saniyə)</span>
+        </div>
+
+        <!-- TV Custom Message -->
+        <div class="settings-section" style="flex:1;">
+          <h3>TV Ekranı Xüsusi Mesaj</h3>
+          <div style="display:flex;align-items:center;gap:10px;flex-direction:column;">
+            <div style="display:flex;align-items:center;gap:10px;width:100%;">
+              <label for="tvCustomMessage" style="white-space:nowrap;">Mesaj:</label>
+              <textarea id="tvCustomMessage" rows="3" placeholder="Son səhifədə göstəriləcək mesaj..." style="flex:1;padding:8px;border:1px solid #ddd;border-radius:6px;resize:vertical;font-family:inherit;"></textarea>
+            </div>
+            <span style="font-size:12px;color:#666;align-self:flex-start;">(Son səhifədə böyük şriftlə göstərilir)</span>
+          </div>
         </div>
       </div>
 

@@ -1216,6 +1216,12 @@ function openSettingsModal() {
     tvFreqInput.value = settings.tvPaginationFrequency || 5;
   }
 
+  // Set TV custom message
+  const tvCustomMessageInput = document.getElementById('tvCustomMessage');
+  if (tvCustomMessageInput) {
+    tvCustomMessageInput.value = settings.tvCustomMessage || '';
+  }
+
   // Populate play zones as editable rows
   const zonesContainer = document.getElementById('playZonesContainer');
   if (zonesContainer) {
@@ -1379,6 +1385,7 @@ async function saveSettings() {
 
   const endDayTime = document.getElementById('endDayHour').value;
   const tvPaginationFrequency = parseInt(document.getElementById('tvPaginationFrequency').value) || 5;
+  const tvCustomMessage = document.getElementById('tvCustomMessage').value.trim();
 
   if (tvPaginationFrequency < 2) {
     await showUiAlert('TV ekranı səhifə keçid tezliyi ən azı 2 saniyə olmalıdır.');
@@ -1404,7 +1411,7 @@ async function saveSettings() {
     const response = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime, tvPaginationFrequency })
+      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime, tvPaginationFrequency, tvCustomMessage })
     });
 
     if (response.ok) {

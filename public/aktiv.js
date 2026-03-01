@@ -6,6 +6,7 @@ const rowsPerPage = 8;
 let totalPages = 1;
 let autoRotationInterval = null;
 let tvPaginationFrequency = 5; // Default value, will be loaded from settings
+let tvCustomMessage = ''; // Custom message for last page
 
 function getTodayDate() {
   const today = new Date();
@@ -92,8 +93,9 @@ function renderActiveSessions(children) {
 
   noMsg.style.display = 'none';
 
-  // Calculate total pages
-  const newTotalPages = Math.ceil(children.length / rowsPerPage);
+  // Calculate total pages (add 1 if custom message is set)
+  const dataPagesCount = Math.ceil(children.length / rowsPerPage);
+  const newTotalPages = tvCustomMessage.trim() ? dataPagesCount + 1 : dataPagesCount;
   
   children.forEach((child, index) => {
     const row = document.createElement('tr');
@@ -134,29 +136,71 @@ function renderActiveSessions(children) {
 // Switch to a specific page with smooth animation
 function switchToPage(pageNum) {
   const tableContent = document.getElementById('tableContent');
+  const customMessagePage = document.getElementById('customMessagePage');
   const rows = document.querySelectorAll('#activeOnlyTableBody tr');
+  
+  // Determine if this is the custom message page
+  const dataPagesCount = Math.ceil(rows.length / rowsPerPage);
+  const isCustomMessagePage = tvCustomMessage.trim() && pageNum > dataPagesCount;
   
   // Add animation class to trigger fade out
   if (tableContent) {
     tableContent.classList.remove('fade-in');
     tableContent.classList.add('fade-out');
   }
+  if (customMessagePage) {
+    customMessagePage.classList.remove('fade-in');
+    customMessagePage.classList.add('fade-out');
+  }
   
-  // Wait for fade out animation to complete, then switch rows and fade in
+  // Wait for fade out animation to complete, then switch content and fade in
   setTimeout(() => {
-    rows.forEach(row => {
-      const rowPage = parseInt(row.getAttribute('data-page'));
-      if (rowPage === pageNum) {
-        row.classList.remove('page-hidden');
-      } else {
-        row.classList.add('page-hidden');
-      }
-    });
+    const sectionTitle = document.querySelector('.section h2');
+    const pageIndicator = document.getElementById('pageIndicator');
     
-    // Trigger fade in animation
-    if (tableContent) {
-      tableContent.classList.remove('fade-out');
-      tableContent.classList.add('fade-in');
+    if (isCustomMessagePage) {
+      // Show custom message page
+      if (tableContent) {
+        tableContent.style.display = 'none';
+      }
+      if (sectionTitle) {
+        sectionTitle.style.display = 'none';
+      }
+      if (pageIndicator) {
+        pageIndicator.style.display = 'none';
+      }
+      if (customMessagePage) {
+        customMessagePage.innerHTML = tvCustomMessage;
+        customMessagePage.style.display = 'flex';
+        customMessagePage.classList.remove('fade-out');
+        customMessagePage.classList.add('fade-in');
+      }
+    } else {
+      // Show table page
+      if (customMessagePage) {
+        customMessagePage.style.display = 'none';
+      }
+      if (sectionTitle) {
+        sectionTitle.style.display = 'block';
+      }
+      if (tableContent) {
+        tableContent.style.display = 'block';
+      }
+      
+      rows.forEach(row => {
+        const rowPage = parseInt(row.getAttribute('data-page'));
+        if (rowPage === pageNum) {
+          row.classList.remove('page-hidden');
+        } else {
+          row.classList.add('page-hidden');
+        }
+      });
+      
+      // Trigger fade in animation
+      if (tableContent) {
+        tableContent.classList.remove('fade-out');
+        tableContent.classList.add('fade-in');
+      }
     }
     
     updatePageIndicator(pageNum, totalPages);
@@ -203,6 +247,9 @@ function stopAutoRotation() {
 
 async function loadActiveSessions() {
   try {
+    // Reload settings to pick up any changes (including custom message)
+    await loadSettings();
+    
     const date = getTodayDate();
     const response = await fetch(`/api/data/${date}`);
     const data = await response.json();
@@ -219,6 +266,9 @@ async function loadSettings() {
     const settings = await response.json();
     if (settings.tvPaginationFrequency) {
       tvPaginationFrequency = settings.tvPaginationFrequency;
+    }
+    if (settings.tvCustomMessage) {
+      tvCustomMessage = settings.tvCustomMessage;
     }
   } catch (error) {
     console.error('Error loading settings:', error);
