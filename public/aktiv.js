@@ -5,6 +5,7 @@ let currentPage = 1;
 const rowsPerPage = 8;
 let totalPages = 1;
 let autoRotationInterval = null;
+let tvPaginationFrequency = 5; // Default value, will be loaded from settings
 
 function getTodayDate() {
   const today = new Date();
@@ -189,7 +190,7 @@ function startAutoRotation() {
       currentPage = 1;
     }
     switchToPage(currentPage);
-  }, 5000); // 5 seconds
+  }, tvPaginationFrequency * 1000); // Use frequency from settings
 }
 
 // Stop auto-rotation
@@ -211,5 +212,21 @@ async function loadActiveSessions() {
   }
 }
 
-loadActiveSessions();
-setInterval(loadActiveSessions, 30000);
+// Load settings and start the app
+async function loadSettings() {
+  try {
+    const response = await fetch('/api/settings');
+    const settings = await response.json();
+    if (settings.tvPaginationFrequency) {
+      tvPaginationFrequency = settings.tvPaginationFrequency;
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+}
+
+// Initialize app
+loadSettings().then(() => {
+  loadActiveSessions();
+  setInterval(loadActiveSessions, 30000);
+});

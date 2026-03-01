@@ -29,5 +29,6 @@
       "name": "Körpə"
     }
   ],
-  "endDayHour": "23:59"
+  "endDayHour": "22:00",
+  "tvPaginationFrequency": 5
 }

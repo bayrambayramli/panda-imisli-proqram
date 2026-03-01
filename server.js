@@ -63,7 +63,8 @@ function loadSettings() {
   return {
     passTypes: [],
     playZones: [],
-    endDayHour: '22:00'
+    endDayHour: '22:00',
+    tvPaginationFrequency: 5
   };
 }
 
@@ -307,12 +308,17 @@ app.get('/api/checkAutoEnd', (req, res) => {
 });
 
 app.post('/api/settings', (req, res) => {
-  const { passTypes, playZones, endDayHour } = req.body;
+  const { passTypes, playZones, endDayHour, tvPaginationFrequency } = req.body;
   // Validate endDayHour format
   if (!endDayHour || !endDayHour.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
     return res.status(400).json({ error: 'Invalid endDayHour format. Use HH:MM.' });
   }
-  const settings = { passTypes, playZones, endDayHour };
+  // Validate tvPaginationFrequency
+  const frequency = parseInt(tvPaginationFrequency) || 5;
+  if (frequency < 2) {
+    return res.status(400).json({ error: 'TV pagination frequency must be at least 2 seconds.' });
+  }
+  const settings = { passTypes, playZones, endDayHour, tvPaginationFrequency: frequency };
   saveSettings(settings);
   
   // Auto-end sessions at the specified hour

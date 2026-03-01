@@ -32,7 +32,8 @@ async function loadSettings() {
     settings = {
       passTypes: [],
       playZones: [],
-      endDayHour: '22:00'
+      endDayHour: '22:00',
+      tvPaginationFrequency: 5
     };
     updatePriceConfig();
   }
@@ -1209,6 +1210,12 @@ function openSettingsModal() {
   // Set end day hour
   document.getElementById('endDayHour').value = settings.endDayHour || '22:00';
 
+  // Set TV pagination frequency
+  const tvFreqInput = document.getElementById('tvPaginationFrequency');
+  if (tvFreqInput) {
+    tvFreqInput.value = settings.tvPaginationFrequency || 5;
+  }
+
   // Populate play zones as editable rows
   const zonesContainer = document.getElementById('playZonesContainer');
   if (zonesContainer) {
@@ -1371,6 +1378,12 @@ async function saveSettings() {
   });
 
   const endDayTime = document.getElementById('endDayHour').value;
+  const tvPaginationFrequency = parseInt(document.getElementById('tvPaginationFrequency').value) || 5;
+
+  if (tvPaginationFrequency < 2) {
+    await showUiAlert('TV ekranı səhifə keçid tezliyi ən azı 2 saniyə olmalıdır.');
+    return;
+  }
 
   if (passTypes.length === 0) {
     await showUiAlert('Ən azı bir bilet əlavə edin!');
@@ -1391,7 +1404,7 @@ async function saveSettings() {
     const response = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime })
+      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime, tvPaginationFrequency })
     });
 
     if (response.ok) {
