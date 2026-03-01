@@ -301,8 +301,8 @@ body {
 /* When completed is visible (default), limit active sessions height to show ~5-6 rows */
 .active-sessions-section {
   border: 2px solid #4CAF50;
-  max-height: 400px;
-  flex: 0 0 400px;
+  max-height: 320px;
+  flex: 0 0 320px;
 }
 
 /* When completed IS collapsed, active sessions expands to fill space */
