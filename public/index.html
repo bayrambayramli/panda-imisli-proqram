@@ -243,17 +243,17 @@
         </div>
       </div>
 
-      <!-- Play Zones Management -->
-      <div class="settings-section">
-        <h3>Oyun Zonaları</h3>
-        <div class="settings-section-container">
-          <div id="playZonesContainer" class="settings-table-container"></div>
-          <button onclick="addPlayZoneRow()" class="btn btn-add-ticket">Yeni Zona Əlavə Et</button>
-        </div>
-      </div>
-
-      <!-- Auto-End Sessions Time & TV Pagination Frequency - Side by Side -->
+      <!-- Play Zones Management & Day End Time - Side by Side -->
       <div style="display:flex;gap:40px;margin-bottom:20px;">
+        <!-- Play Zones Management -->
+        <div class="settings-section" style="flex:0 0 45%;">
+          <h3>Oyun Zonaları</h3>
+          <div class="settings-section-container">
+            <div id="playZonesContainer" class="settings-table-container"></div>
+            <button onclick="addPlayZoneRow()" class="btn btn-add-ticket">Yeni Zona Əlavə Et</button>
+          </div>
+        </div>
+
         <!-- Auto-End Sessions Time -->
         <div class="settings-section" style="flex:1;">
           <h3>Günün Bitmə Saatı</h3>
@@ -265,20 +265,18 @@
             <span style="font-size:12px;color:#666;align-self:flex-start;">(Nümunə: 22:00)</span>
           </div>
         </div>
+      </div>
 
-        <!-- TV Screen Pagination Frequency -->
-        <div class="settings-section" style="flex:1;">
-          <h3>TV Ekranı Səhifə Keçidi</h3>
-          <div style="display:flex;align-items:center;gap:10px;flex-direction:column;">
-            <div style="display:flex;align-items:center;gap:10px;width:100%;">
-              <label for="tvPaginationFrequency" style="white-space:nowrap;">Keçid tezliyi:</label>
-              <div style="display:flex;align-items:center;gap:5px;">
-                <input type="number" id="tvPaginationFrequency" min="2" step="1" style="width:80px;padding:8px;border:1px solid #ddd;border-radius:6px;" />
-                <span style="white-space:nowrap;">saniyə</span>
-              </div>
-            </div>
-            <span style="font-size:12px;color:#666;align-self:flex-start;">(Minimum: 2 saniyə)</span>
+      <!-- TV Screen Pagination Frequency -->
+      <div class="settings-section">
+        <h3>TV Ekranı Səhifə Keçidi</h3>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label for="tvPaginationFrequency" style="white-space:nowrap;">Keçid tezliyi:</label>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <input type="number" id="tvPaginationFrequency" min="2" step="1" style="width:80px;padding:8px;border:1px solid #ddd;border-radius:6px;" />
+            <span style="white-space:nowrap;">saniyə</span>
           </div>
+          <span style="font-size:12px;color:#666;">(Minimum: 2 saniyə)</span>
         </div>
       </div>
 
