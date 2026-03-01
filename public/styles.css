@@ -1088,12 +1088,12 @@ body {
 }
 
 .pass-type-row input[type="text"] {
-  flex: 1.2;
+  flex: 1.5;
   min-width: 80px;
 }
 
 .pass-type-row input[type="number"] {
-  flex: 0.8;
+  flex: 0.5;
 }
 
 .pass-type-row select {
@@ -1716,6 +1716,7 @@ body {
   border-radius: 6px;
   resize: vertical;
   font-family: inherit;
+  margin-top: 12px;
 }
 
 .form-checkbox {

@@ -1237,7 +1237,7 @@ function addPassTypeRow() {
   row.className = 'pass-type-row';
   row.setAttribute('data-id', newId);
   row.innerHTML = `
-    <input type="text" class="pass-name" placeholder="Adı" data-id="${newId}" style="flex:1.2;" />
+    <input type="text" class="pass-name" placeholder="Adı" data-id="${newId}" style="flex:1.5;" />
     <select class="pass-duration" data-id="${newId}" style="flex:1;">
       <option value="60">1 Saat</option>
       <option value="120">2 Saat</option>
@@ -1245,7 +1245,7 @@ function addPassTypeRow() {
       <option value="240">4 Saat</option>
       <option value="unlimited">Limitsiz</option>
     </select>
-    <input type="number" class="pass-price" placeholder="Qiymət" data-id="${newId}" step="0.01" style="flex:0.8;" />
+    <input type="number" class="pass-price" placeholder="Qiymət" data-id="${newId}" step="0.01" style="flex:0.5;" />
     <button class="btn-delete" onclick="removePassType(${newId})">Sil</button>
   `;
   container.appendChild(row);
