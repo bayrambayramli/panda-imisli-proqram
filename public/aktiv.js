@@ -221,9 +221,9 @@ function switchToPage(pageNum) {
         tableContent.classList.remove('fade-out');
         tableContent.classList.add('fade-in');
       }
+      
+      updatePageIndicator(pageNum, totalPages);
     }
-    
-    updatePageIndicator(pageNum, totalPages);
   }, 250); // Half of animation duration
 }
 
@@ -231,11 +231,17 @@ function switchToPage(pageNum) {
 function updatePageIndicator(current, total) {
   const indicator = document.getElementById('pageIndicator');
   if (indicator) {
-    if (total <= 1) {
+    // Calculate actual data pages (excluding custom message page)
+    const rows = document.querySelectorAll('#activeOnlyTableBody tr');
+    const dataPagesCount = Math.ceil(rows.length / rowsPerPage);
+    
+    // Only show indicator if there are multiple data pages
+    if (dataPagesCount <= 1) {
       indicator.style.display = 'none';
     } else {
       indicator.style.display = 'block';
-      indicator.textContent = `Səhifə ${current} / ${total}`;
+      // Show only data pages count, not including custom message page
+      indicator.textContent = `Səhifə ${current} / ${dataPagesCount}`;
     }
   }
 }
