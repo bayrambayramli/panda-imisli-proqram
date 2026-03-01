@@ -1028,9 +1028,9 @@ body {
 .settings-section {
   margin-bottom: 6px;
   padding: 6px;
-  /* background: #f9f9f9;
+  /* background: #969191; */
   border-radius: 6px;
-  border-left: 4px solid #667eea; */
+  border: 2px solid #667eea;
 }
 
 .settings-section h3 {
@@ -1634,18 +1634,20 @@ body {
 }
 
 .settings-section {
-  flex: 1;
+  /* flex: 1; */
   min-width: 0;
 }
 
 .settings-section-lg {
   flex: 1.25;
   min-width: 0;
+  min-height: 200px;
 }
 
 .settings-section-sm {
   flex: 0.75;
   min-width: 0;
+  min-height: 200px;
 }
 
 .settings-section-container {
@@ -1699,7 +1701,7 @@ body {
 }
 
 .form-label-spaced {
-  margin-left: 40px;
+  margin-left: 10px;
 }
 
 .input-helper-text {
