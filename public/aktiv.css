@@ -255,7 +255,7 @@ body {
   font-size: 56px;
   font-weight: bold;
   line-height: 1.4;
-  color: #e74c3c;
+  color: hsl(0, 89%, 47%);
   background: #ffffff;
   word-wrap: break-word;
   white-space: pre-wrap;
