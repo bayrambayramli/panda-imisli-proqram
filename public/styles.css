@@ -343,6 +343,20 @@ body {
   margin-bottom: 0;
 }
 
+/* Override collapse when in fullscreen - always show content */
+.completed-sessions-section.fullscreen-section.collapsed .table-wrapper {
+  display: block;
+}
+
+.completed-sessions-section.fullscreen-section.collapsed {
+  flex: 1;
+  min-height: unset;
+}
+
+.completed-sessions-section.fullscreen-section.collapsed h2 {
+  margin-bottom: 6px;
+}
+
 .btn-collapse-section {
   position: absolute;
   top: 10px;
@@ -363,6 +377,11 @@ body {
   border-color: #E65100;
   box-shadow: 0 4px 8px rgba(230, 81, 0, 0.25);
   transform: translateY(-2px);
+}
+
+/* Hide collapse button in fullscreen mode */
+.fullscreen-section .btn-collapse-section {
+  display: none;
 }
 
 .btn-export {
