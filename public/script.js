@@ -5,6 +5,8 @@ let editingChildId = null;
 let editingSource = null; // 'active' or 'completed'
 let settings = null; // Will be loaded from backend
 let analyticsChart = null; // Will hold chart instance
+let historySortBy = 'startTime'; // Default sort column
+let historySortDir = 'asc'; // 'asc' or 'desc'
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1005,6 +1007,9 @@ function openHistoryModal() {
   if (nameSearchInput) {
     nameSearchInput.value = '';
   }
+  // Reset sort to default when opening modal
+  historySortBy = 'startTime';
+  historySortDir = 'asc';
   document.getElementById('historyModal').classList.add('show');
   
   // Automatically load today's data (without showing alert on modal open)
@@ -1110,23 +1115,26 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     } else if (filteredCompleted.length === 0) {
       html = '<p class="no-data-msg">Axtarışa uyğun bitmiş seans tapılmadı.</p>';
     } else {
+      // Sort the data
+      const sortedCompleted = sortHistoryData([...filteredCompleted]);
+      
       html += `
         <div class="history-section">
-          <h3>✅ Bitmiş Seanslar (${filteredCompleted.length})</h3>
+          <h3>✅ Bitmiş Seanslar (${sortedCompleted.length})</h3>
           <table class="history-table">
             <thead>
               <tr>
-                <th>Ad</th>
-                <th>Yaş</th>
-                <th>Zona</th>
-                <th>Müddət</th>
-                <th>Məbləğ</th>
-                <th>Başlama Vaxtı</th>
-                <th>Bitmə Vaxtı</th>
+                <th class="sortable" onclick="sortHistoryBy('name')">Ad ${getSortIndicator('name')}</th>
+                <th class="sortable" onclick="sortHistoryBy('age')">Yaş ${getSortIndicator('age')}</th>
+                <th class="sortable" onclick="sortHistoryBy('playZone')">Zona ${getSortIndicator('playZone')}</th>
+                <th class="sortable" onclick="sortHistoryBy('duration')">Müddət ${getSortIndicator('duration')}</th>
+                <th class="sortable" onclick="sortHistoryBy('price')">Məbləğ ${getSortIndicator('price')}</th>
+                <th class="sortable" onclick="sortHistoryBy('startTime')">Başlama Vaxtı ${getSortIndicator('startTime')}</th>
+                <th class="sortable" onclick="sortHistoryBy('endTime')">Bitmə Vaxtı ${getSortIndicator('endTime')}</th>
               </tr>
             </thead>
             <tbody>
-              ${filteredCompleted.map(child => `
+              ${sortedCompleted.map(child => `
                 <tr>
                   <td>${child.name}</td>
                   <td>${child.age}</td>
@@ -1147,6 +1155,77 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     console.error('Error loading history:', error);
     document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta baş verdi.</p>';
   }
+}
+
+// Get sort indicator symbol for column header
+function getSortIndicator(column) {
+  if (historySortBy !== column) return '';
+  return historySortDir === 'asc' ? '▲' : '▼';
+}
+
+// Change sort column and direction
+function sortHistoryBy(column) {
+  if (historySortBy === column) {
+    // Toggle direction if same column
+    historySortDir = historySortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    // New column, default to ascending
+    historySortBy = column;
+    historySortDir = 'asc';
+  }
+  loadHistoryData(false);
+}
+
+// Sort history data based on current sort settings
+function sortHistoryData(data) {
+  const sorted = [...data];
+  
+  sorted.sort((a, b) => {
+    let aVal, bVal;
+    
+    switch (historySortBy) {
+      case 'name':
+        aVal = (a.name || '').toLowerCase();
+        bVal = (b.name || '').toLowerCase();
+        return historySortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      
+      case 'age':
+        aVal = parseInt(a.age) || 0;
+        bVal = parseInt(b.age) || 0;
+        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      
+      case 'playZone':
+        aVal = (a.playZone || '').toLowerCase();
+        bVal = (b.playZone || '').toLowerCase();
+        return historySortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      
+      case 'duration':
+        // Handle unlimited vs numeric durations
+        aVal = a.duration === 'unlimited' ? Infinity : parseInt(a.duration) || 0;
+        bVal = b.duration === 'unlimited' ? Infinity : parseInt(b.duration) || 0;
+        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      
+      case 'price':
+        aVal = parseFloat(a.price) || 0;
+        bVal = parseFloat(b.price) || 0;
+        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      
+      case 'startTime':
+        aVal = a.startTime ? new Date(a.startTime).getTime() : 0;
+        bVal = b.startTime ? new Date(b.startTime).getTime() : 0;
+        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      
+      case 'endTime':
+        aVal = a.endTime ? new Date(a.endTime).getTime() : 0;
+        bVal = b.endTime ? new Date(b.endTime).getTime() : 0;
+        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      
+      default:
+        return 0;
+    }
+  });
+  
+  return sorted;
 }
 
 // Settings Modal Functions

@@ -1249,6 +1249,16 @@ body {
   border-right: 1px solid #555;
 }
 
+.history-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.history-table th.sortable:hover {
+  background: linear-gradient(135deg, #7a8eef 0%, #8b5bb8 100%);
+}
+
 .history-table th:last-child {
   border-right: none;
 }
