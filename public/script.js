@@ -1180,9 +1180,9 @@ function openSettingsModal() {
     const headerRow = document.createElement('div');
     headerRow.className = 'pass-type-row';
     headerRow.innerHTML = `
-      <div style="flex:1.2;">Ad</div>
+      <div style="flex:1;">Ad</div>
       <div style="flex:1;">Müddət</div>
-      <div style="flex:0.8;">Qiymət (AZN)</div>
+      <div style="flex:1;">Qiymət (AZN)</div>
       <div style="width:50px;"></div>
     `;
     container.appendChild(headerRow);

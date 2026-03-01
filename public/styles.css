@@ -880,11 +880,11 @@ body {
 }
 
 .settings-section {
-  margin-bottom: 12px;
-  padding: 12px;
-  background: #f9f9f9;
+  margin-bottom: 6px;
+  padding: 6px;
+  /* background: #f9f9f9;
   border-radius: 6px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #667eea; */
 }
 
 .settings-section h3 {
