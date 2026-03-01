@@ -1688,7 +1688,7 @@ body {
 }
 
 .form-input-number {
-  width: 80px;
+  width: 55px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -1696,6 +1696,10 @@ body {
 
 .form-label-nowrap {
   white-space: nowrap;
+}
+
+.form-label-spaced {
+  margin-left: 40px;
 }
 
 .input-helper-text {
