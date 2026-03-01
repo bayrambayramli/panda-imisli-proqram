@@ -202,6 +202,40 @@ app.post('/api/children/:id/end', (req, res) => {
   }
 });
 
+// Restore session (move from completed back to active) within 5 minutes
+app.post('/api/children/:id/restore', (req, res) => {
+  const { date } = req.query;
+  const currentDate = date || getTodayDate();
+  const { id } = req.params;
+
+  const data = loadData(currentDate);
+
+  const completedIndex = data.completed.findIndex(c => c.id == id);
+  if (completedIndex === -1) {
+    return res.status(404).json({ error: 'Child not found in completed sessions' });
+  }
+
+  const child = data.completed[completedIndex];
+  if (!child.endTime) {
+    return res.status(400).json({ error: 'Session end time is missing' });
+  }
+
+  const endedAtMs = new Date(child.endTime).getTime();
+  const nowMs = Date.now();
+  const restoreWindowMs = 5 * 60 * 1000;
+
+  if (!Number.isFinite(endedAtMs) || (nowMs - endedAtMs) > restoreWindowMs) {
+    return res.status(400).json({ error: 'Restore window expired (5 minutes)' });
+  }
+
+  child.endTime = null;
+  data.active.push(child);
+  data.completed.splice(completedIndex, 1);
+  saveData(currentDate, data);
+
+  return res.json(child);
+});
+
 // Delete child
 app.delete('/api/children/:id', (req, res) => {
   const { date } = req.query;

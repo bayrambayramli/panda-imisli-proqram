@@ -508,6 +508,8 @@ function createCompletedRow(child) {
   const startTime = new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
   const endTime = child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
   const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
+  const canRestore = child.endTime && (Date.now() - new Date(child.endTime).getTime() <= 5 * 60 * 1000);
+  const restoreButtonHtml = canRestore ? `<button class="btn-action btn-restore" onclick="restoreSession('${child.id}')">Bərpa et</button>` : '';
   
   row.innerHTML = `
     <td>${child.name}</td>
@@ -522,6 +524,7 @@ function createCompletedRow(child) {
     <td>
       <div class="actions-cell">
         <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'completed')">Dəyişdir</button>
+        ${restoreButtonHtml}
         <button class="btn-action btn-delete" onclick="deleteChild('${child.id}', 'completed')">Sil</button>
       </div>
     </td>
@@ -685,6 +688,30 @@ async function endSession(childId) {
     loadData();
   } catch (error) {
     console.error('Error ending session:', error);
+  }
+}
+
+// Restore completed session back to active (within 5 minutes)
+async function restoreSession(childId) {
+  const ok = await showUiPrompt('Bitmiş seansı aktiv seanslara qaytarmaq istəyirsiniz?');
+  if (!ok) return;
+
+  try {
+    const response = await fetch(`/api/children/${childId}/restore?date=${currentDate}`, {
+      method: 'POST'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const message = errorData.error || 'Seansı bərpa etmək mümkün olmadı.';
+      await showUiAlert(message);
+      return;
+    }
+
+    loadData();
+  } catch (error) {
+    console.error('Error restoring session:', error);
+    await showUiAlert('Seansı bərpa edərkən xəta baş verdi.');
   }
 }
 

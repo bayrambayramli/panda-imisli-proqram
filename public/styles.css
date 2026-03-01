@@ -615,6 +615,20 @@ body {
   box-shadow: 0 3px 6px rgba(46, 125, 50, 0.2);
 }
 
+.btn-restore {
+  background-color: #E0F2F1;
+  color: #00695C;
+  border-color: #26A69A;
+  font-size: 16px;
+}
+
+.btn-restore:hover {
+  background-color: #B2DFDB;
+  border-color: #00897B;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 137, 123, 0.2);
+}
+
 .btn-end {
   background-color: #D32F2F;
   color: #fff;
