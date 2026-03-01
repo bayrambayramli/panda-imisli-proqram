@@ -1,5 +1,21 @@
 /* Aktiv.html Independent Styles */
 
+/* CSS Variables */
+:root {
+  --aktiv-primary: #07690a;
+  --aktiv-primary-dark: #04440e;
+  --aktiv-success: #4CAF50;
+  --aktiv-warning: #f0b812;
+  --aktiv-danger: #f44336;
+  --aktiv-text: #000;
+  --aktiv-text-light: #999;
+  --aktiv-bg-light: #f9f9f9;
+  --aktiv-bg-lighter: #f5f5f5;
+  --aktiv-bg-white: #ffffff;
+  --aktiv-border: #999;
+  --aktiv-border-light: #fff;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,18 +23,17 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #07690a 0%, #04440e 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, var(--aktiv-primary) 0%, var(--aktiv-primary-dark) 100%);
   color: #333;
   min-height: 100vh;
   padding: 20px;
-  margin: 0;
 }
 
 .container {
   max-width: 100%;
   margin: 0 auto;
-  background: white;
+  background: var(--aktiv-bg-white);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -29,20 +44,20 @@ body {
 
 /* Section */
 .section {
-  border: 2px solid #07690a;
+  border: 2px solid var(--aktiv-primary);
   border-radius: 12px;
   padding: 10px;
-  background: #f9f9f9;
+  background: var(--aktiv-bg-light);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   height: 100%;
 }
 
 .section h2 {
-  color: #07690a;
+  color: var(--aktiv-primary);
   margin-bottom: 10px;
   font-size: 26px;
   font-weight: 700;
-  border-bottom: 4px solid #07690a;
+  border-bottom: 4px solid var(--aktiv-primary);
   padding-bottom: 8px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
@@ -59,9 +74,9 @@ body {
 .table-wrapper {
   flex: 1;
   overflow-y: auto;
-  border: 1px solid #07690a;
+  border: 1px solid var(--aktiv-primary);
   border-radius: 8px;
-  background: white;
+  background: var(--aktiv-bg-white);
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -109,8 +124,8 @@ body {
 }
 
 .sessions-table thead {
-  background: #07690a;
-  color: white;
+  background: var(--aktiv-primary);
+  color: var(--aktiv-bg-white);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -121,25 +136,25 @@ body {
   padding: 8px 12px;
   text-align: left;
   font-weight: 700;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-right: 2px solid var(--aktiv-border-light);
+  border-bottom: 2px solid var(--aktiv-border-light);
   white-space: nowrap;
   font-size: 26px;
-  color: #fff;
+  color: var(--aktiv-border-light);
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .sessions-table th:last-child {
   border-right: none;
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid var(--aktiv-border-light);
 }
 
 .sessions-table td {
   padding: 6px 8px;
-  border-bottom: 2px solid #999;
-  border-right: 2px solid #999;
+  border-bottom: 2px solid var(--aktiv-border);
+  border-right: 2px solid var(--aktiv-border);
   font-size: 28px;
-  color: #000;
+  color: var(--aktiv-text);
   font-weight: 600;
 }
 
@@ -147,23 +162,17 @@ body {
   border-right: none;
 }
 
-/* .sessions-table tbody tr:hover {
-  background-color: #e8f5e9;
-  transform: scale(1.01);
-  transition: all 0.2s ease;
-} */
-
 .sessions-table tbody tr:nth-child(even) {
-  background-color: #f5f5f5;
+  background-color: var(--aktiv-bg-lighter);
 }
 
 .sessions-table tbody tr:nth-child(odd) {
-  background-color: #ffffff;
+  background-color: var(--aktiv-bg-white);
 }
 
 .sessions-table td:first-child {
   font-weight: 700;
-  color: #07690a;
+  color: var(--aktiv-primary);
 }
 
 /* Timer Cell and Timer Styles */
@@ -173,15 +182,15 @@ body {
 }
 
 .timer-cell.timer-green {
-  background-color: #4CAF50 !important;
+  background-color: var(--aktiv-success);
 }
 
 .timer-cell.timer-yellow {
-  background-color: #f0b812 !important;
+  background-color: var(--aktiv-warning);
 }
 
 .timer-cell.timer-red {
-  background-color: #f44336 !important;
+  background-color: var(--aktiv-danger);
 }
 
 .timer {
@@ -189,7 +198,7 @@ body {
   padding: 10px 16px;
   border-radius: 8px;
   background-color: transparent;
-  color: white;
+  color: var(--aktiv-bg-white);
   min-width: 120px;
   text-align: center;
   display: inline-block;
@@ -212,85 +221,15 @@ body {
 .no-data-msg {
   text-align: center;
   padding: 40px;
-  color: #999;
+  color: var(--aktiv-text-light);
   font-size: 22px;
   font-style: italic;
   display: none;
 }
 
-/* Responsive Design for Smaller Screens */
-@media (max-width: 1200px) {
-  .section h2 {
-    font-size: 26px;
-  }
-
-  .sessions-table {
-    font-size: 16px;
-  }
-
-  .sessions-table th {
-    font-size: 24px;
-    padding: 8px 10px;
-  }
-
-  .sessions-table td {
-    font-size: 26px;
-    padding: 6px 6px;
-  }
-
-  .timer {
-    font-size: 20px;
-    padding: 8px 14px;
-    min-width: 100px;
-  }
-}
-
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-
-  .container {
-    min-height: calc(100vh - 20px);
-  }
-
-  .section {
-    padding: 15px;
-  }
-
-  .section h2 {
-    font-size: 24px;
-  }
-
-  .sessions-table {
-    font-size: 14px;
-  }
-
-  .sessions-table th {
-    font-size: 20px;
-    padding: 6px 6px;
-  }
-
-  .sessions-table td {
-    font-size: 22px;
-    padding: 4px 4px;
-  }
-
-  .timer {
-    font-size: 16px;
-    padding: 6px 10px;
-    min-width: 80px;
-  }
-
-  .no-data-msg {
-    font-size: 18px;
-    padding: 30px;
-  }
-}
-
 /* Pagination styles */
 .page-hidden {
-  display: none !important;
+  display: none;
 }
 
 .page-indicator {
@@ -298,9 +237,9 @@ body {
   padding: 15px;
   font-size: 28px;
   font-weight: 700;
-  color: #07690a;
+  color: var(--aktiv-primary);
   background: #f0f9f0;
-  border-top: 3px solid #07690a;
+  border-top: 3px solid var(--aktiv-primary);
   margin-top: auto;
   text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
@@ -328,35 +267,4 @@ body {
 
 .custom-message-page.fade-out {
   animation: fadeOut 0.5s ease-out forwards;
-}
-
-@media (max-width: 480px) {
-  .section h2 {
-    font-size: 20px;
-  }
-
-  .sessions-table {
-    font-size: 12px;
-  }
-
-  .sessions-table th {
-    font-size: 18px;
-    padding: 6px 4px;
-  }
-
-  .sessions-table td {
-    font-size: 20px;
-    padding: 4px 3px;
-  }
-
-  .timer {
-    font-size: 14px;
-    padding: 4px 8px;
-    min-width: 70px;
-  }
-
-  .no-data-msg {
-    font-size: 16px;
-    padding: 20px;
-  }
 }
