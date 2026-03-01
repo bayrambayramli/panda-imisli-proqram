@@ -302,8 +302,17 @@ body {
   flex-direction: column;
 }
 
+/* When completed is visible (default), limit active sessions height to show ~5-6 rows */
 .active-sessions-section {
   border: 2px solid #4CAF50;
+  max-height: 400px;
+  flex: 0 0 400px;
+}
+
+/* When completed IS collapsed, active sessions expands to fill space */
+.content.completed-collapsed .active-sessions-section {
+  max-height: none;
+  flex: 1;
 }
 
 .active-sessions-section h2 {
@@ -318,6 +327,42 @@ body {
 .completed-sessions-section h2 {
   color: #607D8B;
   border-bottom-color: #90A4AE;
+}
+
+/* Collapse styling for completed sessions */
+.completed-sessions-section.collapsed {
+  flex: 0 0 auto;
+  min-height: 60px;
+}
+
+.completed-sessions-section.collapsed .table-wrapper {
+  display: none;
+}
+
+.completed-sessions-section.collapsed h2 {
+  margin-bottom: 0;
+}
+
+.btn-collapse-section {
+  position: absolute;
+  top: 10px;
+  right: 150px;
+  padding: 6px 10px;
+  background: #FFF3E0;
+  color: #E65100;
+  border: 2px solid #FF9800;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-collapse-section:hover {
+  background: #FFE0B2;
+  border-color: #E65100;
+  box-shadow: 0 4px 8px rgba(230, 81, 0, 0.25);
+  transform: translateY(-2px);
 }
 
 .btn-export {
@@ -504,15 +549,15 @@ body {
 }
 
 .btn-action {
-  padding: 6px 8px;
+  padding: 4px 6px;
   border: 2px solid;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   transition: all 0.3s ease;
   white-space: nowrap;
-  min-width: 90px;
+  min-width: 80px;
   text-align: center;
 }
 
@@ -813,6 +858,18 @@ body {
   z-index: 2000;
   padding: 20px;
   overflow: auto;
+  max-height: none !important;
+  flex: 1 !important;
+}
+
+/* Hide other sections when one is in fullscreen */
+.content:has(.fullscreen-section) .section:not(.fullscreen-section) {
+  display: none;
+}
+
+/* Also hide add-child section when any session is fullscreen */
+.content:has(.fullscreen-section) .add-child-section {
+  display: none;
 }
 
 .fullscreen-modal {
@@ -895,14 +952,15 @@ body {
 
 .btn-section-fullscreen {
   position: absolute;
-  top: 12px;
-  right: 65px;
+  top: 10px;
+  right: 60px;
   padding: 6px 10px;
   background: #E8F5E9;
   color: #2E7D32;
   border: 2px solid #4CAF50;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 12px;
   font-weight: 600;
   transition: all 0.3s ease;
 }

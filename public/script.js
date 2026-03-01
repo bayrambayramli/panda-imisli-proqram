@@ -253,6 +253,24 @@ function toggleFullscreen(section) {
   }
 }
 
+// Toggle collapse/expand completed sessions
+function toggleCompletedSessions() {
+  const section = document.querySelector('.completed-sessions-section');
+  const content = document.querySelector('.content');
+  const btn = document.getElementById('completedCollapseBtn');
+  if (!section || !btn || !content) return;
+  
+  const isCollapsed = section.classList.toggle('collapsed');
+  btn.textContent = isCollapsed ? '▶ Göstər' : '▼ Gizlət';
+  
+  // Toggle class on content to control active sessions expansion
+  if (isCollapsed) {
+    content.classList.add('completed-collapsed');
+  } else {
+    content.classList.remove('completed-collapsed');
+  }
+}
+
 // UI alert implementation (info/error only - just OK button)
 let _uiAlertResolve = null;
 function showUiAlert(message) {

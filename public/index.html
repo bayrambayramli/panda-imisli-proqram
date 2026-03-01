@@ -80,7 +80,8 @@
 
       <!-- Section 2: Active Sessions (Middle) -->
       <section class="section active-sessions-section">
-        <h2>🎮 Aktiv Seanslar (<span id="activeCount">0</span>) <button class="btn-section-fullscreen" id="activeFullBtn">Tam ekran</button></h2>
+        <h2>🎮 Aktiv Seanslar (<span id="activeCount">0</span>)</h2>
+        <button class="btn-section-fullscreen" id="activeFullBtn">Tam ekran</button>
         <div class="table-wrapper">
           <table id="activeTable" class="sessions-table">
             <thead>
@@ -107,7 +108,9 @@
 
       <!-- Section 3: Completed Sessions (Bottom) -->
       <section class="section completed-sessions-section">
-        <h2>✅ Bitmiş Seanslar (<span id="completedCount">0</span>) <button class="btn-section-fullscreen" id="completedFullBtn">Tam ekran</button></h2>
+        <h2>✅ Bitmiş Seanslar (<span id="completedCount">0</span>)</h2>
+        <button class="btn-collapse-section" id="completedCollapseBtn" onclick="toggleCompletedSessions()">▼ Gizlət</button>
+        <button class="btn-section-fullscreen" id="completedFullBtn">Tam ekran</button>
         <div class="table-wrapper">
           <table id="completedTable" class="sessions-table">
             <thead>
