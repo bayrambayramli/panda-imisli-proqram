@@ -783,6 +783,21 @@ async function openEditModal(childId, source) {
   document.getElementById('editPlayZone').value = child.playZone;
   document.getElementById('editNotes').value = child.notes || '';
   
+  // Show/hide and populate start time field (only for active sessions)
+  const startTimeGroup = document.getElementById('editStartTimeGroup');
+  const startTimeInput = document.getElementById('editStartTime');
+  if (source === 'active' && child.startTime) {
+    startTimeGroup.style.display = 'flex';
+    // Convert ISO datetime to HH:MM format for time input
+    const startDate = new Date(child.startTime);
+    const hours = String(startDate.getHours()).padStart(2, '0');
+    const minutes = String(startDate.getMinutes()).padStart(2, '0');
+    startTimeInput.value = `${hours}:${minutes}`;
+  } else {
+    startTimeGroup.style.display = 'none';
+    startTimeInput.value = '';
+  }
+  
   // Find and set the correct pass type in the dropdown
   if (child.passTypeId && settings.passTypes) {
     const passType = settings.passTypes.find(pt => pt.id === child.passTypeId);
@@ -831,6 +846,25 @@ async function saveEdit() {
     passTypeName: passType.name,
     notes: document.getElementById('editNotes').value
   };
+  
+  // Update start time if editing an active session
+  if (editingSource === 'active') {
+    const startTimeInput = document.getElementById('editStartTime').value;
+    if (startTimeInput) {
+      // Get the current date from the child being edited
+      const response = await fetch(`/api/data/${currentDate}`);
+      const data = await response.json();
+      const child = data.active.find(c => c.id == editingChildId);
+      
+      if (child && child.startTime) {
+        // Keep the same date, update only time
+        const startDate = new Date(child.startTime);
+        const [hours, minutes] = startTimeInput.split(':');
+        startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        updates.startTime = startDate.toISOString();
+      }
+    }
+  }
   
   try {
     await fetch(`/api/children/${editingChildId}?date=${currentDate}`, {
