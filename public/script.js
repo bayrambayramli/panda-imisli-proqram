@@ -672,7 +672,7 @@ function startTimer(childId, durationValue, startTimeISO) {
 
 // End session
 async function endSession(childId) {
-  const ok = await showUiPrompt('Seansı bitirmək istədiyinizə əminsiniz?');
+  const ok = await showUiPrompt('Seansı bitirmək istədiyinizə əminsiniz? Bitirdikdən sonra ilk 5 dəqiqə ərzində seansı bərpa etmək mümkündür.');
   if (!ok) return;
 
   try {
@@ -693,7 +693,7 @@ async function endSession(childId) {
 
 // Restore completed session back to active (within 5 minutes)
 async function restoreSession(childId) {
-  const ok = await showUiPrompt('Bitmiş seansı aktiv seanslara qaytarmaq istəyirsiniz?');
+  const ok = await showUiPrompt('Bitmiş seansı geri qaytarmaq istəyirsiniz?');
   if (!ok) return;
 
   try {
@@ -717,7 +717,7 @@ async function restoreSession(childId) {
 
 // Delete child
 async function deleteChild(childId, source) {
-  const delConfirm = await showUiPrompt('Bu girişi silmək istəyirsiniz?');
+  const delConfirm = await showUiPrompt('Bu girişi silmək istəyirsiniz? Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.');
   if (!delConfirm) {
     return;
   }

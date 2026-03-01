@@ -153,20 +153,6 @@
       "notes": "",
       "startTime": "2026-03-01T12:41:09.678Z",
       "endTime": null
-    },
-    {
-      "id": 1772380030934,
-      "name": "ghh",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T15:47:10.934Z",
-      "endTime": null
     }
   ],
   "completed": [
@@ -463,6 +449,20 @@
       "notes": "",
       "startTime": "2026-03-01T15:08:22.485Z",
       "endTime": "2026-03-01T15:47:53.547Z"
+    },
+    {
+      "id": 1772380030934,
+      "name": "ghh",
+      "age": 4,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "extendedTime": 0,
+      "notes": "",
+      "startTime": "2026-03-01T15:47:10.934Z",
+      "endTime": "2026-03-01T15:57:41.778Z"
     }
   ]
 }
