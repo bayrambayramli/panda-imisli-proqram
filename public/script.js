@@ -244,6 +244,9 @@ function toggleFullscreen(section) {
   if (section === 'active') {
     const btn = document.getElementById('activeFullBtn');
     if (btn) btn.textContent = isNow ? 'Tam Ekrandan Çıx' : 'Tam Ekran';
+    // Hide/show TV Ekranı button
+    const tvBtn = document.getElementById('activeTvBtn');
+    if (tvBtn) tvBtn.style.display = isNow ? 'none' : 'block';
   } else {
     const btn = document.getElementById('completedFullBtn');
     if (btn) btn.textContent = isNow ? 'Tam Ekrandan Çıx' : 'Tam Ekran';
