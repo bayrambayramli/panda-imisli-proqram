@@ -1,6 +1,7 @@
 # Files
 *.xlsx
 data/
+data/*
 
 # Logs
 logs

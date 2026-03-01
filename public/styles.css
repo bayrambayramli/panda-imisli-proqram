@@ -1413,13 +1413,13 @@ body {
 .reports-tabs {
   display: flex;
   gap: 8px;
-  margin: 15px 0;
+  margin: 6px 0;
   border-bottom: 2px solid #ddd;
   flex-wrap: wrap;
 }
 
 .report-tab-btn {
-  padding: 10px 15px;
+  padding: 8px 12px;
   background-color: #f0f0f0;
   border: 2px solid transparent;
   border-radius: 4px 4px 0 0;
@@ -1557,6 +1557,9 @@ body {
 
 /* Compact styles for statistics tab */
 .statistics-filters {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
   margin: 8px 0 !important;
   padding: 6px 10px !important;
   gap: 10px !important;
