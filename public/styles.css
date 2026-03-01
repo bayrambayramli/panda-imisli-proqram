@@ -880,7 +880,7 @@ body {
 
 /* History Modal */
 .history-modal {
-  max-width: 800px;
+  max-width: 1000px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -1153,10 +1153,10 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 15px;
+  padding: 8px;
   background: #f9f9f9;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
 }
 
