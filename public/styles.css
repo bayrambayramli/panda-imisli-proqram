@@ -435,28 +435,30 @@ body {
 }
 
 .sessions-table th {
-  padding: 8px 4px;
+  padding: 5px 3px;
   text-align: left;
   font-weight: 700;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
   white-space: nowrap;
-  font-size: 15px;
+  font-size: 16px;
   color: #fff;
+  line-height: 1.1;
 }
 
 .sessions-table th:last-child {
   border-right: none;
-  border-bottom: 2px solid #fff;
+  border-bottom: 1px solid #fff;
 }
 
 .sessions-table td {
-  padding: 4px 2px;
-  border-bottom: 2px solid #999;
-  border-right: 2px solid #999;
+  padding: 2px 2px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
   font-size: 16px;
   color: #000;
   font-weight: 500;
+  line-height: 1.1;
 }
 
 .sessions-table td:last-child {
@@ -504,7 +506,7 @@ body {
 
 .timer {
   font-weight: bold;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 6px;
   background-color: transparent;
   color: white;
@@ -515,6 +517,7 @@ body {
   white-space: nowrap;
   font-size: 16px;
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  line-height: 1.1;
 }
 
 .timer.danger {
@@ -528,13 +531,15 @@ body {
 
 /* Editable Fields */
 .editable-field {
-  padding: 6px;
+  padding: 4px;
   border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
   font-weight: 500;
   color: #000;
+  font-size: 14px;
+  line-height: 1.1;
 }
 
 .editable-field.editable-placeholder {
@@ -554,10 +559,11 @@ body {
 
 .editable-field input {
   width: 100%;
-  padding: 4px;
+  padding: 2px;
   border: 1px solid #667eea;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.1;
 }
 
 /* Action Buttons */
@@ -568,16 +574,17 @@ body {
 }
 
 .btn-action {
-  padding: 4px 6px;
+  padding: 2px 4px;
   border: 2px solid;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   transition: all 0.3s ease;
   white-space: nowrap;
-  min-width: 80px;
+  min-width: 70px;
   text-align: center;
+  line-height: 1.2;
 }
 
 .btn-edit {
