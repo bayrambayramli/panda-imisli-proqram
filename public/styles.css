@@ -196,7 +196,7 @@ body {
 .section {
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  padding: 15px;
+  padding: 8px;
   background: #f9f9f9;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -204,7 +204,7 @@ body {
 
 .section h2 {
   color: #000;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   font-size: 20px;
   font-weight: 700;
   border-bottom: 3px solid #667eea;
@@ -223,7 +223,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   align-items: end;
 }
 
