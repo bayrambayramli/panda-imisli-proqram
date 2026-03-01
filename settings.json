@@ -8,15 +8,15 @@
     },
     {
       "id": 2,
-      "name": "Limitsiz",
-      "duration": "unlimited",
-      "price": 8
+      "name": "1 saat - Endirimli",
+      "duration": 60,
+      "price": 3
     },
     {
       "id": 3,
-      "name": "1 saat 50% Endirim",
-      "duration": 60,
-      "price": 2.5
+      "name": "Limitsiz",
+      "duration": "unlimited",
+      "price": 8
     }
   ],
   "playZones": [

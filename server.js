@@ -288,7 +288,6 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     { header: 'Yaş', key: 'age', width: 8 },
     { header: 'Oyun Zonası', key: 'playZone', width: 15 },
     { header: 'Bilet', key: 'passTypeName', width: 20 },
-    { header: 'Əlavə Vaxt', key: 'extendedTime', width: 12 },
     { header: 'Müddət', key: 'duration', width: 12 },
     { header: 'Məbləğ', key: 'price', width: 10 },
     { header: 'Qeydlər', key: 'notes', width: 30 },
@@ -300,14 +299,12 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     // Translate unlimited duration to Azerbaijani
     const durationDisplay = child.duration === 'unlimited' ? 'Limitsiz' : child.duration;
     const passTypeDisplay = child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq');
-    const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
     
     sheet.addRow({
       name: child.name,
       age: child.age,
       playZone: child.playZone,
       passTypeName: passTypeDisplay,
-      extendedTime: extendedTimeDisplay,
       duration: durationDisplay,
       price: child.price,
       notes: child.notes || '',

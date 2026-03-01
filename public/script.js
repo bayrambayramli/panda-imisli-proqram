@@ -459,7 +459,6 @@ function createActiveRow(child) {
     `<span class="editable-field editable-placeholder" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
   
   const startTimeStr = child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
-  const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
   const timeButtonsHtml = '';
 
   row.innerHTML = `
@@ -469,7 +468,6 @@ function createActiveRow(child) {
     <td>${startTimeStr}</td>
     <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
     <td>${child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq')}</td>
-    <td>${extendedTimeDisplay}</td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>
@@ -496,7 +494,6 @@ function createCompletedRow(child) {
   
   const startTime = new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
   const endTime = child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
-  const extendedTimeDisplay = (child.extendedTime && child.extendedTime > 0) ? `+${child.extendedTime} dəq` : '-';
   const canRestore = child.endTime && (Date.now() - new Date(child.endTime).getTime() <= 5 * 60 * 1000);
   const restoreButtonHtml = canRestore ? `<button class="btn-action btn-restore" onclick="restoreSession('${child.id}')">Bərpa et</button>` : '';
   
@@ -507,7 +504,6 @@ function createCompletedRow(child) {
     <td>${startTime}</td>
     <td>${endTime}</td>
     <td>${child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq')}</td>
-    <td>${extendedTimeDisplay}</td>
     <td>${child.price} AZN</td>
     <td>${notesContent}</td>
     <td>
@@ -569,7 +565,6 @@ async function addChild() {
         price: passType.price,
         passTypeId: passType.id,
         passTypeName: passType.name,
-        extendedTime: 0,
         notes
       })
     });
