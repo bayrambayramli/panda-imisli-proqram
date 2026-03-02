@@ -125,7 +125,7 @@ function setupEventListeners() {
       }
       
       if (startDate > endDate) {
-        await showUiAlert('Başlanğıc tarixi son tarixin üstündə ola bilməz.');
+        await showUiAlert('Başlanğıc tarixi son tarixdən sonra ola bilməz.');
         return;
       }
       
@@ -1173,7 +1173,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     }
     
     if (startDate > endDate) {
-      await showUiAlert('Başlanğıc tarixi son tarixin üstündə ola bilməz.');
+      await showUiAlert('Başlanğıc tarixi son tarixdən sonra ola bilməz.');
       return;
     }
     
