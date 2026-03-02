@@ -1239,36 +1239,38 @@ function openSettingsModal() {
   // Populate pass types as editable rows
   const container = document.getElementById('passTypesContainer');
   if (container) {
-    container.innerHTML = '';
-    
-    // Add header row
-    const headerRow = document.createElement('div');
-    headerRow.className = 'pass-type-row';
-    headerRow.innerHTML = `
-      <div class="flex-1">Ad</div>
-      <div class="flex-1">Müddət</div>
-      <div class="flex-1">Qiymət (AZN)</div>
-      <div class="width-50"></div>
+    container.innerHTML = `
+      <table class="pass-types-table">
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Müddət</th>
+            <th>Qiymət (AZN)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="passTypesBody">
+        </tbody>
+      </table>
     `;
-    container.appendChild(headerRow);
     
+    const tbody = document.getElementById('passTypesBody');
     settings.passTypes.forEach(pt => {
-      const row = document.createElement('div');
-      row.className = 'pass-type-row';
+      const row = document.createElement('tr');
       row.setAttribute('data-id', pt.id);
       row.innerHTML = `
-        <input type="text" class="pass-name flex-1-2" placeholder="Adı" value="${pt.name}" data-id="${pt.id}" />
-        <select class="pass-duration flex-1" data-id="${pt.id}">
+        <td><input type="text" class="pass-name" placeholder="Adı" value="${pt.name}" data-id="${pt.id}" /></td>
+        <td><select class="pass-duration" data-id="${pt.id}">
           <option value="60" ${pt.duration === 60 ? 'selected' : ''}>1 Saat</option>
           <option value="120" ${pt.duration === 120 ? 'selected' : ''}>2 Saat</option>
           <option value="180" ${pt.duration === 180 ? 'selected' : ''}>3 Saat</option>
           <option value="240" ${pt.duration === 240 ? 'selected' : ''}>4 Saat</option>
           <option value="unlimited" ${pt.duration === 'unlimited' ? 'selected' : ''}>Limitsiz</option>
-        </select>
-        <input type="number" class="pass-price flex-0-8" placeholder="Qiymət" value="${pt.price}" data-id="${pt.id}" step="0.01" />
-        <button class="btn-delete" onclick="removePassType(${pt.id})">Sil</button>
+        </select></td>
+        <td><input type="number" class="pass-price" placeholder="Qiymət" value="${pt.price}" data-id="${pt.id}" step="0.01" /></td>
+        <td><button class="btn-delete" onclick="removePassType(${pt.id})">Sil</button></td>
       `;
-      container.appendChild(row);
+      tbody.appendChild(row);
     });
   }
 
@@ -1303,7 +1305,6 @@ function openSettingsModal() {
     headerRow.className = 'play-zone-row';
     headerRow.innerHTML = `
       <div class="flex-1">Zona Adı</div>
-      <div class="width-50"></div>
     `;
     zonesContainer.appendChild(headerRow);
     
@@ -1329,26 +1330,26 @@ function closeSettingsModal() {
 
 function addPassTypeRow() {
   const container = document.getElementById('passTypesContainer');
-  if (!container) return;
+  const tbody = document.getElementById('passTypesBody');
+  if (!container || !tbody) return;
 
   const newId = Math.max(...settings.passTypes.map(p => p.id || 0), 0) + 1;
 
-  const row = document.createElement('div');
-  row.className = 'pass-type-row';
+  const row = document.createElement('tr');
   row.setAttribute('data-id', newId);
   row.innerHTML = `
-    <input type="text" class="pass-name flex-1-5" placeholder="Adı" data-id="${newId}" />
-    <select class="pass-duration flex-1" data-id="${newId}">
+    <td><input type="text" class="pass-name" placeholder="Adı" data-id="${newId}" /></td>
+    <td><select class="pass-duration" data-id="${newId}">
       <option value="60">1 Saat</option>
       <option value="120">2 Saat</option>
       <option value="180">3 Saat</option>
       <option value="240">4 Saat</option>
       <option value="unlimited">Limitsiz</option>
-    </select>
-    <input type="number" class="pass-price flex-0-5" placeholder="Qiymət" data-id="${newId}" step="0.01" />
-    <button class="btn-delete" onclick="removePassType(${newId})">Sil</button>
+    </select></td>
+    <td><input type="number" class="pass-price" placeholder="Qiymət" data-id="${newId}" step="0.01" /></td>
+    <td><button class="btn-delete" onclick="removePassType(${newId})">Sil</button></td>
   `;
-  container.appendChild(row);
+  tbody.appendChild(row);
 }
 
 function removePassType(idOrElem) {
@@ -1356,14 +1357,14 @@ function removePassType(idOrElem) {
   let id = null;
   if (typeof idOrElem === 'number') {
     id = idOrElem;
-    const row = document.querySelector('.pass-type-row[data-id="' + id + '"]');
+    const row = document.querySelector('#passTypesBody tr[data-id="' + id + '"]');
     if (row) row.remove();
     settings.passTypes = settings.passTypes.filter(pt => pt.id !== id);
     return;
   }
 
   // If element (e.g., this from onclick), find row
-  const row = idOrElem && idOrElem.closest ? idOrElem.closest('.pass-type-row') : null;
+  const row = idOrElem && idOrElem.closest ? idOrElem.closest('tr') : null;
   if (row) {
     const attr = row.getAttribute('data-id');
     if (attr) {
@@ -1417,8 +1418,8 @@ function removePlayZone(idOrElem) {
 }
 
 async function saveSettings() {
-  // Gather all pass rows from container
-  const rows = document.querySelectorAll('#passTypesContainer .pass-type-row');
+  // Gather all pass rows from table
+  const rows = document.querySelectorAll('#passTypesContainer tbody tr');
   const passTypes = [];
 
   rows.forEach(row => {
