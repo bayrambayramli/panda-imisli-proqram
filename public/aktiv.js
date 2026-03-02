@@ -2,7 +2,7 @@ const timerIntervals = {};
 
 // Pagination variables
 let currentPage = 1;
-const rowsPerPage = 8;
+const rowsPerPage = 7;
 let totalPages = 1;
 let autoRotationInterval = null;
 let tvPaginationFrequency = 5; // Default value, will be loaded from settings
