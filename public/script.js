@@ -1289,6 +1289,12 @@ function openSettingsModal() {
     tvCustomMessageInput.value = settings.tvCustomMessage || '';
   }
 
+  // Set TV show unlimited pass types toggle
+  const tvShowUnlimitedPassTypesInput = document.getElementById('tvShowUnlimitedPassTypes');
+  if (tvShowUnlimitedPassTypesInput) {
+    tvShowUnlimitedPassTypesInput.checked = settings.tvShowUnlimitedPassTypes !== false;
+  }
+
   // Set TV custom message enabled toggle
   const tvCustomMessageEnabledInput = document.getElementById('tvCustomMessageEnabled');
   if (tvCustomMessageEnabledInput) {
@@ -1460,6 +1466,7 @@ async function saveSettings() {
 
   const endDayTime = document.getElementById('endDayHour').value;
   const tvPaginationFrequency = parseInt(document.getElementById('tvPaginationFrequency').value) || 5;
+  const tvShowUnlimitedPassTypes = document.getElementById('tvShowUnlimitedPassTypes').checked;
   const tvCustomMessage = document.getElementById('tvCustomMessage').value.trim();
   const tvCustomMessageEnabled = document.getElementById('tvCustomMessageEnabled').checked;
 
@@ -1487,7 +1494,7 @@ async function saveSettings() {
     const response = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime, tvPaginationFrequency, tvCustomMessage, tvCustomMessageEnabled })
+      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime, tvPaginationFrequency, tvShowUnlimitedPassTypes, tvCustomMessage, tvCustomMessageEnabled })
     });
 
     if (response.ok) {

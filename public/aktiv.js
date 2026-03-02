@@ -6,6 +6,7 @@ const rowsPerPage = 7;
 let totalPages = 1;
 let autoRotationInterval = null;
 let tvPaginationFrequency = 5; // Default value, will be loaded from settings
+let tvShowUnlimitedPassTypes = true; // Toggle to show/hide unlimited pass types on TV
 let tvCustomMessage = ''; // Custom message for last page
 let tvCustomMessageEnabled = false; // Toggle for custom message display
 
@@ -120,6 +121,11 @@ function renderActiveSessions(children) {
   }
 
   tbody.innerHTML = '';
+
+  // Filter out unlimited pass types if the toggle is off
+  if (!tvShowUnlimitedPassTypes) {
+    children = children.filter(child => child.duration !== 'unlimited');
+  }
 
   if (!children || children.length === 0) {
     // If custom message is enabled and not empty, show it instead of empty table
@@ -341,6 +347,9 @@ async function loadSettings() {
     const settings = await response.json();
     if (settings.tvPaginationFrequency) {
       tvPaginationFrequency = settings.tvPaginationFrequency;
+    }
+    if (settings.tvShowUnlimitedPassTypes !== undefined) {
+      tvShowUnlimitedPassTypes = settings.tvShowUnlimitedPassTypes;
     }
     if (settings.tvCustomMessage) {
       tvCustomMessage = settings.tvCustomMessage;
