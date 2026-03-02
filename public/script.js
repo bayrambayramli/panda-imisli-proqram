@@ -102,13 +102,39 @@ function setupEventListeners() {
     historyNameSearch.addEventListener('input', () => loadHistoryData(false));
   }
   document.getElementById('historyExportBtn').addEventListener('click', async () => {
-    const date = document.getElementById('historyDate').value;
-    if (!date) {
-      await showUiAlert('Lütfən tarixi seçin.');
-      return;
+    const mode = document.querySelector('input[name="historyMode"]:checked').value;
+    
+    let url = '';
+    let filename = '';
+    
+    if (mode === 'single') {
+      const date = document.getElementById('historyDate').value;
+      if (!date) {
+        await showUiAlert('Lütfən tarixi seçin.');
+        return;
+      }
+      url = `/api/exportExcel/${date}`;
+      filename = `panda_imisli_${date}.xlsx`;
+    } else {
+      const startDate = document.getElementById('historyStartDate').value;
+      const endDate = document.getElementById('historyEndDate').value;
+      
+      if (!startDate || !endDate) {
+        await showUiAlert('Lütfən başlanğıc və son tarixini seçin.');
+        return;
+      }
+      
+      if (startDate > endDate) {
+        await showUiAlert('Başlanğıc tarixi son tarixin üstündə ola bilməz.');
+        return;
+      }
+      
+      url = `/api/exportExcel?startDate=${startDate}&endDate=${endDate}`;
+      filename = `panda_imisli_${startDate}_${endDate}.xlsx`;
     }
+    
     try {
-      const response = await fetch(`/api/exportExcel/${date}`);
+      const response = await fetch(url);
       if (!response.ok) {
         const errorData = await response.json();
         await showUiAlert(errorData.error || 'Excel faylını yükləmək mümkün olmadı.');
@@ -116,13 +142,13 @@ function setupEventListeners() {
       }
       // If successful, download the file
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `panda_imisli_${date}.xlsx`;
+      a.href = downloadUrl;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     } catch (error) {
       console.error('Export error:', error);
@@ -1190,7 +1216,7 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
       
       html += `
         <div class="history-section">
-          <h3>✅ Bitmiş Seanslar (${sortedCompleted.length})</h3>
+          <h3 class="history-section-title">✅ Bitmiş Seanslar (${sortedCompleted.length})</h3>
           <table class="history-table">
             <thead>
               <tr>
@@ -1199,22 +1225,28 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                 <th class="sortable" onclick="sortHistoryBy('playZone')">Zona ${getSortIndicator('playZone')}</th>
                 <th class="sortable" onclick="sortHistoryBy('duration')">Müddət ${getSortIndicator('duration')}</th>
                 <th class="sortable" onclick="sortHistoryBy('price')">Məbləğ ${getSortIndicator('price')}</th>
+                <th class="sortable" onclick="sortHistoryBy('date')">Tarix ${getSortIndicator('date')}</th>
                 <th class="sortable" onclick="sortHistoryBy('startTime')">Başlama Vaxtı ${getSortIndicator('startTime')}</th>
                 <th class="sortable" onclick="sortHistoryBy('endTime')">Bitmə Vaxtı ${getSortIndicator('endTime')}</th>
               </tr>
             </thead>
             <tbody>
-              ${sortedCompleted.map(child => `
-                <tr>
-                  <td>${child.name}</td>
-                  <td>${child.age}</td>
-                  <td>${child.playZone}</td>
-                  <td>${child.duration === 'unlimited' ? 'Limitsiz' : (child.duration + ' dəq')}</td>
-                  <td>${child.price} AZN</td>
-                  <td>${child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-                  <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-                </tr>
-              `).join('')}
+              ${sortedCompleted.map(child => {
+                const startDate = child.startTime ? new Date(child.startTime) : null;
+                const dateStr = startDate ? startDate.toLocaleDateString('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
+                return `
+                  <tr>
+                    <td>${child.name}</td>
+                    <td>${child.age}</td>
+                    <td>${child.playZone}</td>
+                    <td>${child.duration === 'unlimited' ? 'Limitsiz' : (child.duration + ' dəq')}</td>
+                    <td>${child.price} AZN</td>
+                    <td>${dateStr}</td>
+                    <td>${startDate ? startDate.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                    <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -1274,6 +1306,11 @@ function sortHistoryData(data) {
       case 'price':
         aVal = parseFloat(a.price) || 0;
         bVal = parseFloat(b.price) || 0;
+        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      
+      case 'date':
+        aVal = a.startTime ? new Date(a.startTime).getTime() : 0;
+        bVal = b.startTime ? new Date(b.startTime).getTime() : 0;
         return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
       
       case 'startTime':

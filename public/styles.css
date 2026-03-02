@@ -1259,6 +1259,11 @@ body {
   border-bottom: 2px solid #1a237e;
   padding-bottom: 8px;
   font-weight: 700;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding-top: 5px;
 }
 
 .history-table {
@@ -1271,6 +1276,9 @@ body {
 .history-table thead {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  position: sticky;
+  top: 40px;
+  z-index: 9;
 }
 
 .history-table th {

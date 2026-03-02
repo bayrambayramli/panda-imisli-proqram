@@ -333,6 +333,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     { header: 'Bilet', key: 'passTypeName', width: 20 },
     { header: 'Müddət', key: 'duration', width: 12 },
     { header: 'Məbləğ', key: 'price', width: 10 },
+    { header: 'Tarix', key: 'date', width: 12 },
     { header: 'Qeydlər', key: 'notes', width: 30 },
     { header: 'Başlama Vaxtı', key: 'startTime', width: 20 },
     { header: 'Bitmə Vaxtı', key: 'endTime', width: 20 }
@@ -342,6 +343,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     // Translate unlimited duration to Azerbaijani
     const durationDisplay = child.duration === 'unlimited' ? 'Limitsiz' : child.duration;
     const passTypeDisplay = child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq');
+    const dateStr = child.startTime ? new Date(child.startTime).toLocaleDateString('az-AZ') : '';
     
     sheet.addRow({
       name: child.name,
@@ -350,6 +352,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
       passTypeName: passTypeDisplay,
       duration: durationDisplay,
       price: child.price,
+      date: dateStr,
       notes: child.notes || '',
       startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
       endTime: child.endTime ? new Date(child.endTime).toLocaleString() : ''
@@ -357,6 +360,89 @@ app.get('/api/exportExcel/:date', async (req, res) => {
   });
 
   const fileName = `panda_imisli_${date}.xlsx`;
+  const filePath = path.join(__dirname, 'public', fileName);
+
+  try {
+    await workbook.xlsx.writeFile(filePath);
+    res.download(filePath, fileName, (err) => {
+      if (err) logError('Error downloading file:', err);
+      setTimeout(() => {
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      }, 1000);
+    });
+  } catch (err) {
+    logError('Error writing Excel:', err);
+    res.status(500).json({ error: 'Failed to export Excel' });
+  }
+});
+
+// Export to Excel - for date range (completed sessions only)
+app.get('/api/exportExcel', async (req, res) => {
+  const { startDate, endDate } = req.query;
+  
+  // Validate date format
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: 'Start date and end date are required' });
+  }
+  if (!startDate.match(/^\d{4}-\d{2}-\d{2}$/) || !endDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return res.status(400).json({ error: 'Invalid date format' });
+  }
+  if (startDate > endDate) {
+    return res.status(400).json({ error: 'Start date cannot be after end date' });
+  }
+  
+  // Load data for all dates in the range
+  let allCompleted = [];
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateStr = d.toISOString().split('T')[0];
+    const data = loadData(dateStr);
+    allCompleted = allCompleted.concat(data.completed);
+  }
+
+  if (allCompleted.length === 0) {
+    return res.status(404).json({ error: 'Bu tarix aralığında bitmiş seans yoxdur.' });
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet('Sessions');
+
+  sheet.columns = [
+    { header: 'Ad', key: 'name', width: 20 },
+    { header: 'Yaş', key: 'age', width: 8 },
+    { header: 'Oyun Zonası', key: 'playZone', width: 15 },
+    { header: 'Bilet', key: 'passTypeName', width: 20 },
+    { header: 'Müddət', key: 'duration', width: 12 },
+    { header: 'Məbləğ', key: 'price', width: 10 },
+    { header: 'Tarix', key: 'date', width: 12 },
+    { header: 'Qeydlər', key: 'notes', width: 30 },
+    { header: 'Başlama Vaxtı', key: 'startTime', width: 20 },
+    { header: 'Bitmə Vaxtı', key: 'endTime', width: 20 }
+  ];
+
+  allCompleted.forEach(child => {
+    // Translate unlimited duration to Azerbaijani
+    const durationDisplay = child.duration === 'unlimited' ? 'Limitsiz' : child.duration;
+    const passTypeDisplay = child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq');
+    const dateStr = child.startTime ? new Date(child.startTime).toLocaleDateString('az-AZ') : '';
+    
+    sheet.addRow({
+      name: child.name,
+      age: child.age,
+      playZone: child.playZone,
+      passTypeName: passTypeDisplay,
+      duration: durationDisplay,
+      price: child.price,
+      date: dateStr,
+      notes: child.notes || '',
+      startTime: child.startTime ? new Date(child.startTime).toLocaleString() : '',
+      endTime: child.endTime ? new Date(child.endTime).toLocaleString() : ''
+    });
+  });
+
+  const fileName = `panda_imisli_${startDate}_${endDate}.xlsx`;
   const filePath = path.join(__dirname, 'public', fileName);
 
   try {
