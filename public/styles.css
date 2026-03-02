@@ -635,6 +635,8 @@ body {
   color: #C62828;
   border-color: #f44336;
   min-width: 60px;
+  flex: 0.5;
+  max-width: 70px;
 }
 
 .btn-delete:hover {
@@ -1014,9 +1016,11 @@ body {
 }
 
 .settings-section {
+  min-width: 0;
   margin-bottom: 6px;
   padding: 6px;
-  /* background: #969191; */
+  flex: auto;
+  min-height: 160px;
   border-radius: 6px;
   border: 2px solid #667eea;
 }
@@ -1040,7 +1044,7 @@ body {
   border-radius: 6px;
   background: white;
   overflow-y: auto;
-  max-height: 150px;
+  max-height: 200px;
 }
 
 .pass-type-row {
@@ -1082,6 +1086,7 @@ body {
 
 .pass-type-row input[type="number"] {
   flex: 0.5;
+  max-width: 70px;
 }
 
 .pass-type-row select {
@@ -1090,6 +1095,7 @@ body {
   border: 1px solid #999;
   border-radius: 4px;
   font-size: 13px;
+  max-width: 100px;
 }
 
 .pass-type-row .btn-delete {
@@ -1153,7 +1159,8 @@ body {
   font-size: 13px;
   font-weight: 500;
   color: #000;
-  flex: 1;
+  flex: 0.5;
+  max-width: 60%;
 }
 
 .play-zone-row .btn-delete {
@@ -1661,19 +1668,14 @@ body {
   align-items: flex-start;
 }
 
-.settings-section {
-  /* flex: 1; */
-  min-width: 0;
-}
-
 .settings-section-lg {
-  flex: 1.25;
+  flex: 1.475;
   min-width: 0;
   min-height: 200px;
 }
 
 .settings-section-sm {
-  flex: 0.75;
+  flex: 0.525;
   min-width: 0;
   min-height: 200px;
 }
