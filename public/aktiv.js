@@ -111,6 +111,13 @@ function renderActiveSessions(children) {
   const customMessagePage = document.getElementById('customMessagePage');
   const sectionTitle = document.querySelector('.section h2');
   const pageIndicator = document.getElementById('pageIndicator');
+  const tableContent = document.getElementById('tableContent');
+
+  // Hide table content during update to prevent visible flash
+  if (tableContent) {
+    tableContent.style.opacity = '0.3';
+    tableContent.style.pointerEvents = 'none';
+  }
 
   tbody.innerHTML = '';
 
@@ -120,6 +127,10 @@ function renderActiveSessions(children) {
       noMsg.style.display = 'none';
       if (sectionTitle) sectionTitle.style.display = 'none';
       if (pageIndicator) pageIndicator.style.display = 'none';
+      if (tableContent) {
+        tableContent.style.opacity = '1';
+        tableContent.style.pointerEvents = 'auto';
+      }
       customMessagePage.innerHTML = tvCustomMessage;
       customMessagePage.style.display = 'flex';
       customMessagePage.classList.remove('page-hidden');
@@ -131,6 +142,10 @@ function renderActiveSessions(children) {
     noMsg.style.display = 'block';
     customMessagePage.style.display = 'none';
     if (sectionTitle) sectionTitle.style.display = 'block';
+    if (tableContent) {
+      tableContent.style.opacity = '1';
+      tableContent.style.pointerEvents = 'auto';
+    }
     updatePageIndicator(0, 0);
     stopAutoRotation();
     return;
@@ -177,6 +192,12 @@ function renderActiveSessions(children) {
   switchToPage(currentPage);
   if (pagesChanged || !autoRotationInterval) {
     startAutoRotation();
+  }
+  
+  // Restore table visibility after update is complete
+  if (tableContent) {
+    tableContent.style.opacity = '1';
+    tableContent.style.pointerEvents = 'auto';
   }
 }
 
