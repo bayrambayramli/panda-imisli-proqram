@@ -128,6 +128,49 @@ app.get('/api/dates', (req, res) => {
   }
 });
 
+// Get history for a single date
+app.get('/api/history/:date', (req, res) => {
+  const { date } = req.params;
+  const data = loadData(date);
+  res.json(data);
+});
+
+// Get history for a date range
+app.get('/api/history', (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: 'startDate and endDate are required' });
+    }
+    
+    // Collect all matching files in the date range
+    const files = fs.readdirSync(dataDir).filter(f => f.match(/\d{4}-\d{2}-\d{2}\.json/));
+    const matchingFiles = files.filter(file => {
+      const fileDate = file.replace('.json', '');
+      return fileDate >= startDate && fileDate <= endDate;
+    });
+    
+    // Combine data from all matching dates
+    let combinedData = {
+      active: [],
+      completed: []
+    };
+    
+    matchingFiles.sort().forEach(file => {
+      const fileDate = file.replace('.json', '');
+      const data = loadData(fileDate);
+      combinedData.active = combinedData.active.concat(data.active || []);
+      combinedData.completed = combinedData.completed.concat(data.completed || []);
+    });
+    
+    res.json(combinedData);
+  } catch (err) {
+    logError('Error getting history for date range:', err);
+    res.status(500).json({ error: 'Failed to get history' });
+  }
+});
+
 // Add new child
 app.post('/api/children', (req, res) => {
   const { date } = req.query;

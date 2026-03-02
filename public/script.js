@@ -1005,7 +1005,17 @@ function openHistoryModal() {
   // Ensure stats modal is closed when opening history
   closeStatsModal();
   const today = getTodayDate();
+  
+  // Set single day mode
+  document.querySelector('input[name="historyMode"][value="single"]').checked = true;
   document.getElementById('historyDate').value = today;
+  document.getElementById('historyStartDate').value = today;
+  document.getElementById('historyEndDate').value = today;
+  
+  // Show single day mode
+  document.getElementById('historySingleDayMode').style.display = 'block';
+  document.getElementById('historyDateRangeMode').style.display = 'none';
+  
   const nameSearchInput = document.getElementById('historyNameSearch');
   if (nameSearchInput) {
     nameSearchInput.value = '';
@@ -1016,6 +1026,34 @@ function openHistoryModal() {
   document.getElementById('historyModal').classList.add('show');
   
   // Automatically load today's data (without showing alert on modal open)
+  loadHistoryData(false);
+}
+
+// Toggle between single day and date range history mode
+function toggleHistoryMode() {
+  const mode = document.querySelector('input[name="historyMode"]:checked').value;
+  const singleDayGroup = document.getElementById('historySingleDayMode');
+  const dateRangeGroup = document.getElementById('historyDateRangeMode');
+  const today = getTodayDate();
+  
+  if (mode === 'single') {
+    singleDayGroup.style.display = 'block';
+    dateRangeGroup.style.display = 'none';
+    // Set single day date to today
+    document.getElementById('historyDate').value = today;
+  } else {
+    singleDayGroup.style.display = 'none';
+    dateRangeGroup.style.display = 'block';
+    // Set date range to today
+    document.getElementById('historyStartDate').value = today;
+    document.getElementById('historyEndDate').value = today;
+  }
+  
+  // Clear search and reload
+  const nameSearchInput = document.getElementById('historyNameSearch');
+  if (nameSearchInput) {
+    nameSearchInput.value = '';
+  }
   loadHistoryData(false);
 }
 
@@ -1086,19 +1124,48 @@ function closeHistoryModal() {
 }
 
 async function loadHistoryData(showAlertIfEmpty = false) {
-  const selectedDate = document.getElementById('historyDate').value;
+  const mode = document.querySelector('input[name="historyMode"]:checked').value;
   const nameSearchInput = document.getElementById('historyNameSearch');
   const searchTerm = nameSearchInput ? nameSearchInput.value.trim().toLowerCase() : '';
   
-  if (!selectedDate) {
-    await showUiAlert('Lütfən tarixi seçin.');
-    return;
+  let url = '';
+  
+  if (mode === 'single') {
+    const selectedDate = document.getElementById('historyDate').value;
+    if (!selectedDate) {
+      await showUiAlert('Lütfən tarixi seçin.');
+      return;
+    }
+    url = `/api/history/${selectedDate}`;
+  } else {
+    const startDate = document.getElementById('historyStartDate').value;
+    const endDate = document.getElementById('historyEndDate').value;
+    
+    if (!startDate || !endDate) {
+      await showUiAlert('Lütfən başlanğıc və son tarixini seçin.');
+      return;
+    }
+    
+    if (startDate > endDate) {
+      await showUiAlert('Başlanğıc tarixi son tarixin üstündə ola bilməz.');
+      return;
+    }
+    
+    url = `/api/history?startDate=${startDate}&endDate=${endDate}`;
   }
   
   try {
-    const response = await fetch(`/api/data/${selectedDate}`);
+    const response = await fetch(url);
     const data = await response.json();
-    
+    renderHistoryContent(data, searchTerm, showAlertIfEmpty);
+  } catch (error) {
+    console.error('Error loading history:', error);
+    document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta baş verdi.</p>';
+  }
+}
+
+function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
+  
     const contentDiv = document.getElementById('historyContent');
     let html = '';
     
@@ -1111,7 +1178,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     if (completed.length === 0) {
       // Show alert only if Load button was clicked (showAlertIfEmpty = true)
       if (showAlertIfEmpty) {
-        await showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.');
+        showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.');
       }
       // Always show static message in panel
       html = '<p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.</p>';
@@ -1154,10 +1221,6 @@ async function loadHistoryData(showAlertIfEmpty = false) {
       `;
     }
     contentDiv.innerHTML = html;
-  } catch (error) {
-    console.error('Error loading history:', error);
-    document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta baş verdi.</p>';
-  }
 }
 
 // Get sort indicator symbol for column header

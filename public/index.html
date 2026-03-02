@@ -193,14 +193,32 @@
       <span class="close" id="historyCloseBtn">&times;</span>
       <h2>📅 Tarixçə</h2>
       <div class="history-picker">
-        <label for="historyDate">Tarixi seçin:</label>
-        <input type="date" id="historyDate">
+        <!-- Date Selection Mode Toggle -->
+        <div class="history-mode-toggle">
+          <label><input type="radio" name="historyMode" value="single" checked onchange="toggleHistoryMode()"> Bir gün</label>
+          <label><input type="radio" name="historyMode" value="range" onchange="toggleHistoryMode()"> Tarix Aralığı</label>
+        </div>
+
+        <!-- Single Day Mode -->
+        <div id="historySingleDayMode" class="history-date-group">
+          <label for="historyDate">Tarixi seçin:</label>
+          <input type="date" id="historyDate">
+        </div>
+
+        <!-- Date Range Mode -->
+        <div id="historyDateRangeMode" class="history-date-group" style="display: none;">
+          <label for="historyStartDate">Başlanğıc tarixi:</label>
+          <input type="date" id="historyStartDate">
+          <label for="historyEndDate">Son tarixi:</label>
+          <input type="date" id="historyEndDate">
+        </div>
+
         <button id="loadHistoryBtn" class="btn-load-history">Yüklə</button>
         <input type="text" id="historyNameSearch" placeholder="Ada görə axtar...">
         <button id="historyExportBtn" class="btn-export">📥 Excel-ə Çıxar</button>
       </div>
       <div id="historyContent" class="history-content">
-        <p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.</p>
+        <p class="no-data-msg">Tarix seçin və məlumatı yükləyin.</p>
       </div>
     </div>
   </div>
