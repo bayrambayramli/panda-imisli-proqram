@@ -1233,7 +1233,7 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
             <tbody>
               ${sortedCompleted.map(child => {
                 const startDate = child.startTime ? new Date(child.startTime) : null;
-                const dateStr = startDate ? startDate.toLocaleDateString('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
+                const dateStr = startDate ? `${String(startDate.getDate()).padStart(2, '0')}.${String(startDate.getMonth() + 1).padStart(2, '0')}.${startDate.getFullYear()}` : '-';
                 return `
                   <tr>
                     <td>${child.name}</td>

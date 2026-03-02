@@ -343,7 +343,8 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     // Translate unlimited duration to Azerbaijani
     const durationDisplay = child.duration === 'unlimited' ? 'Limitsiz' : child.duration;
     const passTypeDisplay = child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq');
-    const dateStr = child.startTime ? new Date(child.startTime).toLocaleDateString('az-AZ') : '';
+    const startDate = child.startTime ? new Date(child.startTime) : null;
+    const dateStr = startDate ? `${String(startDate.getDate()).padStart(2, '0')}.${String(startDate.getMonth() + 1).padStart(2, '0')}.${startDate.getFullYear()}` : '';
     
     sheet.addRow({
       name: child.name,
@@ -426,7 +427,8 @@ app.get('/api/exportExcel', async (req, res) => {
     // Translate unlimited duration to Azerbaijani
     const durationDisplay = child.duration === 'unlimited' ? 'Limitsiz' : child.duration;
     const passTypeDisplay = child.passTypeName || (child.duration === 'unlimited' ? 'Limitsiz' : child.duration + ' dəq');
-    const dateStr = child.startTime ? new Date(child.startTime).toLocaleDateString('az-AZ') : '';
+    const startDate = child.startTime ? new Date(child.startTime) : null;
+    const dateStr = startDate ? `${String(startDate.getDate()).padStart(2, '0')}.${String(startDate.getMonth() + 1).padStart(2, '0')}.${startDate.getFullYear()}` : '';
     
     sheet.addRow({
       name: child.name,

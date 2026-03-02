@@ -1155,13 +1155,12 @@ body {
 
 .history-picker {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 10px;
   padding: 8px;
   background: #f9f9f9;
   border-radius: 8px;
   margin-bottom: 8px;
-  flex-wrap: wrap;
 }
 
 .history-picker label {
@@ -1188,10 +1187,22 @@ body {
 /* History mode toggle */
 .history-mode-toggle {
   display: flex;
-  gap: 15px;
-  align-items: center;
-  padding: 0 8px;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 12px;
   border-right: 2px solid #ddd;
+  min-width: 120px;
+}
+
+/* History controls container */
+.history-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  flex-wrap: wrap;
 }
 
 .history-mode-toggle label {
@@ -1246,7 +1257,8 @@ body {
   border: 1px solid #ddd;
   border-radius: 8px;
   background: white;
-  padding: 15px;
+  padding: 10px;
+  padding-top: 0px;
 }
 
 .history-section {
@@ -1255,20 +1267,19 @@ body {
 
 .history-section h3 {
   color: #1a237e;
-  margin-bottom: 10px;
+  /* margin: 0 0 10px 0; */
   border-bottom: 2px solid #1a237e;
-  padding-bottom: 8px;
+  padding: 8px 0 8px 0;
   font-weight: 700;
   position: sticky;
   top: 0;
   background: white;
   z-index: 10;
-  padding-top: 5px;
 }
 
 .history-table {
   width: 100%;
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
   font-size: 13px;
   margin-bottom: 15px;
 }
@@ -1277,8 +1288,12 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   position: sticky;
-  top: 40px;
+  top: 45px;
   z-index: 9;
+}
+
+.history-table thead th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .history-table th {

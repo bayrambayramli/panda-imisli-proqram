@@ -199,23 +199,25 @@
           <label><input type="radio" name="historyMode" value="range" onchange="toggleHistoryMode()"> Tarix Aralığı</label>
         </div>
 
-        <!-- Single Day Mode -->
-        <div id="historySingleDayMode" class="history-date-group">
-          <label for="historyDate">Tarixi seçin:</label>
-          <input type="date" id="historyDate">
-        </div>
+        <div class="history-controls">
+          <!-- Single Day Mode -->
+          <div id="historySingleDayMode" class="history-date-group">
+            <label for="historyDate">Tarixi seçin:</label>
+            <input type="date" id="historyDate">
+          </div>
 
-        <!-- Date Range Mode -->
-        <div id="historyDateRangeMode" class="history-date-group" style="display: none;">
-          <label for="historyStartDate">Başlanğıc:</label>
-          <input type="date" id="historyStartDate">
-          <label for="historyEndDate">Son:</label>
-          <input type="date" id="historyEndDate">
-        </div>
+          <!-- Date Range Mode -->
+          <div id="historyDateRangeMode" class="history-date-group" style="display: none;">
+            <label for="historyStartDate">Başlanğıc:</label>
+            <input type="date" id="historyStartDate">
+            <label for="historyEndDate">Son:</label>
+            <input type="date" id="historyEndDate">
+          </div>
 
-        <button id="loadHistoryBtn" class="btn-load-history">Yüklə</button>
-        <input type="text" id="historyNameSearch" placeholder="Ada görə axtar...">
-        <button id="historyExportBtn" class="btn-export">📥 Excel-ə Çıxar</button>
+          <button id="loadHistoryBtn" class="btn-load-history">Yüklə</button>
+          <input type="text" id="historyNameSearch" placeholder="Ada görə axtar...">
+          <button id="historyExportBtn" class="btn-export">📥 Excel-ə Çıxar</button>
+        </div>
       </div>
       <div id="historyContent" class="history-content">
         <p class="no-data-msg">Tarix seçin və məlumatı yükləyin.</p>
