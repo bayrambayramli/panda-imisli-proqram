@@ -1189,6 +1189,52 @@ body {
   width: 50px;
 }
 
+.play-zones-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.play-zones-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: sticky;
+  top: 0;
+}
+
+.play-zones-table th {
+  color: white;
+  font-weight: 700;
+  padding: 8px;
+  text-align: left;
+  border-bottom: 2px solid #555;
+  font-size: 13px;
+}
+
+.play-zones-table td {
+  padding: 2px 2px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.play-zones-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.play-zones-table input {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #000;
+}
+
+.play-zones-table .btn-delete {
+  padding: 6px 8px;
+  font-size: 12px;
+  width: 100%;
+}
+
 .play-zone-row {
   display: flex;
   align-items: center;

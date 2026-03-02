@@ -1295,29 +1295,32 @@ function openSettingsModal() {
     tvCustomMessageEnabledInput.checked = settings.tvCustomMessageEnabled !== false;
   }
 
-  // Populate play zones as editable rows
+  // Populate play zones as table
   const zonesContainer = document.getElementById('playZonesContainer');
   if (zonesContainer) {
-    zonesContainer.innerHTML = '';
-    
-    // Add header row
-    const headerRow = document.createElement('div');
-    headerRow.className = 'play-zone-row';
-    headerRow.innerHTML = `
-      <div class="flex-1">Zona Adı</div>
+    zonesContainer.innerHTML = `
+      <table class="play-zones-table">
+        <thead>
+          <tr>
+            <th>Zona Adı</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="playZonesBody">
+        </tbody>
+      </table>
     `;
-    zonesContainer.appendChild(headerRow);
     
+    const tbody = document.getElementById('playZonesBody');
     const playZones = settings.playZones || [];
     playZones.forEach(zone => {
-      const row = document.createElement('div');
-      row.className = 'play-zone-row';
+      const row = document.createElement('tr');
       row.setAttribute('data-id', zone.id);
       row.innerHTML = `
-        <input type="text" class="play-zone-name" placeholder="Zona adı" value="${zone.name}" data-id="${zone.id}" />
-        <button class="btn-delete" onclick="removePlayZone(${zone.id})">Sil</button>
+        <td><input type="text" class="play-zone-name" placeholder="Zona adı" value="${zone.name}" data-id="${zone.id}" /></td>
+        <td><button class="btn-delete" onclick="removePlayZone(${zone.id})">Sil</button></td>
       `;
-      zonesContainer.appendChild(row);
+      tbody.appendChild(row);
     });
   }
 
@@ -1377,19 +1380,19 @@ function removePassType(idOrElem) {
 
 function addPlayZoneRow() {
   const container = document.getElementById('playZonesContainer');
-  if (!container) return;
+  const tbody = document.getElementById('playZonesBody');
+  if (!container || !tbody) return;
 
   const playZones = settings.playZones || [];
   const newId = Math.max(...playZones.map(z => z.id || 0), 0) + 1;
 
-  const row = document.createElement('div');
-  row.className = 'play-zone-row';
+  const row = document.createElement('tr');
   row.setAttribute('data-id', newId);
   row.innerHTML = `
-    <input type="text" class="play-zone-name flex-1" placeholder="Zona adı" data-id="${newId}" />
-    <button class="btn-delete" onclick="removePlayZone(${newId})">Sil</button>
+    <td><input type="text" class="play-zone-name" placeholder="Zona adı" data-id="${newId}" /></td>
+    <td><button class="btn-delete" onclick="removePlayZone(${newId})">Sil</button></td>
   `;
-  container.appendChild(row);
+  tbody.appendChild(row);
 }
 
 function removePlayZone(idOrElem) {
@@ -1397,7 +1400,7 @@ function removePlayZone(idOrElem) {
   let id = null;
   if (typeof idOrElem === 'number') {
     id = idOrElem;
-    const row = document.querySelector('.play-zone-row[data-id="' + id + '"]');
+    const row = document.querySelector('#playZonesBody tr[data-id="' + id + '"]');
     if (row) row.remove();
     if (!settings.playZones) settings.playZones = [];
     settings.playZones = settings.playZones.filter(z => z.id !== id);
@@ -1405,7 +1408,7 @@ function removePlayZone(idOrElem) {
   }
 
   // If element (e.g., this from onclick), find row
-  const row = idOrElem && idOrElem.closest ? idOrElem.closest('.play-zone-row') : null;
+  const row = idOrElem && idOrElem.closest ? idOrElem.closest('tr') : null;
   if (row) {
     const attr = row.getAttribute('data-id');
     if (attr) {
@@ -1439,8 +1442,8 @@ async function saveSettings() {
     }
   });
 
-  // Gather all play zone rows from container
-  const zoneRows = document.querySelectorAll('#playZonesContainer .play-zone-row');
+  // Gather all play zone rows from table
+  const zoneRows = document.querySelectorAll('#playZonesContainer tbody tr');
   const playZones = [];
 
   zoneRows.forEach(row => {
