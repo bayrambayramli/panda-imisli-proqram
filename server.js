@@ -454,6 +454,8 @@ app.get('/api/report/monthly', (req, res) => {
 });
 
 // Get play zone comparison (all time or filtered by month)
+// NOTE: Includes both active zones (from settings) and historical zones (from data) that are no longer in settings
+// This ensures accurate historical reporting even after play zones are removed from settings
 app.get('/api/report/play-zones', (req, res) => {
   try {
     const { month } = req.query; // Format: YYYY-MM
@@ -483,18 +485,17 @@ app.get('/api/report/play-zones', (req, res) => {
       (data.completed || []).forEach(child => {
         const zone = child.playZone || 'Unknown';
         
-        // Only count zones that exist in settings
-        if (settings.playZones && settings.playZones.some(z => z.name === zone)) {
-          if (!zoneData[zone]) {
-            zoneData[zone] = {
-              zone: zone,
-              totalChildren: 0,
-              totalRevenue: 0
-            };
-          }
-          zoneData[zone].totalChildren++;
-          zoneData[zone].totalRevenue += child.price || 0;
+        // Count all zones, including historical ones no longer in settings
+        if (!zoneData[zone]) {
+          zoneData[zone] = {
+            zone: zone,
+            totalChildren: 0,
+            totalRevenue: 0,
+            isHistorical: !settings.playZones || !settings.playZones.some(z => z.name === zone)
+          };
         }
+        zoneData[zone].totalChildren++;
+        zoneData[zone].totalRevenue += child.price || 0;
       });
     });
 
@@ -510,12 +511,24 @@ app.get('/api/report/play-zones', (req, res) => {
       z.percentageOfTotal = totalChildren > 0 ? ((z.totalChildren / totalChildren) * 100).toFixed(2) : 0;
     });
 
-    // Sort by totalChildren descending, but keep settings order for zones with 0 children
+    // Sort by: 1) Active zones first, then 2) totalChildren descending
     res.json(result.sort((a, b) => {
-      if (a.totalChildren === 0 && b.totalChildren === 0) {
+      // If one is historical and one is not, active zones come first
+      if (a.isHistorical !== b.isHistorical) {
+        return a.isHistorical ? 1 : -1;
+      }
+      
+      // If both have same historical status, sort by totalChildren descending
+      if (a.totalChildren !== b.totalChildren) {
+        return b.totalChildren - a.totalChildren;
+      }
+      
+      // If both have same children count, maintain settings order for active zones
+      if (!a.isHistorical && !b.isHistorical && settings.playZones) {
         return settings.playZones.findIndex(z => z.name === a.zone) - settings.playZones.findIndex(z => z.name === b.zone);
       }
-      return b.totalChildren - a.totalChildren;
+      
+      return 0;
     }));
   } catch (err) {
     logError('Error generating play zone report:', err);

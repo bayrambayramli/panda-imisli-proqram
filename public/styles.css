@@ -1107,88 +1107,6 @@ body {
   width: 100%;
 }
 
-.pass-type-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  padding: 1px;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  border-radius: 0;
-}
-
-.pass-type-row:first-child {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-bottom: 2px solid #555;
-}
-
-.pass-type-row:last-child {
-  border-bottom: none;
-}
-
-.pass-type-row input {
-  padding: 6px;
-  border: 1px solid #999;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #000;
-}
-
-.pass-type-row input[type="text"] {
-  flex: 1.5;
-  min-width: 80px;
-}
-
-.pass-type-row input[type="number"] {
-  flex: 0.5;
-  max-width: 70px;
-}
-
-.pass-type-row select {
-  flex: 1;
-  padding: 6px;
-  border: 1px solid #999;
-  border-radius: 4px;
-  font-size: 13px;
-  max-width: 100px;
-}
-
-.pass-type-row .btn-delete {
-  padding: 6px 8px;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-/* Flex utility classes for settings rows */
-.flex-1 {
-  flex: 1;
-}
-
-.flex-1-2 {
-  flex: 1.2;
-}
-
-.flex-1-5 {
-  flex: 1.5;
-}
-
-.flex-0-8 {
-  flex: 0.8;
-}
-
-.flex-0-5 {
-  flex: 0.5;
-}
-
-.width-50 {
-  width: 50px;
-}
-
 .play-zones-table {
   width: 100%;
   border-collapse: collapse;
@@ -1233,46 +1151,6 @@ body {
   padding: 6px 8px;
   font-size: 12px;
   width: 100%;
-}
-
-.play-zone-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  padding: 1px;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  border-radius: 0;
-}
-
-.play-zone-row:first-child {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-bottom: 2px solid #555;
-}
-
-.play-zone-row:last-child {
-  border-bottom: none;
-}
-
-.play-zone-row input {
-  padding: 6px;
-  border: 1px solid #999;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #000;
-  flex: 0.5;
-  max-width: 60%;
-}
-
-.play-zone-row .btn-delete {
-  padding: 6px 8px;
-  font-size: 12px;
-  flex-shrink: 0;
 }
 
 .history-picker {
@@ -1895,4 +1773,9 @@ body {
 
 .btn-close-x:hover {
   color: #000;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none;
 }
