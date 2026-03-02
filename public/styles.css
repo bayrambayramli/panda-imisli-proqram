@@ -3,29 +3,22 @@
   /* Primary Colors */
   --primary-purple: #667eea;
   --primary-purple-dark: #764ba2;
-  
   /* Semantic Colors */
   --color-success: #4CAF50;
   --color-success-dark: #2E7D32;
   --color-success-light: #E8F5E9;
   --color-success-lighter: #C8E6C9;
-  
   --color-info: #2196F3;
   --color-info-dark: #1565C0;
   --color-info-light: #E3F2FD;
   --color-info-lighter: #BBDEFB;
-  
   --color-danger: #f44336;
   --color-danger-dark: #C62828;
   --color-danger-darker: #B71C1C;
   --color-danger-light: #FFEBEE;
   --color-danger-lighter: #FFCDD2;
-  
-
-  
   --color-green-primary: #07690a;
   --color-green-dark: #04440e;
-  
   /* Neutral Colors */
   --color-text: #333;
   --color-text-light: #7a7a7a;
@@ -34,25 +27,21 @@
   --color-bg-light: #f9f9f9;
   --color-bg-lighter: #f5f5f5;
   --color-white: #fff;
-  
   /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 15px;
   --spacing-lg: 20px;
   --spacing-xl: 30px;
-  
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 10px;
   --radius-xl: 12px;
-  
   /* Transitions */
   --transition-fast: 0.2s;
   --transition-normal: 0.3s;
   --transition-slow: 0.5s;
-  
   /* Z-index System */
   --z-base: 10;
   --z-dropdown: 100;
@@ -1835,6 +1824,10 @@ body {
 }
 
 /* Utility Classes */
-.hidden {
+.history-search {
+  max-width: 140px;
+}
+
+.history-hidden {
   display: none;
 }

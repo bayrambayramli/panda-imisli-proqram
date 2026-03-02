@@ -1039,8 +1039,8 @@ function openHistoryModal() {
   document.getElementById('historyEndDate').value = today;
   
   // Show single day mode
-  document.getElementById('historySingleDayMode').style.display = 'block';
-  document.getElementById('historyDateRangeMode').style.display = 'none';
+  document.getElementById('historySingleDayMode').classList.remove('history-hidden');
+  document.getElementById('historyDateRangeMode').classList.add('history-hidden');
   
   const nameSearchInput = document.getElementById('historyNameSearch');
   if (nameSearchInput) {
@@ -1063,13 +1063,13 @@ function toggleHistoryMode() {
   const today = getTodayDate();
   
   if (mode === 'single') {
-    singleDayGroup.style.display = 'block';
-    dateRangeGroup.style.display = 'none';
+    singleDayGroup.classList.remove('history-hidden');
+    dateRangeGroup.classList.add('history-hidden');
     // Set single day date to today
     document.getElementById('historyDate').value = today;
   } else {
-    singleDayGroup.style.display = 'none';
-    dateRangeGroup.style.display = 'block';
+    singleDayGroup.classList.add('history-hidden');
+    dateRangeGroup.classList.remove('history-hidden');
     // Set date range to today
     document.getElementById('historyStartDate').value = today;
     document.getElementById('historyEndDate').value = today;
