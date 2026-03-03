@@ -787,7 +787,8 @@ app.get('/api/stats/filtered-10days', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
   console.log(`Panda Imisli app running at http://localhost:${PORT}`);
+  console.log(`Access restricted to localhost only`);
   console.log(`Settings loaded: ${settingsFilePath}`);
 });
