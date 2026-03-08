@@ -3,6 +3,7 @@ let currentDate = getTodayDate();
 let timerIntervals = {};
 let editingChildId = null;
 let editingSource = null; // 'active' or 'completed'
+let editingHistoryDate = null; // For history sessions, track the session's date (not currentDate)
 let settings = null; // Will be loaded from backend
 let analyticsChart = null; // Will hold chart instance
 let historySortBy = 'startTime'; // Default sort column
@@ -97,6 +98,7 @@ function setupEventListeners() {
   document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
   document.getElementById('historyCloseBtn').addEventListener('click', closeHistoryModal);
   document.getElementById('loadHistoryBtn').addEventListener('click', () => loadHistoryData(true));
+  document.getElementById('historyAddBtn').addEventListener('click', openHistoryAddModal);
   const historyNameSearch = document.getElementById('historyNameSearch');
   if (historyNameSearch) {
     historyNameSearch.addEventListener('input', () => loadHistoryData(false));
@@ -792,11 +794,15 @@ async function editNotes(childId) {
 
 
 // Open edit modal
-async function openEditModal(childId, source) {
+async function openEditModal(childId, source, historyDate = null) {
   editingChildId = childId;
   editingSource = source;
+  editingHistoryDate = historyDate;
   
-  const response = await fetch(`/api/data/${currentDate}`);
+  // Use historyDate if provided (for history sessions), otherwise use currentDate
+  const dateToUse = historyDate || currentDate;
+  
+  const response = await fetch(`/api/data/${dateToUse}`);
   const data = await response.json();
   
   let child;
@@ -814,19 +820,52 @@ async function openEditModal(childId, source) {
   document.getElementById('editPlayZone').value = child.playZone;
   document.getElementById('editNotes').value = child.notes || '';
   
-  // Show/hide and populate start time field (only for active sessions)
+  // Show/hide time fields based on source
   const startTimeGroup = document.getElementById('editStartTimeGroup');
+  const endTimeGroup = document.getElementById('editEndTimeGroup');
   const startTimeInput = document.getElementById('editStartTime');
-  if (source === 'active' && child.startTime) {
+  const endTimeInput = document.getElementById('editEndTime');
+  
+  if (source === 'history') {
+    // For history sessions, show both start and end times
     startTimeGroup.style.display = 'flex';
-    // Convert ISO datetime to HH:MM format for time input
+    endTimeGroup.style.display = 'flex';
+    
+    if (child.startTime) {
+      const startDate = new Date(child.startTime);
+      const hours = String(startDate.getHours()).padStart(2, '0');
+      const minutes = String(startDate.getMinutes()).padStart(2, '0');
+      startTimeInput.value = `${hours}:${minutes}`;
+    }
+    
+    if (child.endTime) {
+      const endDate = new Date(child.endTime);
+      const hours = String(endDate.getHours()).padStart(2, '0');
+      const minutes = String(endDate.getMinutes()).padStart(2, '0');
+      endTimeInput.value = `${hours}:${minutes}`;
+    } else {
+      // Default end time (1 hour after start if available, otherwise suggest)
+      if (child.startTime) {
+        const startDate = new Date(child.startTime);
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+        const hours = String(endDate.getHours()).padStart(2, '0');
+        const minutes = String(endDate.getMinutes()).padStart(2, '0');
+        endTimeInput.value = `${hours}:${minutes}`;
+      }
+    }
+  } else if (source === 'active' && child.startTime) {
+    // For active sessions, show only start time
+    startTimeGroup.style.display = 'flex';
+    endTimeGroup.style.display = 'none';
     const startDate = new Date(child.startTime);
     const hours = String(startDate.getHours()).padStart(2, '0');
     const minutes = String(startDate.getMinutes()).padStart(2, '0');
     startTimeInput.value = `${hours}:${minutes}`;
   } else {
     startTimeGroup.style.display = 'none';
+    endTimeGroup.style.display = 'none';
     startTimeInput.value = '';
+    endTimeInput.value = '';
   }
   
   // Find and set the correct pass type in the dropdown
@@ -852,12 +891,11 @@ function closeModal() {
   document.getElementById('editModal').classList.remove('show');
   editingChildId = null;
   editingSource = null;
+  editingHistoryDate = null;
 }
 
 // Save edit
 async function saveEdit() {
-  if (!editingChildId) return;
-  
   const passTypeId = document.getElementById('editDuration').value;
   
   // Get pass type details
@@ -867,23 +905,104 @@ async function saveEdit() {
     return;
   }
   
+  const name = document.getElementById('editName').value.trim();
+  const age = parseInt(document.getElementById('editAge').value);
+  const playZone = document.getElementById('editPlayZone').value;
+  const notes = document.getElementById('editNotes').value;
+  
+  // Validate required fields
+  if (!name) {
+    await showUiAlert('Ad boş ola bilməz.');
+    return;
+  }
+  if (!age) {
+    await showUiAlert('Yaş seçilməlidir.');
+    return;
+  }
+  if (!playZone) {
+    await showUiAlert('Zona seçilməlidir.');
+    return;
+  }
+  
+  // Use editingHistoryDate if provided, otherwise currentDate
+  const dateToUse = editingHistoryDate || currentDate;
+  
+  // Handle new history session (add)
+  if (editingSource === 'history' && !editingChildId) {
+    const startTimeInput = document.getElementById('editStartTime').value;
+    const endTimeInput = document.getElementById('editEndTime').value;
+    
+    if (!startTimeInput || !endTimeInput) {
+      await showUiAlert('Başlama və bitmə vaxtları seçilməlidir.');
+      return;
+    }
+    
+    // Validate times
+    const [startH, startM] = startTimeInput.split(':').map(Number);
+    const [endH, endM] = endTimeInput.split(':').map(Number);
+    if (endH * 60 + endM < startH * 60 + startM) {
+      await showUiAlert('Bitmə vaxtı başlama vaxtından sonra olmalıdır.');
+      return;
+    }
+    
+    try {
+      const startISO = new Date(`${dateToUse}T${startTimeInput}:00`).toISOString();
+      const endISO = new Date(`${dateToUse}T${endTimeInput}:00`).toISOString();
+      
+      const response = await fetch('/api/history/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: dateToUse,
+          name,
+          age,
+          playZone,
+          duration: passType.duration,
+          price: passType.price,
+          passTypeId: passType.id,
+          passTypeName: passType.name,
+          notes,
+          startTime: startISO,
+          endTime: endISO
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        await showUiAlert(errorData.error || 'Seansı əlavə etmək mümkün olmadı.');
+        return;
+      }
+      
+      closeModal();
+      loadHistoryData(false);
+      await showUiAlert('Seans uğurla əlavə edildi.');
+    } catch (error) {
+      console.error('Error adding history session:', error);
+      await showUiAlert('Seansı əlavə edilərkən xəta baş verdi.');
+    }
+    return;
+  }
+  
+  if (!editingChildId) return;
+  
   const updates = {
-    name: document.getElementById('editName').value,
-    age: parseInt(document.getElementById('editAge').value),
-    playZone: document.getElementById('editPlayZone').value,
+    name,
+    age,
+    playZone,
     duration: passType.duration,
     price: passType.price,
     passTypeId: passType.id,
     passTypeName: passType.name,
-    notes: document.getElementById('editNotes').value
+    notes
   };
   
-  // Update start time if editing an active session
+  // Handle time fields based on source
   if (editingSource === 'active') {
+    // For active sessions, update start time if provided
     const startTimeInput = document.getElementById('editStartTime').value;
     if (startTimeInput) {
       // Get the current date from the child being edited
-      const response = await fetch(`/api/data/${currentDate}`);
+      const response = await fetch(`/api/data/${dateToUse}`);
       const data = await response.json();
       const child = data.active.find(c => c.id == editingChildId);
       
@@ -895,17 +1014,49 @@ async function saveEdit() {
         updates.startTime = startDate.toISOString();
       }
     }
+  } else if (editingSource === 'history') {
+    // For history sessions, handle both start and end times
+    const startTimeInput = document.getElementById('editStartTime').value;
+    const endTimeInput = document.getElementById('editEndTime').value;
+    
+    if (startTimeInput || endTimeInput) {
+      const response = await fetch(`/api/data/${dateToUse}`);
+      const data = await response.json();
+      const child = data.completed.find(c => c.id == editingChildId);
+      
+      if (child) {
+        if (startTimeInput) {
+          const startDate = new Date(child.startTime || `${dateToUse}T00:00:00`);
+          const [hours, minutes] = startTimeInput.split(':');
+          startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+          updates.startTime = startDate.toISOString();
+        }
+        
+        if (endTimeInput) {
+          const endDate = new Date(child.startTime || `${dateToUse}T00:00:00`);
+          const [hours, minutes] = endTimeInput.split(':');
+          endDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+          updates.endTime = endDate.toISOString();
+        }
+      }
+    }
   }
   
   try {
-    await fetch(`/api/children/${editingChildId}?date=${currentDate}`, {
+    await fetch(`/api/children/${editingChildId}?date=${dateToUse}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
     });
     
     closeModal();
-    loadData();
+    
+    // Reload appropriate data based on source
+    if (editingSource === 'history') {
+      loadHistoryData(false);
+    } else {
+      loadData();
+    }
   } catch (error) {
     console.error('Error saving changes:', error);
   }
@@ -1038,9 +1189,11 @@ function openHistoryModal() {
   document.getElementById('historyStartDate').value = today;
   document.getElementById('historyEndDate').value = today;
   
-  // Show single day mode
+  // Show single day mode and add button
   document.getElementById('historySingleDayMode').classList.remove('history-hidden');
   document.getElementById('historyDateRangeMode').classList.add('history-hidden');
+  const addBtn = document.getElementById('historyAddBtn');
+  if (addBtn) addBtn.style.display = 'block';
   
   const nameSearchInput = document.getElementById('historyNameSearch');
   if (nameSearchInput) {
@@ -1060,6 +1213,7 @@ function toggleHistoryMode() {
   const mode = document.querySelector('input[name="historyMode"]:checked').value;
   const singleDayGroup = document.getElementById('historySingleDayMode');
   const dateRangeGroup = document.getElementById('historyDateRangeMode');
+  const addBtn = document.getElementById('historyAddBtn');
   const today = getTodayDate();
   
   if (mode === 'single') {
@@ -1067,12 +1221,16 @@ function toggleHistoryMode() {
     dateRangeGroup.classList.add('history-hidden');
     // Set single day date to today
     document.getElementById('historyDate').value = today;
+    // Show add button only in single day mode
+    if (addBtn) addBtn.style.display = 'block';
   } else {
     singleDayGroup.classList.add('history-hidden');
     dateRangeGroup.classList.remove('history-hidden');
     // Set date range to today
     document.getElementById('historyStartDate').value = today;
     document.getElementById('historyEndDate').value = today;
+    // Hide add button in range mode
+    if (addBtn) addBtn.style.display = 'none';
   }
   
   // Clear search and reload
@@ -1147,6 +1305,47 @@ function closeStatsModal() {
 
 function closeHistoryModal() {
   document.getElementById('historyModal').classList.remove('show');
+}
+
+// Open modal to add a new session to history (retrospective)
+function openHistoryAddModal() {
+  const selectedDate = document.getElementById('historyDate').value;
+  if (!selectedDate) {
+    showUiAlert('Zəhmət olmasa, tarixi seçin.');
+    return;
+  }
+  
+  // Clear form fields for new entry
+  editingSource = 'history';
+  editingHistoryDate = selectedDate;
+  editingChildId = null;
+  
+  // Clear form
+  document.getElementById('editName').value = '';
+  document.getElementById('editAge').value = '';
+  document.getElementById('editPlayZone').value = '';
+  document.getElementById('editDuration').value = '';
+  document.getElementById('editNotes').value = '';
+  
+  // Set time fields
+  const startTimeGroup = document.getElementById('editStartTimeGroup');
+  const endTimeGroup = document.getElementById('editEndTimeGroup');
+  startTimeGroup.style.display = 'flex';
+  endTimeGroup.style.display = 'flex';
+  document.getElementById('editStartTime').value = '10:00';
+  document.getElementById('editEndTime').value = '11:00';
+  
+  // Show modal
+  document.getElementById('editModal').classList.add('show');
+}
+
+// Open modal to edit an existing history session
+async function openHistoryEditModal(childId, sessionDate) {
+  if (!sessionDate) {
+    await showUiAlert('Seans tarixi tapılmadı.');
+    return;
+  }
+  openEditModal(childId, 'history', sessionDate);
 }
 
 async function loadHistoryData(showAlertIfEmpty = false) {
@@ -1229,12 +1428,14 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                 <th class="sortable" onclick="sortHistoryBy('date')">Tarix ${getSortIndicator('date')}</th>
                 <th class="sortable" onclick="sortHistoryBy('startTime')">Başlama Vaxtı ${getSortIndicator('startTime')}</th>
                 <th class="sortable" onclick="sortHistoryBy('endTime')">Bitmə Vaxtı ${getSortIndicator('endTime')}</th>
+                <th>Əməliyyat</th>
               </tr>
             </thead>
             <tbody>
               ${sortedCompleted.map(child => {
                 const startDate = child.startTime ? new Date(child.startTime) : null;
                 const dateStr = startDate ? `${String(startDate.getDate()).padStart(2, '0')}.${String(startDate.getMonth() + 1).padStart(2, '0')}.${startDate.getFullYear()}` : '-';
+                const sessionDate = startDate ? startDate.toISOString().split('T')[0] : '';
                 return `
                   <tr>
                     <td>${child.name}</td>
@@ -1245,6 +1446,7 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                     <td>${dateStr}</td>
                     <td>${startDate ? startDate.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                     <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                    <td><button class="btn-action btn-edit" onclick="openHistoryEditModal('${child.id}', '${sessionDate}')">Dəyişdir</button></td>
                   </tr>
                 `;
               }).join('')}

@@ -1,0 +1,45 @@
+{
+  "active": [
+    {
+      "id": 1772977338977,
+      "name": "Haci",
+      "age": 4,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "notes": "",
+      "startTime": "2026-03-08T13:42:00.000Z",
+      "endTime": null
+    }
+  ],
+  "completed": [
+    {
+      "id": 1772977042537,
+      "name": "Kamil",
+      "age": 7,
+      "playZone": "Əsas",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "notes": "",
+      "startTime": "2026-03-08T09:00:00.000Z",
+      "endTime": "2026-03-08T10:00:00.000Z"
+    },
+    {
+      "id": 1772979115621,
+      "name": "Hamid",
+      "age": 5,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "notes": "Test",
+      "startTime": "2026-03-08T09:00:00.000Z",
+      "endTime": "2026-03-08T10:00:00.000Z"
+    }
+  ]
+}

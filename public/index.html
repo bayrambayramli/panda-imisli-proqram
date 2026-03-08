@@ -175,6 +175,10 @@
           <label for="editStartTime">Başlama Vaxtı</label>
           <input type="time" id="editStartTime">
         </div>
+      <div class="form-group hidden" id="editEndTimeGroup">
+          <label for="editEndTime">Bitmə Vaxtı</label>
+          <input type="time" id="editEndTime">
+        </div>
         <div class="form-group">
           <label for="editNotes">Qeydlər</label>
           <input type="text" id="editNotes">
@@ -215,6 +219,7 @@
           </div>
 
           <button id="loadHistoryBtn" class="btn-load-history">Yüklə</button>
+          <button id="historyAddBtn" class="btn-load-history" style="display:none;">➕ Seans əlavə et</button>
           <input type="text" id="historyNameSearch" class="history-search" placeholder="Ada görə axtar...">
           <button id="historyExportBtn" class="btn-export">📥 Excel-ə Çıxar</button>
         </div>

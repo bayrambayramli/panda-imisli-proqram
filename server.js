@@ -279,6 +279,52 @@ app.post('/api/children/:id/restore', (req, res) => {
   return res.json(child);
 });
 
+// Add a retrospective completed session to history
+app.post('/api/history/add', (req, res) => {
+  try {
+    const { date, name, age, playZone, duration, price, passTypeId, passTypeName, notes, startTime, endTime } = req.body;
+    
+    // Validate date
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ error: 'Valid date (YYYY-MM-DD) is required' });
+    }
+    
+    // Validate required fields
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Name is required' });
+    }
+    if (!age || !playZone || !passTypeId) {
+      return res.status(400).json({ error: 'Age, playZone, and passTypeId are required' });
+    }
+    
+    const data = loadData(date);
+    
+    // Create a new completed session
+    const newSession = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      name: name.trim(),
+      age: parseInt(age),
+      playZone,
+      duration,
+      price,
+      passTypeId,
+      passTypeName,
+      notes: notes || '',
+      startTime: startTime || new Date(`${date}T10:00:00`).toISOString(),
+      endTime: endTime || new Date(`${date}T11:00:00`).toISOString()
+    };
+    
+    // Add to completed array
+    data.completed.push(newSession);
+    saveData(date, data);
+    
+    res.json(newSession);
+  } catch (err) {
+    logError('Error adding retrospective session:', err);
+    res.status(500).json({ error: 'Failed to add retrospective session' });
+  }
+});
+
 // Delete child
 app.delete('/api/children/:id', (req, res) => {
   const { date } = req.query;
