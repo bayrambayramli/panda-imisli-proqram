@@ -4,15 +4,15 @@
     {
       "id": 1772453933727,
       "name": "Ali",
-      "age": 4,
+      "age": 6,
       "playZone": "Əsas",
       "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
+      "price": 3,
+      "passTypeId": 2,
+      "passTypeName": "1 saat - Endirimli",
       "notes": "",
-      "startTime": "2026-03-02T12:18:53.727Z",
-      "endTime": "2026-03-02T13:23:34.603Z"
+      "startTime": "2026-03-02T12:18:00.000Z",
+      "endTime": "2026-03-02T13:23:00.000Z"
     },
     {
       "id": 1772467703505,
@@ -95,15 +95,15 @@
     {
       "id": 1772467733610,
       "name": "Orxan",
-      "age": 4,
+      "age": 5,
       "playZone": "Körpə",
       "duration": 60,
       "price": 3,
       "passTypeId": 2,
       "passTypeName": "1 saat - Endirimli",
       "notes": "",
-      "startTime": "2026-03-02T16:08:53.610Z",
-      "endTime": "2026-03-02T18:29:02.598Z"
+      "startTime": "2026-03-02T16:08:00.000Z",
+      "endTime": "2026-03-02T18:29:00.000Z"
     },
     {
       "id": 1772467717730,
