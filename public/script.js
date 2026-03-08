@@ -110,7 +110,7 @@ function setupEventListeners() {
     if (mode === 'single') {
       const date = document.getElementById('historyDate').value;
       if (!date) {
-        await showUiAlert('Lütfən tarixi seçin.');
+        await showUiAlert('Zəhmət olmasa, tarixi seçin.');
         return;
       }
       url = `/api/exportExcel/${date}`;
@@ -120,7 +120,7 @@ function setupEventListeners() {
       const endDate = document.getElementById('historyEndDate').value;
       
       if (!startDate || !endDate) {
-        await showUiAlert('Lütfən başlanğıc və son tarixini seçin.');
+        await showUiAlert('Zəhmət olmasa, başlanğıc və son tarixi seçin.');
         return;
       }
       
@@ -571,7 +571,7 @@ async function addChild() {
   
   // Validation
   if (!name || !age || !playZone || !passTypeId) {
-    await showUiAlert('Lütfən bütün tələb olunan xanaları doldurun (*).');
+    await showUiAlert('Zəhmət olmasa, bütün tələb olunan xanaları doldurun (*).');
     return;
   }
   
@@ -1159,7 +1159,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
   if (mode === 'single') {
     const selectedDate = document.getElementById('historyDate').value;
     if (!selectedDate) {
-      await showUiAlert('Lütfən tarixi seçin.');
+      await showUiAlert('Zəhmət olmasa, tarixi seçin.');
       return;
     }
     url = `/api/history/${selectedDate}`;
@@ -1168,7 +1168,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     const endDate = document.getElementById('historyEndDate').value;
     
     if (!startDate || !endDate) {
-      await showUiAlert('Lütfən başlanğıc və son tarixini seçin.');
+      await showUiAlert('Zəhmət olmasa, başlanğıc və son tarixi seçin.');
       return;
     }
     
@@ -1204,10 +1204,10 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
     if (completed.length === 0) {
       // Show alert only if Load button was clicked (showAlertIfEmpty = true)
       if (showAlertIfEmpty) {
-        showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.');
+        showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa, başqa tarix seçin.');
       }
       // Always show static message in panel
-      html = '<p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa başqa tarix seçin.</p>';
+      html = '<p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa, başqa tarix seçin.</p>';
     } else if (filteredCompleted.length === 0) {
       html = '<p class="no-data-msg">Axtarışa uyğun bitmiş seans tapılmadı.</p>';
     } else {
@@ -1587,7 +1587,7 @@ async function saveSettings() {
   }
 
   if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
-    await showUiAlert('Lütfən günü bitirmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
+    await showUiAlert('Zəhmət olmasa, günün bitmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
     return;
   }
 
