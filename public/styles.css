@@ -1281,13 +1281,14 @@ body {
   z-index: 9;
 }
 
-.history-table thead th {
+/* .history-table thead th {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+} */
 
 .history-table th {
-  padding: 10px 8px;
+  padding: 4px 8px;
   text-align: left;
+  font-size: 16px;
   font-weight: 600;
   border-right: 1px solid #555;
 }
@@ -1307,7 +1308,7 @@ body {
 }
 
 .history-table td {
-  padding: 10px 8px;
+  padding: 4px 8px;
   border-bottom: 1px solid #e0e0e0;
   border-right: 1px solid #e0e0e0;
 }
