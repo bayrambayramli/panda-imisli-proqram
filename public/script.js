@@ -1213,10 +1213,11 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
     } else {
       // Sort the data
       const sortedCompleted = sortHistoryData([...filteredCompleted]);
+      const completedRevenue = sortedCompleted.reduce((sum, child) => sum + (parseFloat(child.price) || 0), 0);
       
       html += `
         <div class="history-section">
-          <h3 class="history-section-title">✅ Bitmiş Seanslar (${sortedCompleted.length})</h3>
+          <h3 class="history-section-title">✅ Bitmiş Seanslar (Cəmi: ${sortedCompleted.length} uşaq. Gəlir: ${completedRevenue.toFixed(2)} AZN)</h3>
           <table class="history-table">
             <thead>
               <tr>
