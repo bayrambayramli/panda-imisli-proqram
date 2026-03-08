@@ -301,7 +301,7 @@ body {
 }
 
 .active-sessions-section h2 {
-  color: #4CAF50;
+  color: #0a7f0f;
   border-bottom-color: #4CAF50;
 }
 
@@ -310,7 +310,7 @@ body {
 }
 
 .completed-sessions-section h2 {
-  color: #607D8B;
+  color: #0e5273;
   border-bottom-color: #90A4AE;
 }
 
@@ -1274,7 +1274,7 @@ body {
 }
 
 .history-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #764ba2;
   color: white;
   position: sticky;
   top: 45px;
