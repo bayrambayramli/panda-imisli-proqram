@@ -282,7 +282,7 @@ app.post('/api/children/:id/restore', (req, res) => {
 // Add a retrospective completed session to history
 app.post('/api/history/add', (req, res) => {
   try {
-    const { date, name, age, playZone, duration, price, passTypeId, passTypeName, notes, startTime, endTime } = req.body;
+    const { date, name, age, playZone, notes, passTypeId, startTime, endTime } = req.body;
     
     // Validate date
     if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -293,8 +293,25 @@ app.post('/api/history/add', (req, res) => {
     if (!name || !name.trim()) {
       return res.status(400).json({ error: 'Name is required' });
     }
-    if (!age || !playZone || !passTypeId) {
+    if (!age || !playZone || passTypeId === undefined || passTypeId === null || passTypeId === '') {
       return res.status(400).json({ error: 'Age, playZone, and passTypeId are required' });
+    }
+
+    const settings = loadSettings();
+    const passType = (settings.passTypes || []).find(pt => pt.id.toString() === passTypeId.toString());
+    if (!passType) {
+      return res.status(400).json({ error: 'Pass type not found' });
+    }
+
+    const parsedStart = startTime ? new Date(startTime) : new Date(`${date}T10:00:00`);
+    const parsedEnd = endTime ? new Date(endTime) : new Date(parsedStart.getTime() + 60 * 60 * 1000);
+
+    if (Number.isNaN(parsedStart.getTime()) || Number.isNaN(parsedEnd.getTime())) {
+      return res.status(400).json({ error: 'Invalid startTime or endTime' });
+    }
+
+    if (parsedEnd < parsedStart) {
+      return res.status(400).json({ error: 'endTime cannot be earlier than startTime' });
     }
     
     const data = loadData(date);
@@ -305,13 +322,13 @@ app.post('/api/history/add', (req, res) => {
       name: name.trim(),
       age: parseInt(age),
       playZone,
-      duration,
-      price,
-      passTypeId,
-      passTypeName,
+      duration: passType.duration,
+      price: passType.price,
+      passTypeId: passType.id,
+      passTypeName: passType.name,
       notes: notes || '',
-      startTime: startTime || new Date(`${date}T10:00:00`).toISOString(),
-      endTime: endTime || new Date(`${date}T11:00:00`).toISOString()
+      startTime: parsedStart.toISOString(),
+      endTime: parsedEnd.toISOString()
     };
     
     // Add to completed array

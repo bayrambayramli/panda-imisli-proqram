@@ -870,7 +870,7 @@ async function openEditModal(childId, source, historyDate = null) {
   
   // Find and set the correct pass type in the dropdown
   if (child.passTypeId && settings.passTypes) {
-    const passType = settings.passTypes.find(pt => pt.id === child.passTypeId);
+    const passType = settings.passTypes.find(pt => pt.id.toString() === child.passTypeId.toString());
     if (passType) {
       document.getElementById('editDuration').value = passType.id;
     }
@@ -1018,6 +1018,15 @@ async function saveEdit() {
     // For history sessions, handle both start and end times
     const startTimeInput = document.getElementById('editStartTime').value;
     const endTimeInput = document.getElementById('editEndTime').value;
+
+    if (startTimeInput && endTimeInput) {
+      const [startH, startM] = startTimeInput.split(':').map(Number);
+      const [endH, endM] = endTimeInput.split(':').map(Number);
+      if (endH * 60 + endM < startH * 60 + startM) {
+        await showUiAlert('Bitmə vaxtı başlama vaxtından sonra olmalıdır.');
+        return;
+      }
+    }
     
     if (startTimeInput || endTimeInput) {
       const response = await fetch(`/api/data/${dateToUse}`);
@@ -1033,7 +1042,7 @@ async function saveEdit() {
         }
         
         if (endTimeInput) {
-          const endDate = new Date(child.startTime || `${dateToUse}T00:00:00`);
+          const endDate = new Date(child.endTime || child.startTime || `${dateToUse}T00:00:00`);
           const [hours, minutes] = endTimeInput.split(':');
           endDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
           updates.endTime = endDate.toISOString();
@@ -1193,7 +1202,7 @@ function openHistoryModal() {
   document.getElementById('historySingleDayMode').classList.remove('history-hidden');
   document.getElementById('historyDateRangeMode').classList.add('history-hidden');
   const addBtn = document.getElementById('historyAddBtn');
-  if (addBtn) addBtn.style.display = 'block';
+  if (addBtn) addBtn.classList.remove('is-hidden');
   
   const nameSearchInput = document.getElementById('historyNameSearch');
   if (nameSearchInput) {
@@ -1222,7 +1231,7 @@ function toggleHistoryMode() {
     // Set single day date to today
     document.getElementById('historyDate').value = today;
     // Show add button only in single day mode
-    if (addBtn) addBtn.style.display = 'block';
+    if (addBtn) addBtn.classList.remove('is-hidden');
   } else {
     singleDayGroup.classList.add('history-hidden');
     dateRangeGroup.classList.remove('history-hidden');
@@ -1230,7 +1239,7 @@ function toggleHistoryMode() {
     document.getElementById('historyStartDate').value = today;
     document.getElementById('historyEndDate').value = today;
     // Hide add button in range mode
-    if (addBtn) addBtn.style.display = 'none';
+    if (addBtn) addBtn.classList.add('is-hidden');
   }
   
   // Clear search and reload
@@ -1308,10 +1317,10 @@ function closeHistoryModal() {
 }
 
 // Open modal to add a new session to history (retrospective)
-function openHistoryAddModal() {
+async function openHistoryAddModal() {
   const selectedDate = document.getElementById('historyDate').value;
   if (!selectedDate) {
-    showUiAlert('Zəhmət olmasa, tarixi seçin.');
+    await showUiAlert('Zəhmət olmasa, tarixi seçin.');
     return;
   }
   
@@ -1345,7 +1354,7 @@ async function openHistoryEditModal(childId, sessionDate) {
     await showUiAlert('Seans tarixi tapılmadı.');
     return;
   }
-  openEditModal(childId, 'history', sessionDate);
+  await openEditModal(childId, 'history', sessionDate);
 }
 
 async function loadHistoryData(showAlertIfEmpty = false) {

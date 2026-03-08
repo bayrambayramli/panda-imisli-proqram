@@ -1829,6 +1829,10 @@ body {
   max-width: 140px;
 }
 
+.is-hidden {
+  display: none;
+}
+
 .history-hidden {
   display: none;
 }

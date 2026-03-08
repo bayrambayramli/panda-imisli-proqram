@@ -282,3 +282,7 @@ body {
 .custom-message-page.fade-out {
   animation: fadeOut 0.5s ease-out forwards;
 }
+
+.is-hidden {
+  display: none;
+}
