@@ -635,7 +635,7 @@ function startTimer(childId, durationValue, startTimeISO) {
   }
 
   const durationMinutes = parseInt(durationValue) || 0;
-  const totalDuration = durationMinutes * 60 * 1000; // Total duration in milliseconds
+  const totalDuration = (durationMinutes + 6) * 60 * 1000; // Add 6 minutes prep time
   const startMs = startTimeISO ? new Date(startTimeISO).getTime() : Date.now();
   let endTime = startMs + totalDuration;
   let lastDisplayedMinute = -1; // Track last displayed minute to reduce updates
