@@ -23,6 +23,12 @@
       "name": "Boyama",
       "duration": "unlimited",
       "price": 5
+    },
+    {
+      "id": 5,
+      "name": "Körpə - 1 saat",
+      "duration": 60,
+      "price": 3
     }
   ],
   "playZones": [
@@ -40,8 +46,8 @@
     }
   ],
   "endDayHour": "23:59",
-  "tvPaginationFrequency": 5,
+  "tvPaginationFrequency": 6,
   "tvShowUnlimitedPassTypes": false,
-  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\n\nOyun zonasının qiymətləri:\n1 uşaq 1 saat: 5 manat\n1 uşaq limitsiz: 8 manat",
-  "tvCustomMessageEnabled": false
+  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\n\nOyun zonasının qiymətləri:\n1 uşaq 1 saat: 5 manat\n1 uşaq limitsiz: 8 manat\n1-3 yaş: 3 manat\nBoyama: 5 manat",
+  "tvCustomMessageEnabled": true
 }

@@ -1,19 +1,5 @@
 {
-  "active": [
-    {
-      "id": 1772981984534,
-      "name": "Karim",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": "unlimited",
-      "price": 5,
-      "passTypeId": 4,
-      "passTypeName": "Boyama",
-      "notes": "",
-      "startTime": "2026-03-08T14:59:00.000Z",
-      "endTime": null
-    }
-  ],
+  "active": [],
   "completed": [
     {
       "id": 1772979115621,
@@ -66,6 +52,19 @@
       "notes": "",
       "startTime": "2026-03-08T13:42:00.000Z",
       "endTime": "2026-03-08T14:49:54.943Z"
+    },
+    {
+      "id": 1772981984534,
+      "name": "Karim",
+      "age": 4,
+      "playZone": "Körpə",
+      "duration": "unlimited",
+      "price": 5,
+      "passTypeId": 4,
+      "passTypeName": "Boyama",
+      "notes": "",
+      "startTime": "2026-03-08T14:59:00.000Z",
+      "endTime": "2026-03-08T15:21:04.883Z"
     }
   ]
 }
