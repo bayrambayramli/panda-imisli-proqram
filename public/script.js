@@ -1437,6 +1437,7 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                 <th class="sortable" onclick="sortHistoryBy('date')">Tarix ${getSortIndicator('date')}</th>
                 <th class="sortable" onclick="sortHistoryBy('startTime')">Başlama Vaxtı ${getSortIndicator('startTime')}</th>
                 <th class="sortable" onclick="sortHistoryBy('endTime')">Bitmə Vaxtı ${getSortIndicator('endTime')}</th>
+                <th>Qeydlər</th>
                 <th>Əməliyyat</th>
               </tr>
             </thead>
@@ -1455,6 +1456,7 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                     <td>${dateStr}</td>
                     <td>${startDate ? startDate.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                     <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                    <td>${child.notes || '-'}</td>
                     <td><button class="btn-action btn-edit" onclick="openHistoryEditModal('${child.id}', '${sessionDate}')">Dəyişdir</button></td>
                   </tr>
                 `;

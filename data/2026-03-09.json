@@ -24,9 +24,9 @@
       "price": 3,
       "passTypeId": 5,
       "passTypeName": "Körpə - 1 saat",
-      "notes": "",
-      "startTime": "2026-03-09T14:56:17.070Z",
-      "endTime": "2026-03-09T16:39:21.328Z"
+      "notes": "Test",
+      "startTime": "2026-03-09T14:56:00.000Z",
+      "endTime": "2026-03-09T16:39:00.000Z"
     }
   ]
 }
