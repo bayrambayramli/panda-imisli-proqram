@@ -87,21 +87,7 @@ function initializeDateDisplay() {
   
   // Set history date picker to today
   document.getElementById('historyDate').value = today;
-  
-  // Set start time to current time
-  // setCurrentStartTime();
 }
-
-// Set start time input to current time
-// function setCurrentStartTime() {
-//   const now = new Date();
-//   const hours = String(now.getHours()).padStart(2, '0');
-//   const minutes = String(now.getMinutes()).padStart(2, '0');
-//   const startTimeInput = document.getElementById('startTimeInput');
-//   if (startTimeInput) {
-//     startTimeInput.value = `${hours}:${minutes}`;
-//   }
-// }
 
 // Setup event listeners
 function setupEventListeners() {
@@ -572,7 +558,6 @@ async function addChild() {
   const playZone = document.getElementById('playZone').value;
   const passTypeId = document.getElementById('duration').value;
   const notes = document.getElementById('notesInput').value.trim();
-  const startTimeValue = document.getElementById('startTimeInput').value;
   
   // Check if work day is over
   const now = new Date();
@@ -587,7 +572,8 @@ async function addChild() {
   }
   
   // Validation
-  if (!name || !age || !playZone || !passTypeId || !startTimeValue) {
+  if (!name || !age || !playZone || !passTypeId) {
+    await showUiAlert('Zəhmət olmasa, bütün tələb olunan xanaları doldurun (*).');
     return;
   }
   
@@ -597,9 +583,6 @@ async function addChild() {
     await showUiAlert('Seçilmiş bilet tipi tapılmadı.');
     return;
   }
-  
-  // Create start time ISO string
-  const startTimeISO = new Date(`${currentDate}T${startTimeValue}:00`).toISOString();
   
   try {
     const response = await fetch(`/api/children?date=${currentDate}`, {
@@ -615,8 +598,7 @@ async function addChild() {
         price: passType.price,
         passTypeId: passType.id,
         passTypeName: passType.name,
-        notes,
-        startTime: startTimeISO
+        notes
       })
     });
     
@@ -628,7 +610,6 @@ async function addChild() {
     document.getElementById('playZone').value = '';
     document.getElementById('duration').value = '';
     document.getElementById('notesInput').value = '';
-    setCurrentStartTime(); // Reset start time to current time
     
     // Reload data
     loadData();
