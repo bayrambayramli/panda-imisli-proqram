@@ -1,19 +1,5 @@
 {
-  "active": [
-    {
-      "id": 1773159756720,
-      "name": "Kamil",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 3,
-      "passTypeId": 5,
-      "passTypeName": "Körpə - 1 saat",
-      "notes": "",
-      "startTime": "2026-03-10T16:22:36.720Z",
-      "endTime": null
-    }
-  ],
+  "active": [],
   "completed": [
     {
       "id": 1773159800482,
@@ -27,6 +13,19 @@
       "notes": "",
       "startTime": "2026-03-10T10:00:00.000Z",
       "endTime": "2026-03-10T11:00:00.000Z"
+    },
+    {
+      "id": 1773159756720,
+      "name": "Kamil",
+      "age": 4,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 3,
+      "passTypeId": 5,
+      "passTypeName": "Körpə - 1 saat",
+      "notes": "",
+      "startTime": "2026-03-10T16:22:36.720Z",
+      "endTime": "2026-03-10T16:26:37.832Z"
     }
   ]
 }

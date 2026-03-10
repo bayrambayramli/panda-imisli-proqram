@@ -751,11 +751,12 @@ app.get('/api/report/age-demographics', (req, res) => {
       
       (data.completed || []).forEach(child => {
         const age = parseInt(child.age) || 0;
-        let range = '3-5';
-        
-        if (age >= 6 && age <= 8) range = '6-8';
+        let range;
+        if (age >= 3 && age <= 5) range = '3-5';
+        else if (age >= 6 && age <= 8) range = '6-8';
         else if (age >= 9 && age <= 12) range = '9-12';
-        
+        else return; // skip ages outside defined ranges
+
         ageRanges[range].count++;
         ageRanges[range].revenue += child.price || 0;
       });

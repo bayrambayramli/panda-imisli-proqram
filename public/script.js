@@ -1114,42 +1114,6 @@ function buildChartConfig(labels, childrenCounts, incomeCounts) {
   };
 }
 
-async function updateAnalyticsChart() {
-  // Load last 10 days data from backend
-  try {
-    const response = await fetch('/api/stats/filtered-10days');
-    const stats = await response.json();
-    
-    const days = stats.map(s => {
-      const date = new Date(s.date + 'T00:00:00');
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      return `${day}.${month}`;
-    });
-    const childrenCounts = stats.map(s => s.children);
-    const incomeCounts = stats.map(s => s.income);
-  
-  const chartContainer = document.getElementById('analyticsChartContainer');
-
-  if (days.length === 0) {
-    chartContainer.classList.add('is-hidden');
-    return;
-  }
-  
-  chartContainer.classList.remove('is-hidden');
-  const ctx = document.getElementById('analyticsChart').getContext('2d');
-  
-  // Destroy existing chart if it exists
-  if (analyticsChart) {
-    analyticsChart.destroy();
-  }
-  
-  analyticsChart = new Chart(ctx, buildChartConfig(days, childrenCounts, incomeCounts));
-  } catch (error) {
-    console.error('Error loading analytics data:', error);
-  }
-}
-
 // History Modal Functions
 function openHistoryModal() {
   // Ensure stats modal is closed when opening history
@@ -2052,8 +2016,8 @@ function switchReportTab(tabName) {
 
 // Load statistics report (chart with filters)
 async function loadStatisticsReport() {
-  // Load and display analytics chart
-  await updateAnalyticsChart();
+  // Use updateFilteredStats so current filter selections are respected
+  await updateFilteredStats();
 }
 
 // Load monthly report
@@ -2185,22 +2149,30 @@ async function updateFilteredStats() {
 
 // Update filtered analytics chart
 function updateFilteredChart(stats) {
+  const chartContainer = document.getElementById('analyticsChartContainer');
   const days = stats.map(s => {
     const date = new Date(s.date + 'T00:00:00');
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     return `${day}.${month}`;
   });
-  
+
   const childrenCounts = stats.map(s => s.children);
   const incomeCounts = stats.map(s => s.income);
-  
-    const ctx = document.getElementById('analyticsChart');
-    if (!ctx) return;
-    
-    if (analyticsChart) {
-      analyticsChart.destroy();
-    }
-    
-    analyticsChart = new Chart(ctx.getContext('2d'), buildChartConfig(days, childrenCounts, incomeCounts));
+
+  const ctx = document.getElementById('analyticsChart');
+  if (!ctx) return;
+
+  if (days.length === 0) {
+    chartContainer.classList.add('is-hidden');
+    return;
+  }
+
+  chartContainer.classList.remove('is-hidden');
+
+  if (analyticsChart) {
+    analyticsChart.destroy();
+  }
+
+  analyticsChart = new Chart(ctx.getContext('2d'), buildChartConfig(days, childrenCounts, incomeCounts));
 }
