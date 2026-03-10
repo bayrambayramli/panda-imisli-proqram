@@ -65,7 +65,7 @@ function updateTimer(childId, durationValue, startTimeISO) {
   }
 
   const durationMinutes = parseInt(durationValue) || 0;
-  const totalDuration = durationMinutes * 60 * 1000;
+  const totalDuration = (durationMinutes + 6) * 60 * 1000;
   const startMs = startTimeISO ? new Date(startTimeISO).getTime() : Date.now();
   const endTime = startMs + totalDuration;
   const remaining = Math.max(0, endTime - Date.now());
