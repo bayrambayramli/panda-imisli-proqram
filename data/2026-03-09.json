@@ -1,45 +1,5 @@
 {
-  "active": [
-    {
-      "id": 1773091430468,
-      "name": "Ali",
-      "age": 3,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 3,
-      "passTypeId": 2,
-      "passTypeName": "1 saat - Endirimli",
-      "notes": "",
-      "startTime": "2026-03-09T21:23:50.468Z",
-      "endTime": null
-    },
-    {
-      "id": 1773092620598,
-      "name": "Karim",
-      "age": 7,
-      "playZone": "Əsas",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "notes": "",
-      "startTime": "2026-03-09T21:43:00.000Z",
-      "endTime": null
-    },
-    {
-      "id": 1773092667093,
-      "name": "Vusal",
-      "age": 5,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "notes": "",
-      "startTime": "2026-03-09T21:44:27.093Z",
-      "endTime": null
-    }
-  ],
+  "active": [],
   "completed": [
     {
       "id": 1773068177070,
@@ -53,6 +13,45 @@
       "notes": "Test",
       "startTime": "2026-03-09T14:56:00.000Z",
       "endTime": "2026-03-09T16:39:00.000Z"
+    },
+    {
+      "id": 1773091430468,
+      "name": "Ali",
+      "age": 3,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 3,
+      "passTypeId": 2,
+      "passTypeName": "1 saat - Endirimli",
+      "notes": "",
+      "startTime": "2026-03-09T21:23:50.468Z",
+      "endTime": "2026-03-09T22:32:20.655Z"
+    },
+    {
+      "id": 1773092620598,
+      "name": "Karim",
+      "age": 7,
+      "playZone": "Əsas",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "notes": "",
+      "startTime": "2026-03-09T21:43:00.000Z",
+      "endTime": "2026-03-09T22:32:20.655Z"
+    },
+    {
+      "id": 1773092667093,
+      "name": "Vusal",
+      "age": 5,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "notes": "",
+      "startTime": "2026-03-09T21:44:27.093Z",
+      "endTime": "2026-03-09T22:32:20.655Z"
     }
   ]
 }
