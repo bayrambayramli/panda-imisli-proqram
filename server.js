@@ -736,9 +736,10 @@ app.get('/api/report/age-demographics', (req, res) => {
     const { month } = req.query; // Format: YYYY-MM
     const files = fs.readdirSync(dataDir).filter(f => f.match(/\d{4}-\d{2}-\d{2}\.json/));
     const ageRanges = {
-      '3-5': { range: '3-5', count: 0, revenue: 0 },
-      '6-8': { range: '6-8', count: 0, revenue: 0 },
-      '9-12': { range: '9-12', count: 0, revenue: 0 }
+      '1-3': { range: '1-3', count: 0, revenue: 0 },
+      '4-6': { range: '4-6', count: 0, revenue: 0 },
+      '7-9': { range: '7-9', count: 0, revenue: 0 },
+      '10-13': { range: '10-13', count: 0, revenue: 0 }
     };
 
     files.forEach(file => {
@@ -752,9 +753,10 @@ app.get('/api/report/age-demographics', (req, res) => {
       (data.completed || []).forEach(child => {
         const age = parseInt(child.age) || 0;
         let range;
-        if (age >= 3 && age <= 5) range = '3-5';
-        else if (age >= 6 && age <= 8) range = '6-8';
-        else if (age >= 9 && age <= 12) range = '9-12';
+        if (age >= 1 && age <= 3) range = '1-3';
+        else if (age >= 4 && age <= 6) range = '4-6';
+        else if (age >= 7 && age <= 9) range = '7-9';
+        else if (age >= 10 && age <= 13) range = '10-13';
         else return; // skip ages outside defined ranges
 
         ageRanges[range].count++;
