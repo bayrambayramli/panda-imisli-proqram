@@ -274,7 +274,7 @@ function toggleFullscreen(section) {
     if (btn) btn.textContent = isNow ? 'Tam Ekrandan Çıx' : 'Tam Ekran';
     // Hide/show TV Ekranı button
     const tvBtn = document.getElementById('activeTvBtn');
-    if (tvBtn) tvBtn.style.display = isNow ? 'none' : 'block';
+    if (tvBtn) tvBtn.classList.toggle('is-hidden', isNow);
   } else {
     const btn = document.getElementById('completedFullBtn');
     if (btn) btn.textContent = isNow ? 'Tam Ekrandan Çıx' : 'Tam Ekran';
@@ -370,7 +370,7 @@ function closeUiPrompt(ok) {
         _uiPromptResolve(true);
       }
     } else {
-      _uiPromptResolve(ok ? true : false);
+      _uiPromptResolve(false);
     }
     _uiPromptResolve = null;
   }
@@ -389,6 +389,22 @@ async function loadData() {
   }
 }
 
+// Build session count text with zone breakdown
+function buildSessionCountText(children) {
+  if (children.length === 0) return '0';
+  const zoneCounts = {};
+  children.forEach(child => {
+    zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
+  });
+  const parts = [`Cəmi: ${children.length}`];
+  if (settings && settings.playZones) {
+    settings.playZones.forEach(zone => {
+      if (zoneCounts[zone.name]) parts.push(`${zone.name}: ${zoneCounts[zone.name]}`);
+    });
+  }
+  return parts.join(', ');
+}
+
 // Render active sessions
 function renderActiveSessions(children) {
   const tbody = document.getElementById('activeTableBody');
@@ -396,30 +412,7 @@ function renderActiveSessions(children) {
   const count = document.getElementById('activeCount');
   
   tbody.innerHTML = '';
-  
-  // Count children by zone
-  const zoneCounts = {};
-  children.forEach(child => {
-    zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
-  });
-  
-  // Format count with zone breakdown (dynamic based on settings)
-  let countText = children.length;
-  if (children.length > 0) {
-    const parts = [`Cəmi: ${children.length}`];
-    
-    // Add zone counts dynamically from settings
-    if (settings && settings.playZones) {
-      settings.playZones.forEach(zone => {
-        if (zoneCounts[zone.name]) {
-          parts.push(`${zone.name}: ${zoneCounts[zone.name]}`);
-        }
-      });
-    }
-    
-    countText = parts.join(', ');
-  }
-  count.textContent = countText;
+  count.textContent = buildSessionCountText(children);
   
   if (children.length === 0) {
     noMsg.style.display = 'block';
@@ -444,30 +437,7 @@ function renderCompletedSessions(children) {
   const count = document.getElementById('completedCount');
   
   tbody.innerHTML = '';
-  
-  // Count children by zone
-  const zoneCounts = {};
-  children.forEach(child => {
-    zoneCounts[child.playZone] = (zoneCounts[child.playZone] || 0) + 1;
-  });
-  
-  // Format count with zone breakdown (dynamic based on settings)
-  let countText = children.length;
-  if (children.length > 0) {
-    const parts = [`Cəmi: ${children.length}`];
-    
-    // Add zone counts dynamically from settings
-    if (settings && settings.playZones) {
-      settings.playZones.forEach(zone => {
-        if (zoneCounts[zone.name]) {
-          parts.push(`${zone.name}: ${zoneCounts[zone.name]}`);
-        }
-      });
-    }
-    
-    countText = parts.join(', ');
-  }
-  count.textContent = countText;
+  count.textContent = buildSessionCountText(children);
   
   if (children.length === 0) {
     noMsg.style.display = 'block';
@@ -492,7 +462,6 @@ function createActiveRow(child) {
     `<span class="editable-field editable-placeholder" onclick="editNotes('${child.id}')">Qeyd əlavə et...</span>`;
   
   const startTimeStr = child.startTime ? new Date(child.startTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-';
-  const timeButtonsHtml = '';
 
   row.innerHTML = `
     <td>${child.name}</td>
@@ -506,7 +475,6 @@ function createActiveRow(child) {
     <td>
       <div class="actions-cell">
         <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'active')">Dəyişdir</button>
-        ${timeButtonsHtml}
         <button class="btn-action btn-end" onclick="endSession('${child.id}')">Bitir</button>
         <button class="btn-action btn-delete" onclick="deleteChild('${child.id}', 'active')">Sil</button>
       </div>
@@ -760,17 +728,9 @@ async function editNotes(childId) {
   const response = await fetch(`/api/data/${currentDate}`);
   const data = await response.json();
   
-  let child;
-  let source;
-  
-  // Search active sessions first
-  child = data.active.find(c => c.id == childId);
-  if (child) {
-    source = 'active';
-  } else {
-    // Then search completed sessions
+  let child = data.active.find(c => c.id == childId);
+  if (!child) {
     child = data.completed.find(c => c.id == childId);
-    source = 'completed';
   }
   
   if (!child) return;
@@ -1075,40 +1035,12 @@ async function saveEdit() {
 
 // ===== ANALYTICS CHART FUNCTIONS =====
 
-async function updateAnalyticsChart() {
-  // Load last 10 days data from backend
-  try {
-    const response = await fetch('/api/stats/filtered-10days');
-    const stats = await response.json();
-    
-    const days = stats.map(s => {
-      const date = new Date(s.date + 'T00:00:00');
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      return `${day}.${month}`;
-    });
-    const childrenCounts = stats.map(s => s.children);
-    const incomeCounts = stats.map(s => s.income);
-  
-  const chartContainer = document.getElementById('analyticsChartContainer');
-  
-  if (days.length === 0) {
-    chartContainer.style.display = 'none';
-    return;
-  }
-  
-  chartContainer.style.display = 'block';
-  const ctx = document.getElementById('analyticsChart').getContext('2d');
-  
-  // Destroy existing chart if it exists
-  if (analyticsChart) {
-    analyticsChart.destroy();
-  }
-  
-  analyticsChart = new Chart(ctx, {
+// Build reusable Chart.js configuration for analytics charts
+function buildChartConfig(labels, childrenCounts, incomeCounts) {
+  return {
     type: 'line',
     data: {
-      labels: days,
+      labels,
       datasets: [
         {
           label: 'Qəbul Edilən Uşaqlar',
@@ -1143,18 +1075,11 @@ async function updateAnalyticsChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
+      interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: {
           display: true,
-          labels: {
-            font: { size: 12, weight: 'bold' },
-            color: '#333',
-            padding: 15
-          }
+          labels: { font: { size: 12, weight: 'bold' }, color: '#333', padding: 15 }
         }
       },
       scales: {
@@ -1162,27 +1087,52 @@ async function updateAnalyticsChart() {
           type: 'linear',
           display: true,
           position: 'left',
-          title: {
-            display: true,
-            text: 'Uşaq Sayı',
-            font: { size: 12, weight: 'bold' }
-          },
+          title: { display: true, text: 'Uşaq Sayı', font: { size: 12, weight: 'bold' } },
           grid: { color: 'rgba(0, 0, 0, 0.05)' }
         },
         y1: {
           type: 'linear',
           display: true,
           position: 'right',
-          title: {
-            display: true,
-            text: 'Gəlir (AZN)',
-            font: { size: 12, weight: 'bold' }
-          },
-          grid: { display: false }
+          title: { display: true, text: 'Gəlir (AZN)', font: { size: 12, weight: 'bold' } },
+          grid: { drawOnChartArea: false }
         }
       }
     }
-  });
+  };
+}
+
+async function updateAnalyticsChart() {
+  // Load last 10 days data from backend
+  try {
+    const response = await fetch('/api/stats/filtered-10days');
+    const stats = await response.json();
+    
+    const days = stats.map(s => {
+      const date = new Date(s.date + 'T00:00:00');
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return `${day}.${month}`;
+    });
+    const childrenCounts = stats.map(s => s.children);
+    const incomeCounts = stats.map(s => s.income);
+  
+  const chartContainer = document.getElementById('analyticsChartContainer');
+  
+  if (days.length === 0) {
+    chartContainer.style.display = 'none';
+    return;
+  }
+  
+  chartContainer.style.display = 'block';
+  const ctx = document.getElementById('analyticsChart').getContext('2d');
+  
+  // Destroy existing chart if it exists
+  if (analyticsChart) {
+    analyticsChart.destroy();
+  }
+  
+  analyticsChart = new Chart(ctx, buildChartConfig(days, childrenCounts, incomeCounts));
   } catch (error) {
     console.error('Error loading analytics data:', error);
   }
@@ -2235,81 +2185,5 @@ function updateFilteredChart(stats) {
       analyticsChart.destroy();
     }
     
-    analyticsChart = new Chart(ctx.getContext('2d'), {
-    type: 'line',
-    data: {
-      labels: days,
-      datasets: [
-        {
-          label: 'Qəbul Edilən Uşaqlar',
-          data: childrenCounts,
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0,
-          pointRadius: 5,
-          pointBackgroundColor: '#4CAF50',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          yAxisID: 'y'
-        },
-        {
-          label: 'Gəlir (AZN)',
-          data: incomeCounts,
-          borderColor: '#2196F3',
-          backgroundColor: 'rgba(33, 150, 243, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0,
-          pointRadius: 5,
-          pointBackgroundColor: '#2196F3',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          yAxisID: 'y1'
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      plugins: {
-        legend: {
-          display: true,
-          labels: {
-            font: { size: 12, weight: 'bold' },
-            color: '#333',
-            padding: 15
-          }
-        }
-      },
-      scales: {
-        y: {
-          type: 'linear',
-          display: true,
-          position: 'left',
-          title: {
-            display: true,
-            text: 'Uşaq Sayı'
-          }
-        },
-        y1: {
-          type: 'linear',
-          display: true,
-          position: 'right',
-          title: {
-            display: true,
-            text: 'Gəlir (AZN)'
-          },
-          grid: {
-            drawOnChartArea: false,
-          }
-        }
-      }
-    }
-  });
+    analyticsChart = new Chart(ctx.getContext('2d'), buildChartConfig(days, childrenCounts, incomeCounts));
 }
