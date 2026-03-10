@@ -1013,6 +1013,7 @@ async function saveEdit() {
     }
   }
   
+  const savedSource = editingSource;
   try {
     await fetch(`/api/children/${editingChildId}?date=${dateToUse}`, {
       method: 'PUT',
@@ -1023,7 +1024,7 @@ async function saveEdit() {
     closeModal();
     
     // Reload appropriate data based on source
-    if (editingSource === 'history') {
+    if (savedSource === 'history') {
       loadHistoryData(false);
     } else {
       loadData();
