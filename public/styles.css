@@ -115,12 +115,6 @@ body {
   flex-wrap: wrap;
 }
 
-.date-section label {
-  font-weight: 700;
-  font-size: 14px;
-  color: white;
-}
-
 .today-date {
   font-weight: 600;
   font-size: 14px;
@@ -1783,9 +1777,5 @@ body {
 }
 
 .is-hidden {
-  display: none;
-}
-
-.history-hidden {
   display: none;
 }

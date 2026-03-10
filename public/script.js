@@ -306,14 +306,11 @@ function showUiAlert(message) {
     const modal = document.getElementById('uiPromptModal');
     document.getElementById('uiPromptMessage').textContent = message;
     const input = document.getElementById('uiPromptInput');
-    input.style.display = 'none';
-    
-    // Hide cancel button for alerts
+    input.classList.add('is-hidden');
     const cancelBtn = document.getElementById('uiPromptCancel');
     const okBtn = document.getElementById('uiPromptOk');
-    if (cancelBtn) cancelBtn.style.display = 'none';
-    if (okBtn) okBtn.style.display = 'block';
-    
+    if (cancelBtn) cancelBtn.classList.add('is-hidden');
+    if (okBtn) okBtn.classList.remove('is-hidden');
     modal.classList.add('show');
     _uiAlertResolve = resolve;
   });
@@ -324,8 +321,8 @@ function closeUiAlert() {
   const cancelBtn = document.getElementById('uiPromptCancel');
   const okBtn = document.getElementById('uiPromptOk');
   modal.classList.remove('show');
-  if (cancelBtn) cancelBtn.style.display = 'block'; // restore for prompts
-  if (okBtn) okBtn.style.display = 'block';
+  if (cancelBtn) cancelBtn.classList.remove('is-hidden');
+  if (okBtn) okBtn.classList.remove('is-hidden');
   if (_uiAlertResolve) {
     _uiAlertResolve(true);
     _uiAlertResolve = null;
@@ -343,15 +340,15 @@ function showUiPrompt(message, options = { input: false, defaultValue: '' }) {
     const okBtn = document.getElementById('uiPromptOk');
     
     // Show cancel button for prompts
-    if (cancelBtn) cancelBtn.style.display = 'block';
-    if (okBtn) okBtn.style.display = 'block';
+    if (cancelBtn) cancelBtn.classList.remove('is-hidden');
+    if (okBtn) okBtn.classList.remove('is-hidden');
     
     if (options.input) {
-      input.style.display = 'block';
+      input.classList.remove('is-hidden');
       input.value = options.defaultValue || '';
       input.focus();
     } else {
-      input.style.display = 'none';
+      input.classList.add('is-hidden');
     }
     modal.classList.add('show');
     _uiPromptResolve = resolve;
@@ -364,7 +361,7 @@ function closeUiPrompt(ok) {
   modal.classList.remove('show');
   if (_uiPromptResolve) {
     if (ok) {
-      if (input.style.display === 'block') {
+      if (!input.classList.contains('is-hidden')) {
         _uiPromptResolve(input.value);
       } else {
         _uiPromptResolve(true);
@@ -415,11 +412,11 @@ function renderActiveSessions(children) {
   count.textContent = buildSessionCountText(children);
   
   if (children.length === 0) {
-    noMsg.style.display = 'block';
+    noMsg.classList.remove('is-hidden');
     return;
   }
   
-  noMsg.style.display = 'none';
+  noMsg.classList.add('is-hidden');
   
   children.forEach(child => {
     const row = createActiveRow(child);
@@ -440,11 +437,11 @@ function renderCompletedSessions(children) {
   count.textContent = buildSessionCountText(children);
   
   if (children.length === 0) {
-    noMsg.style.display = 'block';
+    noMsg.classList.remove('is-hidden');
     return;
   }
   
-  noMsg.style.display = 'none';
+  noMsg.classList.add('is-hidden');
   
   children.forEach(child => {
     const row = createCompletedRow(child);
@@ -804,8 +801,8 @@ async function openEditModal(childId, source, historyDate = null) {
   
   if (source === 'history') {
     // For history sessions, show both start and end times
-    startTimeGroup.style.display = 'flex';
-    endTimeGroup.style.display = 'flex';
+    startTimeGroup.classList.remove('is-hidden');
+    endTimeGroup.classList.remove('is-hidden');
     
     if (child.startTime) {
       const startDate = new Date(child.startTime);
@@ -831,15 +828,15 @@ async function openEditModal(childId, source, historyDate = null) {
     }
   } else if (source === 'active' && child.startTime) {
     // For active sessions, show only start time
-    startTimeGroup.style.display = 'flex';
-    endTimeGroup.style.display = 'none';
+    startTimeGroup.classList.remove('is-hidden');
+    endTimeGroup.classList.add('is-hidden');
     const startDate = new Date(child.startTime);
     const hours = String(startDate.getHours()).padStart(2, '0');
     const minutes = String(startDate.getMinutes()).padStart(2, '0');
     startTimeInput.value = `${hours}:${minutes}`;
   } else {
-    startTimeGroup.style.display = 'none';
-    endTimeGroup.style.display = 'none';
+    startTimeGroup.classList.add('is-hidden');
+    endTimeGroup.classList.add('is-hidden');
     startTimeInput.value = '';
     endTimeInput.value = '';
   }
@@ -1133,13 +1130,13 @@ async function updateAnalyticsChart() {
     const incomeCounts = stats.map(s => s.income);
   
   const chartContainer = document.getElementById('analyticsChartContainer');
-  
+
   if (days.length === 0) {
-    chartContainer.style.display = 'none';
+    chartContainer.classList.add('is-hidden');
     return;
   }
   
-  chartContainer.style.display = 'block';
+  chartContainer.classList.remove('is-hidden');
   const ctx = document.getElementById('analyticsChart').getContext('2d');
   
   // Destroy existing chart if it exists
@@ -1166,8 +1163,8 @@ function openHistoryModal() {
   document.getElementById('historyEndDate').value = today;
   
   // Show single day mode and add button
-  document.getElementById('historySingleDayMode').classList.remove('history-hidden');
-  document.getElementById('historyDateRangeMode').classList.add('history-hidden');
+  document.getElementById('historySingleDayMode').classList.remove('is-hidden');
+  document.getElementById('historyDateRangeMode').classList.add('is-hidden');
   const addBtn = document.getElementById('historyAddBtn');
   if (addBtn) addBtn.classList.remove('is-hidden');
   
@@ -1193,15 +1190,15 @@ function toggleHistoryMode() {
   const today = getTodayDate();
   
   if (mode === 'single') {
-    singleDayGroup.classList.remove('history-hidden');
-    dateRangeGroup.classList.add('history-hidden');
+    singleDayGroup.classList.remove('is-hidden');
+    dateRangeGroup.classList.add('is-hidden');
     // Set single day date to today
     document.getElementById('historyDate').value = today;
     // Show add button only in single day mode
     if (addBtn) addBtn.classList.remove('is-hidden');
   } else {
-    singleDayGroup.classList.add('history-hidden');
-    dateRangeGroup.classList.remove('history-hidden');
+    singleDayGroup.classList.add('is-hidden');
+    dateRangeGroup.classList.remove('is-hidden');
     // Set date range to today
     document.getElementById('historyStartDate').value = today;
     document.getElementById('historyEndDate').value = today;
@@ -1328,8 +1325,8 @@ async function openHistoryAddModal() {
   // Set time fields
   const startTimeGroup = document.getElementById('editStartTimeGroup');
   const endTimeGroup = document.getElementById('editEndTimeGroup');
-  startTimeGroup.style.display = 'flex';
-  endTimeGroup.style.display = 'flex';
+  startTimeGroup.classList.remove('is-hidden');
+  endTimeGroup.classList.remove('is-hidden');
   document.getElementById('editStartTime').value = '11:00';
   document.getElementById('editEndTime').value = '12:00';
   
