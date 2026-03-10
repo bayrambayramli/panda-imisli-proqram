@@ -798,6 +798,8 @@ async function openEditModal(childId, source, historyDate = null) {
   editingChildId = childId;
   editingSource = source;
   editingHistoryDate = historyDate;
+  const editModalTitle = document.querySelector('#editModal .modal-content h2');
+  if (editModalTitle) editModalTitle.textContent = 'Məlumatları Dəyiş';
   
   // Use historyDate if provided (for history sessions), otherwise use currentDate
   const dateToUse = historyDate || currentDate;
@@ -1328,6 +1330,8 @@ async function openHistoryAddModal() {
   editingSource = 'history';
   editingHistoryDate = selectedDate;
   editingChildId = null;
+  const editModalTitle = document.querySelector('#editModal .modal-content h2');
+  if (editModalTitle) editModalTitle.textContent = 'Seans Əlavə Et';
   
   // Clear form
   document.getElementById('editName').value = '';
