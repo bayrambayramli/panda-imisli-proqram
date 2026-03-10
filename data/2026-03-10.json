@@ -10,7 +10,7 @@
       "price": 5,
       "passTypeId": 1,
       "passTypeName": "1 saat",
-      "notes": "",
+      "notes": "Test 2 yeni 3",
       "startTime": "2026-03-10T10:00:00.000Z",
       "endTime": "2026-03-10T11:00:00.000Z"
     },
@@ -23,9 +23,9 @@
       "price": 3,
       "passTypeId": 5,
       "passTypeName": "Körpə - 1 saat",
-      "notes": "",
-      "startTime": "2026-03-10T16:22:36.720Z",
-      "endTime": "2026-03-10T16:26:37.832Z"
+      "notes": "Qeyd deyisdi",
+      "startTime": "2026-03-10T16:22:00.000Z",
+      "endTime": "2026-03-10T16:26:00.000Z"
     }
   ]
 }

@@ -30,34 +30,6 @@
       "endTime": "2026-03-01T01:16:07.048Z"
     },
     {
-      "id": 1772324465470,
-      "name": "11",
-      "age": 4,
-      "playZone": "Əsas",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:21:05.470Z",
-      "endTime": "2026-03-01T01:22:15.840Z"
-    },
-    {
-      "id": 1772324507292,
-      "name": "55",
-      "age": 9,
-      "playZone": "Əsas",
-      "duration": 60,
-      "price": 2.5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 0,
-      "notes": "1",
-      "startTime": "2026-03-01T00:21:47.292Z",
-      "endTime": "2026-03-01T01:22:18.224Z"
-    },
-    {
       "id": 1772324530866,
       "name": "77",
       "age": 11,
@@ -100,20 +72,6 @@
       "endTime": "2026-03-01T01:22:30.267Z"
     },
     {
-      "id": 1772324573048,
-      "name": "12",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 2.5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:22:53.048Z",
-      "endTime": "2026-03-01T01:22:32.230Z"
-    },
-    {
       "id": 1772324582550,
       "name": "23",
       "age": 3,
@@ -128,48 +86,6 @@
       "endTime": "2026-03-01T01:22:36.536Z"
     },
     {
-      "id": 1772324473318,
-      "name": "22",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": "unlimited",
-      "price": 8,
-      "passTypeId": 2,
-      "passTypeName": "Limitsiz",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:21:13.318Z",
-      "endTime": "2026-03-01T01:23:27.686Z"
-    },
-    {
-      "id": 1772324480062,
-      "name": "33",
-      "age": 8,
-      "playZone": "Əsas",
-      "duration": "unlimited",
-      "price": 8,
-      "passTypeId": 2,
-      "passTypeName": "Limitsiz",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:21:20.063Z",
-      "endTime": "2026-03-01T01:23:30.103Z"
-    },
-    {
-      "id": 1772324494301,
-      "name": "44",
-      "age": 12,
-      "playZone": "Əsas",
-      "duration": "unlimited",
-      "price": 8,
-      "passTypeId": 2,
-      "passTypeName": "Limitsiz",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:21:34.301Z",
-      "endTime": "2026-03-01T01:23:32.928Z"
-    },
-    {
       "id": 1772324618014,
       "name": "34",
       "age": 9,
@@ -182,20 +98,6 @@
       "notes": "",
       "startTime": "2026-03-01T00:23:38.014Z",
       "endTime": "2026-03-01T01:23:34.902Z"
-    },
-    {
-      "id": 1772324627687,
-      "name": "45",
-      "age": 5,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 2.5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T00:23:47.687Z",
-      "endTime": "2026-03-01T01:23:37.044Z"
     },
     {
       "id": 1772324635851,
@@ -282,76 +184,6 @@
       "endTime": "2026-03-01T12:10:53.950Z"
     },
     {
-      "id": 1772377702485,
-      "name": "tetete",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T15:08:22.485Z",
-      "endTime": "2026-03-01T15:47:53.547Z"
-    },
-    {
-      "id": 1772380030934,
-      "name": "ghh",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T15:47:10.934Z",
-      "endTime": "2026-03-01T15:57:41.778Z"
-    },
-    {
-      "id": 1772368908140,
-      "name": "jjkjkm",
-      "age": 12,
-      "playZone": "Əsas",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T12:41:48.140Z",
-      "endTime": "2026-03-01T16:55:47.984Z"
-    },
-    {
-      "id": 1772368879791,
-      "name": "tyty",
-      "age": 4,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 2.5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T12:41:19.791Z",
-      "endTime": "2026-03-01T18:02:57.017Z"
-    },
-    {
-      "id": 1772368916197,
-      "name": "tty",
-      "age": 5,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 2.5,
-      "passTypeId": 3,
-      "passTypeName": "1 saat 50% Endirim",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T12:41:56.197Z",
-      "endTime": "2026-03-01T18:02:58.518Z"
-    },
-    {
       "id": 1772402801694,
       "name": "Akif",
       "age": 3,
@@ -362,20 +194,6 @@
       "passTypeName": "1 saat - Endirimli",
       "notes": "",
       "startTime": "2026-03-01T22:06:41.694Z",
-      "endTime": "2026-03-01T22:59:39.727Z"
-    },
-    {
-      "id": 1772400991800,
-      "name": "1212",
-      "age": 3,
-      "playZone": "Körpə",
-      "duration": 60,
-      "price": 5,
-      "passTypeId": 1,
-      "passTypeName": "1 saat",
-      "extendedTime": 0,
-      "notes": "",
-      "startTime": "2026-03-01T21:22:00.000Z",
       "endTime": "2026-03-01T22:59:39.727Z"
     },
     {
