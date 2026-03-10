@@ -702,7 +702,7 @@ async function restoreSession(childId) {
 
 // Delete child
 async function deleteChild(childId, source) {
-  const delConfirm = await showUiPrompt('Bu girişi silmək istəyirsiniz? Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.');
+  const delConfirm = await showUiPrompt('Bu seansı silmək istəyirsiniz? Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.');
   if (!delConfirm) {
     return;
   }
@@ -720,6 +720,20 @@ async function deleteChild(childId, source) {
     loadData();
   } catch (error) {
     console.error('Error deleting child:', error);
+  }
+}
+
+// Delete a session from history (completed)
+async function deleteHistorySession(childId, date) {
+  const delConfirm = await showUiPrompt('Bu seansı silmək istəyirsiniz? Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.');
+  if (!delConfirm) return;
+
+  try {
+    await fetch(`/api/children/${childId}?date=${date}`, { method: 'DELETE' });
+    loadHistoryData(false);
+  } catch (error) {
+    console.error('Error deleting history session:', error);
+    await showUiAlert('Seansı silərkən xəta baş verdi.');
   }
 }
 
@@ -1432,7 +1446,12 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                     <td>${startDate ? startDate.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                     <td>${child.endTime ? new Date(child.endTime).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                     <td>${child.notes || '-'}</td>
-                    <td><button class="btn-action btn-edit" onclick="openHistoryEditModal('${child.id}', '${sessionDate}')">Dəyişdir</button></td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn-action btn-edit" onclick="openHistoryEditModal('${child.id}', '${sessionDate}')">Dəyişdir</button>
+                        <button class="btn-action btn-delete" onclick="deleteHistorySession('${child.id}', '${sessionDate}')">Sil</button>
+                      </div>
+                    </td>
                   </tr>
                 `;
               }).join('')}
