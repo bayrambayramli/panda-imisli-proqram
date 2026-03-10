@@ -1345,8 +1345,8 @@ async function openHistoryAddModal() {
   const endTimeGroup = document.getElementById('editEndTimeGroup');
   startTimeGroup.style.display = 'flex';
   endTimeGroup.style.display = 'flex';
-  document.getElementById('editStartTime').value = '10:00';
-  document.getElementById('editEndTime').value = '11:00';
+  document.getElementById('editStartTime').value = '11:00';
+  document.getElementById('editEndTime').value = '12:00';
   
   // Show modal
   document.getElementById('editModal').classList.add('show');
