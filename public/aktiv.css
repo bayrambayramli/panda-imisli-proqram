@@ -5,7 +5,7 @@
   --aktiv-primary: #07690a;
   --aktiv-primary-dark: #04440e;
   --aktiv-success: #4CAF50;
-  --aktiv-warning: #f0b812;
+  --aktiv-warning: #c39611;
   --aktiv-danger: #f44336;
   --aktiv-text: #000;
   --aktiv-text-light: #999;
@@ -154,10 +154,10 @@ body {
 }
 
 .sessions-table td {
-  padding: 6px 8px;
+  padding: 2px 8px;
   border-bottom: 2px solid var(--aktiv-border);
   border-right: 2px solid var(--aktiv-border);
-  font-size: 28px;
+  font-size: 32px;
   color: var(--aktiv-text);
   font-weight: 600;
 }
@@ -199,7 +199,7 @@ body {
 
 .timer {
   font-weight: bold;
-  padding: 10px 16px;
+  padding: 2px 8px;
   border-radius: 8px;
   background-color: transparent;
   color: var(--aktiv-bg-white);
@@ -208,7 +208,7 @@ body {
   display: inline-block;
   transition: all 0.3s;
   white-space: nowrap;
-  font-size: 24px;
+  font-size: 32px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
 

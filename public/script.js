@@ -1340,6 +1340,26 @@ async function openHistoryAddModal() {
   document.getElementById('editDuration').value = '';
   document.getElementById('editNotes').value = '';
   
+  // Auto-select first available options
+  const editPlayZoneSelect = document.getElementById('editPlayZone');
+  const editDurationSelect = document.getElementById('editDuration');
+  const editAgeSelect = document.getElementById('editAge');
+  
+  // Select first play zone if available
+  if (editPlayZoneSelect && editPlayZoneSelect.options.length > 0) {
+    editPlayZoneSelect.value = editPlayZoneSelect.options[0].value;
+  }
+  
+  // Select first pass type if available
+  if (editDurationSelect && editDurationSelect.options.length > 0) {
+    editDurationSelect.value = editDurationSelect.options[0].value;
+  }
+  
+  // Select age 6 option if available
+  if (editAgeSelect && editAgeSelect.options.length > 0) {
+    editAgeSelect.value = editAgeSelect.options[5].value;
+  }
+
   // Set time fields
   const startTimeGroup = document.getElementById('editStartTimeGroup');
   const endTimeGroup = document.getElementById('editEndTimeGroup');
@@ -1843,10 +1863,13 @@ function updateDurationDropdown() {
       const currentValue = select.value;
       select.innerHTML = '';
       
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = 'Bilet seçin';
-      select.appendChild(defaultOption);
+      // Only add placeholder option to main form select, not to edit modal
+      if (select.id === 'duration') {
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Bilet seçin';
+        select.appendChild(defaultOption);
+      }
       
       settings.passTypes.forEach(pt => {
         const option = document.createElement('option');
