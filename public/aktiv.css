@@ -12,7 +12,7 @@
   --aktiv-bg-light: #f9f9f9;
   --aktiv-bg-lighter: #f5f5f5;
   --aktiv-bg-white: #ffffff;
-  --aktiv-border: #999;
+  --aktiv-border: #0a0a0a;
   --aktiv-border-light: #fff;
 }
 
@@ -154,7 +154,7 @@ body {
 }
 
 .sessions-table td {
-  padding: 2px 8px;
+  padding: 2px 6px;
   border-bottom: 2px solid var(--aktiv-border);
   border-right: 2px solid var(--aktiv-border);
   font-size: 32px;
