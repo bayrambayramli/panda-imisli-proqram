@@ -711,6 +711,19 @@ body {
   position: relative;
 }
 
+.modal-content-daily-stats {
+  background-color: var(--color-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+  width: 600px;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn var(--transition-normal) ease-out;
+  position: relative;
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(-50px);
@@ -1583,7 +1596,7 @@ body {
   padding: 20px;
   max-width: 1200px;
   width: 95%;
-  min-height: 600px;
+  min-height: 550px;
   max-height: 90vh;
 }
 

@@ -2034,7 +2034,7 @@ async function loadMonthlyReport() {
       return;
     }
     
-    let html = '<table class="report-table"><thead><tr><th>Ay</th><th>Ümumi Uşaqlar</th><th>Günə Orta Uşaq Sayı</th><th>Ümumi Gəlir (AZN)</th><th>Günə Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    let html = '<table class="report-table"><thead><tr><th>Ay</th><th>Ümumi Uşaq Sayı</th><th>Ümumi Gəlir (AZN)</th><th>Günlük Orta Uşaq Sayı</th><th>Günlük Orta Gəlir (AZN)</th></tr></thead><tbody>';
     
     data.forEach(monthData => {
       const [year, monthNum] = monthData.month.split('-');
@@ -2043,8 +2043,8 @@ async function loadMonthlyReport() {
       html += `<tr>
         <td>${monthName}</td>
         <td>${monthData.totalChildren}</td>
-        <td>${monthData.avgChildrenPerDay}</td>
         <td>${Math.round(monthData.totalRevenue)}</td>
+        <td>${monthData.avgChildrenPerDay}</td>
         <td>${Math.round(monthData.avgRevenuePerDay)}</td>
       </tr>`;
     });
@@ -2071,15 +2071,15 @@ async function loadZonesReport() {
       return;
     }
     
-    let html = '<table class="report-table"><thead><tr><th>Oyun Zonası</th><th>Ümumi Uşaqlar</th><th>Populyarlıq</th><th>Ümumi Gəlir (AZN)</th><th>Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    let html = '<table class="report-table"><thead><tr><th>Oyun Zonası</th><th>Ümumi Uşaq Sayı</th><th>Ümumi Gəlir (AZN)</th><th>Uşaq Başına Orta Gəlir (AZN)</th><th>Populyarlıq</th></tr></thead><tbody>';
     
     data.forEach(zone => {
       html += `<tr>
         <td>${zone.zone}</td>
         <td>${zone.totalChildren}</td>
-        <td>${Math.round(zone.percentageOfTotal)}%</td>
         <td>${Math.round(zone.totalRevenue)}</td>
         <td>${Math.round(zone.avgRevenuePerChild)}</td>
+        <td>${Math.round(zone.percentageOfTotal)}%</td>
       </tr>`;
     });
     
@@ -2105,16 +2105,16 @@ async function loadAgeReport() {
       return;
     }
     
-    let html = '<table class="report-table"><thead><tr><th>Yaş Qrupu</th><th>Ümumi Uşaqlar</th><th>Populyarlıq</th><th>Ümumi Gəlir (AZN)</th><th>Orta Gəlir (AZN)</th></tr></thead><tbody>';
+    let html = '<table class="report-table"><thead><tr><th>Yaş Qrupu</th><th>Ümumi Uşaq Sayı</th><th>Ümumi Gəlir (AZN)</th><th>Uşaq Başına Orta Gəlir (AZN)</th><th>Populyarlıq</th></tr></thead><tbody>';
     
     data.forEach(age => {
       html += `<tr>
         <td>${age.range} yaş</td>
         <td>${age.count}</td>
-        <td>${Math.round(age.percentageOfTotal)}%</td>
         <td>${Math.round(age.revenue)}</td>
         <td>${Math.round(age.avgRevenuePerChild)}</td>
-      </tr>`;
+        <td>${Math.round(age.percentageOfTotal)}%</td>
+        </tr>`;
     });
     
     html += '</tbody></table>';
