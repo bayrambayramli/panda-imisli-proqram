@@ -29,8 +29,8 @@
   --color-white: #fff;
   /* Spacing */
   --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 15px;
+  --spacing-sm: 6px;
+  --spacing-md: 10px;
   --spacing-lg: 20px;
   --spacing-xl: 30px;
   /* Border Radius */
@@ -133,6 +133,7 @@ body {
   font-weight: 600;
   font-size: 14px;
   transition: all var(--transition-normal) ease;
+  min-height: 39px;
 }
 
 .btn-info:hover {
@@ -152,6 +153,7 @@ body {
   font-weight: 600;
   font-size: 14px;
   transition: all var(--transition-normal) ease;
+  min-height: 39px;
 }
 
 .btn-history:hover {
