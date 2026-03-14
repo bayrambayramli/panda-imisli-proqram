@@ -1683,13 +1683,13 @@ body {
 }
 
 .settings-section-lg {
-  flex: 1.475;
+  flex: 1.4;
   min-width: 0;
   min-height: 200px;
 }
 
 .settings-section-sm {
-  flex: 0.525;
+  flex: 0.6;
   min-width: 0;
   min-height: 200px;
 }
