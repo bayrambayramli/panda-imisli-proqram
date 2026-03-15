@@ -1188,7 +1188,7 @@ function toggleReportsFullscreen(btn) {
   // Also toggle class on parent to remove flex centering
   modal.classList.toggle('modal-fullscreen-parent');
   
-  btn.textContent = isFullscreen ? 'Tam Ekrandan Çıx' : 'Tam ekran';
+  btn.textContent = isFullscreen ? 'Tam Ekrandan Çıx' : 'Tam Ekran';
   
   // Trigger chart resize when toggling fullscreen
   setTimeout(() => {
@@ -1890,7 +1890,7 @@ function closeReportsModal(e) {
   
   // Reset fullscreen button text if needed
   if (fullscreenBtn) {
-    fullscreenBtn.textContent = 'Tam ekran';
+    fullscreenBtn.textContent = 'Tam Ekran';
   }
 }
 
