@@ -165,7 +165,7 @@ app.get('/api/history', (req, res) => {
     const { startDate, endDate } = req.query;
     
     if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'startDate and endDate are required' });
+      return res.status(400).json({ error: 'Başlanğıc və son tarix tələb olunur.' });
     }
     
     // Collect all matching files in the date range
@@ -191,7 +191,7 @@ app.get('/api/history', (req, res) => {
     res.json(combinedData);
   } catch (err) {
     logError('Error getting history for date range:', err);
-    res.status(500).json({ error: 'Failed to get history' });
+    res.status(500).json({ error: 'Tarixçəni yükləmək mümkün olmadı.' });
   }
 });
 
@@ -203,10 +203,10 @@ app.post('/api/children', (req, res) => {
   // Validate input
   const { name, age, playZone, duration, price } = req.body;
   if (!name || !name.trim()) {
-    return res.status(400).json({ error: 'Name is required' });
+    return res.status(400).json({ error: 'Ad tələb olunur.' });
   }
   if (!playZone || !duration) {
-    return res.status(400).json({ error: 'Play zone and duration are required' });
+    return res.status(400).json({ error: 'Oyun zonası və müddət tələb olunur.' });
   }
   
   const normalizedAge = age === undefined || age === '' ? '-' : age;
@@ -245,7 +245,7 @@ app.put('/api/children/:id', (req, res) => {
       saveData(currentDate, data);
       res.json(data.completed[completedIndex]);
     } else {
-      res.status(404).json({ error: 'Child not found' });
+      res.status(404).json({ error: 'Uşaq tapılmadı.' });
     }
   }
 });
@@ -267,7 +267,7 @@ app.post('/api/children/:id/end', (req, res) => {
     saveData(currentDate, data);
     res.json(child);
   } else {
-    res.status(404).json({ error: 'Child not found' });
+    res.status(404).json({ error: 'Uşaq tapılmadı.' });
   }
 });
 
@@ -281,12 +281,12 @@ app.post('/api/children/:id/restore', (req, res) => {
 
   const completedIndex = data.completed.findIndex(c => c.id == id);
   if (completedIndex === -1) {
-    return res.status(404).json({ error: 'Child not found in completed sessions' });
+    return res.status(404).json({ error: 'Uşaq bitmiş seanslarda tapılmadı.' });
   }
 
   const child = data.completed[completedIndex];
   if (!child.endTime) {
-    return res.status(400).json({ error: 'Session end time is missing' });
+    return res.status(400).json({ error: 'Seans bitmə vaxtı yoxdur.' });
   }
 
   const endedAtMs = new Date(child.endTime).getTime();
@@ -294,7 +294,7 @@ app.post('/api/children/:id/restore', (req, res) => {
   const restoreWindowMs = 5 * 60 * 1000;
 
   if (!Number.isFinite(endedAtMs) || (nowMs - endedAtMs) > restoreWindowMs) {
-    return res.status(400).json({ error: 'Restore window expired (5 minutes)' });
+    return res.status(400).json({ error: 'Bərpa müddəti keçib (5 dəqiqə).' });
   }
 
   child.endTime = null;
@@ -312,32 +312,32 @@ app.post('/api/history/add', (req, res) => {
     
     // Validate date
     if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return res.status(400).json({ error: 'Valid date (YYYY-MM-DD) is required' });
+      return res.status(400).json({ error: 'Düzgün tarix (YYYY-MM-DD) tələb olunur.' });
     }
     
     // Validate required fields
     if (!name || !name.trim()) {
-      return res.status(400).json({ error: 'Name is required' });
+      return res.status(400).json({ error: 'Ad tələb olunur.' });
     }
     if (!playZone || passTypeId === undefined || passTypeId === null || passTypeId === '') {
-      return res.status(400).json({ error: 'Play zone and passTypeId are required' });
+      return res.status(400).json({ error: 'Oyun zonası və bilet tipi tələb olunur.' });
     }
 
     const settings = loadSettings();
     const passType = (settings.passTypes || []).find(pt => pt.id.toString() === passTypeId.toString());
     if (!passType) {
-      return res.status(400).json({ error: 'Pass type not found' });
+      return res.status(400).json({ error: 'Bilet tipi tapılmadı.' });
     }
 
     const parsedStart = startTime ? new Date(startTime) : new Date(`${date}T10:00:00`);
     const parsedEnd = endTime ? new Date(endTime) : new Date(parsedStart.getTime() + 60 * 60 * 1000);
 
     if (Number.isNaN(parsedStart.getTime()) || Number.isNaN(parsedEnd.getTime())) {
-      return res.status(400).json({ error: 'Invalid startTime or endTime' });
+      return res.status(400).json({ error: 'Başlama və ya bitmə vaxtı yanlışdır.' });
     }
 
     if (parsedEnd < parsedStart) {
-      return res.status(400).json({ error: 'endTime cannot be earlier than startTime' });
+      return res.status(400).json({ error: 'Bitmə vaxtı başlama vaxtından əvvəl ola bilməz.' });
     }
     
     const data = loadData(date);
@@ -365,7 +365,7 @@ app.post('/api/history/add', (req, res) => {
     res.json(newSession);
   } catch (err) {
     logError('Error adding retrospective session:', err);
-    res.status(500).json({ error: 'Failed to add retrospective session' });
+    res.status(500).json({ error: 'Seans əlavə edilərkən xəta baş verdi.' });
   }
 });
 
@@ -389,7 +389,7 @@ app.delete('/api/children/:id', (req, res) => {
       saveData(currentDate, data);
       res.json({ success: true });
     } else {
-      res.status(404).json({ error: 'Child not found' });
+      res.status(404).json({ error: 'Uşaq tapılmadı.' });
     }
   }
 });
@@ -402,7 +402,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
   
   // Validate date format
   if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    return res.status(400).json({ error: 'Invalid date format' });
+    return res.status(400).json({ error: 'Tarix formatı yanlışdır.' });
   }
   
   const data = loadData(date);
@@ -463,7 +463,7 @@ app.get('/api/exportExcel/:date', async (req, res) => {
     });
   } catch (err) {
     logError('Error writing Excel:', err);
-    res.status(500).json({ error: 'Failed to export Excel' });
+    res.status(500).json({ error: 'Excel faylı ixrac edilərkən xəta baş verdi.' });
   }
 });
 
@@ -473,13 +473,13 @@ app.get('/api/exportExcel', async (req, res) => {
   
   // Validate date format
   if (!startDate || !endDate) {
-    return res.status(400).json({ error: 'Start date and end date are required' });
+    return res.status(400).json({ error: 'Başlanğıc və son tarix tələb olunur.' });
   }
   if (!startDate.match(/^\d{4}-\d{2}-\d{2}$/) || !endDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    return res.status(400).json({ error: 'Invalid date format' });
+    return res.status(400).json({ error: 'Tarix formatı yanlışdır.' });
   }
   if (startDate > endDate) {
-    return res.status(400).json({ error: 'Start date cannot be after end date' });
+    return res.status(400).json({ error: 'Başlanğıc tarixi son tarixdən sonra ola bilməz.' });
   }
   
   // Load data for all dates in the range
@@ -547,7 +547,7 @@ app.get('/api/exportExcel', async (req, res) => {
     });
   } catch (err) {
     logError('Error writing Excel:', err);
-    res.status(500).json({ error: 'Failed to export Excel' });
+    res.status(500).json({ error: 'Excel faylı ixrac edilərkən xəta baş verdi.' });
   }
 });
 
@@ -621,12 +621,12 @@ app.post('/api/settings', (req, res) => {
   } = req.body;
   // Validate endDayHour format
   if (!endDayHour || !endDayHour.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
-    return res.status(400).json({ error: 'Invalid endDayHour format. Use HH:MM.' });
+    return res.status(400).json({ error: 'Günün bitmə vaxtı formatı yanlışdır. Nümunə: 22:00' });
   }
   // Validate tvPaginationFrequency
   const frequency = parseInt(tvPaginationFrequency) || 5;
   if (frequency < 2) {
-    return res.status(400).json({ error: 'TV pagination frequency must be at least 2 seconds.' });
+    return res.status(400).json({ error: 'TV ekranı səhifə keçid tezliyi ən azı 2 saniyə olmalıdır.' });
   }
 
   const currentSettings = loadSettings();
@@ -738,7 +738,7 @@ app.get('/api/report/monthly', (req, res) => {
     res.json(result);
   } catch (err) {
     logError('Error generating monthly report:', err);
-    res.status(500).json({ error: 'Failed to generate report' });
+    res.status(500).json({ error: 'Hesabat yaradılarkən xəta baş verdi.' });
   }
 });
 
@@ -821,7 +821,7 @@ app.get('/api/report/play-zones', (req, res) => {
     }));
   } catch (err) {
     logError('Error generating play zone report:', err);
-    res.status(500).json({ error: 'Failed to generate report' });
+    res.status(500).json({ error: 'Hesabat yaradılarkən xəta baş verdi.' });
   }
 });
 
@@ -841,7 +841,7 @@ app.get('/api/report/months', (req, res) => {
     res.json(result);
   } catch (err) {
     logError('Error getting available months:', err);
-    res.status(500).json({ error: 'Failed to get months' });
+    res.status(500).json({ error: 'Mövcud aylar yüklənərkən xəta baş verdi.' });
   }
 });
 
@@ -883,7 +883,7 @@ app.get('/api/stats/filtered-10days', (req, res) => {
     res.json(stats);
   } catch (err) {
     logError('Error getting filtered statistics:', err);
-    res.status(500).json({ error: 'Failed to get statistics' });
+    res.status(500).json({ error: 'Statistikalar yüklənərkən xəta baş verdi.' });
   }
 });
 
