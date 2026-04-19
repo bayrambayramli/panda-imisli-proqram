@@ -1747,10 +1747,10 @@ async function saveSettings() {
     return;
   }
 
-  if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
-    await showUiAlert('Zəhmət olmasa, günün bitmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
-    return;
-  }
+  // if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
+  //   await showUiAlert('Zəhmət olmasa, günün bitmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
+  //   return;
+  // }
 
   try {
     const response = await fetch('/api/settings', {
