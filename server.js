@@ -562,7 +562,7 @@ app.post('/api/access/verify', (req, res) => {
   const submittedPassword = typeof req.body?.password === 'string' ? req.body.password.trim() : '';
 
   if (!submittedPassword) {
-    return res.status(400).json({ error: 'Şifrə tələb olunur.' });
+    return res.status(400).json({ error: 'Şifrə tələb olunur!' });
   }
 
   if (submittedPassword !== settings.accessPassword) {

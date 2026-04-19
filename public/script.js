@@ -423,7 +423,7 @@ async function verifyProtectedViewAccess(viewName) {
     }
 
     if (!String(password).trim()) {
-      inlineError = 'Şifrə tələb olunur.';
+      inlineError = 'Şifrə tələb olunur!';
       continue;
     }
 
