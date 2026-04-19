@@ -586,7 +586,7 @@ function createActiveRow(child) {
       <div class="actions-cell">
         <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'active')">Dəyişdir</button>
         <button class="btn-action btn-end" onclick="endSession('${child.id}')">Bitir</button>
-        <button class="btn-action btn-delete" onclick="deleteChild('${child.id}', 'active')">Sil</button>
+        <button class="btn-action btn-delete" onclick="deleteChild('${child.id}')">Sil</button>
       </div>
     </td>
   `;
@@ -621,7 +621,7 @@ function createCompletedRow(child) {
       <div class="actions-cell">
         <button class="btn-action btn-edit" onclick="openEditModal('${child.id}', 'completed')">Dəyişdir</button>
         ${restoreButtonHtml}
-        <button class="btn-action btn-delete" onclick="deleteChild('${child.id}', 'completed')">Sil</button>
+        <button class="btn-action btn-delete" onclick="deleteChild('${child.id}')">Sil</button>
       </div>
     </td>
   `;
@@ -824,7 +824,7 @@ async function restoreSession(childId) {
 }
 
 // Delete child
-async function deleteChild(childId, source) {
+async function deleteChild(childId) {
   const delConfirm = await showUiPrompt('Bu seansı silmək istəyirsiniz? Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.');
   if (!delConfirm) {
     return;
@@ -1563,9 +1563,8 @@ async function loadHistoryData(showAlertIfEmpty = false) {
 }
 
 function renderHistoryContent(data, searchTerm) {
-  
-    const contentDiv = document.getElementById('historyContent');
-    let html = '';
+  const contentDiv = document.getElementById('historyContent');
+  let html = '';
     
     // Completed sessions only
     const completed = data.completed || [];
@@ -1924,27 +1923,10 @@ function addPassTypeRow() {
   tbody.appendChild(row);
 }
 
-function removePassType(idOrElem) {
-  // idOrElem can be numeric id or element (button passed via 'this')
-  let id = null;
-  if (typeof idOrElem === 'number') {
-    id = idOrElem;
-    const row = document.querySelector('#passTypesBody tr[data-id="' + id + '"]');
-    if (row) row.remove();
-    settings.passTypes = settings.passTypes.filter(pt => pt.id !== id);
-    return;
-  }
-
-  // If element (e.g., this from onclick), find row
-  const row = idOrElem && idOrElem.closest ? idOrElem.closest('tr') : null;
-  if (row) {
-    const attr = row.getAttribute('data-id');
-    if (attr) {
-      id = parseInt(attr);
-      settings.passTypes = settings.passTypes.filter(pt => pt.id !== id);
-    }
-    row.remove();
-  }
+function removePassType(id) {
+  const row = document.querySelector('#passTypesBody tr[data-id="' + id + '"]');
+  if (row) row.remove();
+  settings.passTypes = settings.passTypes.filter(pt => pt.id !== id);
 }
 
 function addPlayZoneRow() {
@@ -1964,29 +1946,11 @@ function addPlayZoneRow() {
   tbody.appendChild(row);
 }
 
-function removePlayZone(idOrElem) {
-  // idOrElem can be numeric id or element (button passed via 'this')
-  let id = null;
-  if (typeof idOrElem === 'number') {
-    id = idOrElem;
-    const row = document.querySelector('#playZonesBody tr[data-id="' + id + '"]');
-    if (row) row.remove();
-    if (!settings.playZones) settings.playZones = [];
-    settings.playZones = settings.playZones.filter(z => z.id !== id);
-    return;
-  }
-
-  // If element (e.g., this from onclick), find row
-  const row = idOrElem && idOrElem.closest ? idOrElem.closest('tr') : null;
-  if (row) {
-    const attr = row.getAttribute('data-id');
-    if (attr) {
-      id = parseInt(attr);
-      if (!settings.playZones) settings.playZones = [];
-      settings.playZones = settings.playZones.filter(z => z.id !== id);
-    }
-    row.remove();
-  }
+function removePlayZone(id) {
+  const row = document.querySelector('#playZonesBody tr[data-id="' + id + '"]');
+  if (row) row.remove();
+  if (!settings.playZones) settings.playZones = [];
+  settings.playZones = settings.playZones.filter(z => z.id !== id);
 }
 
 async function saveSettings() {
@@ -2072,8 +2036,6 @@ async function saveSettings() {
       const result = await response.json();
       settings = result.settings;
       updatePriceConfig();
-      updateDurationDropdown();
-      updatePlayZoneDropdown();
       populateDynamicFilters();
       closeSettingsModal();
       await showUiAlert('Dəyişikliklər yadda saxlanıldı.');

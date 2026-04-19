@@ -116,8 +116,7 @@ function renderActiveSessions(children) {
 
   // Hide table content during update to prevent visible flash
   if (tableContent) {
-    tableContent.style.opacity = '0.3';
-    tableContent.style.pointerEvents = 'none';
+    tableContent.classList.add('is-updating');
   }
 
   tbody.innerHTML = '';
@@ -130,36 +129,33 @@ function renderActiveSessions(children) {
   if (!children || children.length === 0) {
     // If custom message is enabled and not empty, show it instead of empty table
     if (tvCustomMessageEnabled && tvCustomMessage.trim()) {
-      noMsg.style.display = 'none';
-      if (sectionTitle) sectionTitle.style.display = 'none';
-      if (pageIndicator) pageIndicator.style.display = 'none';
+      noMsg.classList.add('is-hidden');
+      if (sectionTitle) sectionTitle.classList.add('is-hidden');
+      if (pageIndicator) pageIndicator.classList.add('is-hidden');
       if (tableContent) {
-        tableContent.style.opacity = '1';
-        tableContent.style.pointerEvents = 'auto';
+        tableContent.classList.remove('is-updating');
       }
       customMessagePage.innerHTML = tvCustomMessage;
-      customMessagePage.style.display = 'flex';
-      customMessagePage.classList.remove('page-hidden');
+      customMessagePage.classList.add('show');
       adjustCustomMessageFontSize(customMessagePage);
       stopAutoRotation();
       return;
     }
     
-    noMsg.style.display = 'block';
-    customMessagePage.style.display = 'none';
-    if (sectionTitle) sectionTitle.style.display = 'block';
+    noMsg.classList.remove('is-hidden');
+    customMessagePage.classList.remove('show');
+    if (sectionTitle) sectionTitle.classList.remove('is-hidden');
     if (tableContent) {
-      tableContent.style.opacity = '1';
-      tableContent.style.pointerEvents = 'auto';
+      tableContent.classList.remove('is-updating');
     }
     updatePageIndicator(0, 0);
     stopAutoRotation();
     return;
   }
 
-  noMsg.style.display = 'none';
-  customMessagePage.style.display = 'none';
-  if (sectionTitle) sectionTitle.style.display = 'block';
+  noMsg.classList.add('is-hidden');
+  customMessagePage.classList.remove('show');
+  if (sectionTitle) sectionTitle.classList.remove('is-hidden');
 
   // Calculate total pages (add 1 if custom message is enabled and set)
   const dataPagesCount = Math.ceil(children.length / rowsPerPage);
@@ -202,8 +198,7 @@ function renderActiveSessions(children) {
   
   // Restore table visibility after update is complete
   if (tableContent) {
-    tableContent.style.opacity = '1';
-    tableContent.style.pointerEvents = 'auto';
+    tableContent.classList.remove('is-updating');
   }
 }
 
@@ -235,17 +230,17 @@ function switchToPage(pageNum) {
     if (isCustomMessagePage) {
       // Show custom message page
       if (tableContent) {
-        tableContent.style.display = 'none';
+        tableContent.classList.add('is-hidden');
       }
       if (sectionTitle) {
-        sectionTitle.style.display = 'none';
+        sectionTitle.classList.add('is-hidden');
       }
       if (pageIndicator) {
-        pageIndicator.style.display = 'none';
+        pageIndicator.classList.add('is-hidden');
       }
       if (customMessagePage) {
         customMessagePage.innerHTML = tvCustomMessage;
-        customMessagePage.style.display = 'flex';
+        customMessagePage.classList.add('show');
         customMessagePage.classList.remove('fade-out');
         customMessagePage.classList.add('fade-in');
         adjustCustomMessageFontSize(customMessagePage);
@@ -253,13 +248,13 @@ function switchToPage(pageNum) {
     } else {
       // Show table page
       if (customMessagePage) {
-        customMessagePage.style.display = 'none';
+        customMessagePage.classList.remove('show');
       }
       if (sectionTitle) {
-        sectionTitle.style.display = 'block';
+        sectionTitle.classList.remove('is-hidden');
       }
       if (tableContent) {
-        tableContent.style.display = 'block';
+        tableContent.classList.remove('is-hidden');
       }
       
       rows.forEach(row => {
@@ -292,10 +287,9 @@ function updatePageIndicator(current, total) {
     
     // Only show indicator if there are multiple data pages
     if (dataPagesCount <= 1) {
-      indicator.style.display = 'none';
+      indicator.classList.add('is-hidden');
     } else {
-      indicator.style.display = 'block';
-      // Show only data pages count, not including custom message page
+      indicator.classList.remove('is-hidden');
       indicator.textContent = `Səhifə ${current} / ${dataPagesCount}`;
     }
   }
@@ -371,7 +365,7 @@ loadSettings().then(() => {
 // Re-adjust custom message font size on window resize
 window.addEventListener('resize', () => {
   const customMessagePage = document.getElementById('customMessagePage');
-  if (customMessagePage && customMessagePage.style.display === 'flex') {
+  if (customMessagePage && customMessagePage.classList.contains('show')) {
     adjustCustomMessageFontSize(customMessagePage);
   }
 });

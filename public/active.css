@@ -228,7 +228,6 @@ body {
   color: var(--active-text-light);
   font-size: 22px;
   font-style: italic;
-  display: none;
 }
 
 /* Pagination styles */
@@ -281,6 +280,16 @@ body {
 
 .custom-message-page.fade-out {
   animation: fadeOut 0.5s ease-out forwards;
+}
+
+.custom-message-page.show {
+  display: flex;
+}
+
+/* Loading state for table content */
+.table-content.is-updating {
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .is-hidden {
