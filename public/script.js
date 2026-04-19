@@ -334,10 +334,12 @@ function showUiPrompt(message, options = { input: false, defaultValue: '' }) {
     
     if (options.input) {
       input.classList.remove('is-hidden');
+      input.type = options.inputType || 'text';
       input.value = options.defaultValue || '';
       input.focus();
     } else {
       input.classList.add('is-hidden');
+      input.type = 'text';
     }
     modal.classList.add('show');
     _uiPromptResolve = resolve;
@@ -348,6 +350,7 @@ function closeUiPrompt(ok) {
   const modal = document.getElementById('uiPromptModal');
   const input = document.getElementById('uiPromptInput');
   modal.classList.remove('show');
+  input.type = 'text';
   if (_uiPromptResolve) {
     if (ok) {
       if (!input.classList.contains('is-hidden')) {
@@ -359,6 +362,35 @@ function closeUiPrompt(ok) {
       _uiPromptResolve(false);
     }
     _uiPromptResolve = null;
+  }
+}
+
+async function verifyProtectedViewAccess(viewName) {
+  const password = await showUiPrompt(`${viewName} üçün şifrəni daxil edin:`, { input: true, inputType: 'password', defaultValue: '' });
+  if (password === false) {
+    return false;
+  }
+
+  try {
+    const response = await fetch('/api/access/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password })
+    });
+
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      await showUiAlert(result?.error || 'Giriş təsdiqlənmədi.');
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error verifying protected view access:', error);
+    await showUiAlert('Giriş yoxlanılarkən xəta baş verdi.');
+    return false;
   }
 }
 
@@ -1190,7 +1222,12 @@ function buildChartConfig(labels, childrenCounts, incomeCounts) {
 }
 
 // History Modal Functions
-function openHistoryModal() {
+async function openHistoryModal() {
+  const isAuthorized = await verifyProtectedViewAccess('Tarixçə');
+  if (!isAuthorized) {
+    return;
+  }
+
   // Ensure stats modal is closed when opening history
   closeStatsModal();
   const today = getTodayDate();
@@ -1275,6 +1312,11 @@ function toggleReportsFullscreen(btn) {
 
 // Stats Modal Functions
 async function openStatsModal() {
+  const isAuthorized = await verifyProtectedViewAccess('Bu gün');
+  if (!isAuthorized) {
+    return;
+  }
+
   const date = currentDate;
   try {
     // make sure other modals are closed

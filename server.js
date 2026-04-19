@@ -45,6 +45,29 @@ function logError(message, err) {
   }
 }
 
+function normalizeAccessPassword(value) {
+  return /^\d{4}$/.test(value) ? value : '0000';
+}
+
+function normalizeSettings(rawSettings = {}) {
+  return {
+    ...rawSettings,
+    passTypes: Array.isArray(rawSettings.passTypes) ? rawSettings.passTypes : [],
+    playZones: Array.isArray(rawSettings.playZones) ? rawSettings.playZones : [],
+    endDayHour: rawSettings.endDayHour || '22:00',
+    tvPaginationFrequency: parseInt(rawSettings.tvPaginationFrequency, 10) || 5,
+    tvCustomMessage: rawSettings.tvCustomMessage || '',
+    tvCustomMessageEnabled: rawSettings.tvCustomMessageEnabled === true,
+    tvShowUnlimitedPassTypes: rawSettings.tvShowUnlimitedPassTypes !== false,
+    accessPassword: normalizeAccessPassword(rawSettings.accessPassword)
+  };
+}
+
+function sanitizeSettingsForClient(settings) {
+  const { accessPassword, ...publicSettings } = normalizeSettings(settings);
+  return publicSettings;
+}
+
 // Get today's date in YYYY-MM-DD format
 function getTodayDate() {
   const today = new Date();
@@ -55,25 +78,26 @@ function getTodayDate() {
 function loadSettings() {
   try {
     if (fs.existsSync(settingsFilePath)) {
-      return JSON.parse(fs.readFileSync(settingsFilePath, 'utf8'));
+      return normalizeSettings(JSON.parse(fs.readFileSync(settingsFilePath, 'utf8')));
     }
   } catch (err) {
     logError('Error loading settings:', err);
   }
-  return {
+  return normalizeSettings({
     passTypes: [],
     playZones: [],
     endDayHour: '22:00',
     tvPaginationFrequency: 5,
     tvCustomMessage: '',
-    tvCustomMessageEnabled: true
-  };
+    tvCustomMessageEnabled: true,
+    accessPassword: '0000'
+  });
 }
 
 // Save settings
 function saveSettings(settings) {
   try {
-    fs.writeFileSync(settingsFilePath, JSON.stringify(settings, null, 2), 'utf8');
+    fs.writeFileSync(settingsFilePath, JSON.stringify(normalizeSettings(settings), null, 2), 'utf8');
   } catch (err) {
     logError('Error saving settings:', err);
   }
@@ -530,7 +554,22 @@ app.get('/api/exportExcel', async (req, res) => {
 // Settings endpoints
 app.get('/api/settings', (req, res) => {
   const settings = loadSettings();
-  res.json(settings);
+  res.json(sanitizeSettingsForClient(settings));
+});
+
+app.post('/api/access/verify', (req, res) => {
+  const settings = loadSettings();
+  const submittedPassword = typeof req.body?.password === 'string' ? req.body.password.trim() : '';
+
+  if (!submittedPassword) {
+    return res.status(400).json({ error: 'Şifrə tələb olunur.' });
+  }
+
+  if (submittedPassword !== settings.accessPassword) {
+    return res.status(401).json({ error: 'Şifrə yanlışdır.' });
+  }
+
+  return res.json({ success: true });
 });
 
 app.get('/api/checkAutoEnd', (req, res) => {
@@ -548,13 +587,23 @@ app.post('/api/settings', (req, res) => {
   if (frequency < 2) {
     return res.status(400).json({ error: 'TV pagination frequency must be at least 2 seconds.' });
   }
-  const settings = { passTypes, playZones, endDayHour, tvPaginationFrequency: frequency, tvShowUnlimitedPassTypes: tvShowUnlimitedPassTypes !== false, tvCustomMessage: tvCustomMessage || '', tvCustomMessageEnabled: tvCustomMessageEnabled === true };
+  const currentSettings = loadSettings();
+  const settings = {
+    passTypes,
+    playZones,
+    endDayHour,
+    tvPaginationFrequency: frequency,
+    tvShowUnlimitedPassTypes: tvShowUnlimitedPassTypes !== false,
+    tvCustomMessage: tvCustomMessage || '',
+    tvCustomMessageEnabled: tvCustomMessageEnabled === true,
+    accessPassword: currentSettings.accessPassword
+  };
   saveSettings(settings);
   
   // Auto-end sessions at the specified hour
   checkAndAutoEndSessions(endDayHour);
   
-  res.json({ success: true, settings });
+  res.json({ success: true, settings: sanitizeSettingsForClient(settings) });
 });
 
 // Auto-end sessions at specified time (HH:MM format)
