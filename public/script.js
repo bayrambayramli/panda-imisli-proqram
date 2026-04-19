@@ -23,9 +23,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadSettings() {
   try {
     const response = await fetch('/api/settings');
-    settings = await response.json();
+    if (response.ok) {
+      settings = await response.json();
+    } else {
+      console.error('Failed to load settings:', response.status, response.statusText);
+      settings = null;
+    }
+
     // Ensure playZones exists for backwards compatibility with old settings.json
-    if (!settings.playZones) {
+    if (!settings) {
+      settings = {
+        passTypes: [],
+        playZones: [],
+        endDayHour: '22:00',
+        tvPaginationFrequency: 5
+      };
+    } else if (!settings.playZones) {
       settings.playZones = [];
     }
     updatePriceConfig();
@@ -59,10 +72,13 @@ async function startAutoEndPolling() {
   setInterval(async () => {
     try {
       const response = await fetch('/api/checkAutoEnd');
-      const event = await response.json();
+      const event = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(`Auto-end check failed: ${response.status}`);
+      }
       
       // Check if auto-end was triggered and it's a new event
-      if (event.triggered && event.timestamp !== lastAutoEndTimestamp) {
+      if (event?.triggered && event.timestamp !== lastAutoEndTimestamp) {
         lastAutoEndTimestamp = event.timestamp;
         
         // Show auto-end message and reload data
@@ -350,12 +366,17 @@ function closeUiPrompt(ok) {
 async function loadData() {
   try {
     const response = await fetch(`/api/data/${currentDate}`);
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = data?.error || 'Məlumat yüklənə bilmədi.';
+      throw new Error(message);
+    }
     
-    renderActiveSessions(data.active);
-    renderCompletedSessions(data.completed);
+    renderActiveSessions(data.active || []);
+    renderCompletedSessions(data.completed || []);
   } catch (error) {
     console.error('Error loading data:', error);
+    await showUiAlert('Məlumat yüklənərkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 
@@ -534,7 +555,7 @@ async function addChild() {
       },
       body: JSON.stringify({
         name,
-        age: age ? parseInt(age) : "-",
+        age: age ? parseInt(age) : '-',
         playZone,
         duration: passType.duration,
         price: passType.price,
@@ -544,7 +565,12 @@ async function addChild() {
       })
     });
     
-    const child = await response.json();
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = result?.error || 'Uşaq əlavə etmək mümkün olmadı.';
+      await showUiAlert(message);
+      return;
+    }
     
     // Clear form
     document.getElementById('childName').value = '';
@@ -635,9 +661,16 @@ async function endSession(childId) {
   if (!ok) return;
 
   try {
-    await fetch(`/api/children/${childId}/end?date=${currentDate}`, {
+    const response = await fetch(`/api/children/${childId}/end?date=${currentDate}`, {
       method: 'POST'
     });
+
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = result?.error || 'Seansı bitirmək mümkün olmadı.';
+      await showUiAlert(message);
+      return;
+    }
 
     // Clear timer
     if (timerIntervals[childId]) {
@@ -647,6 +680,7 @@ async function endSession(childId) {
     loadData();
   } catch (error) {
     console.error('Error ending session:', error);
+    await showUiAlert('Seansı bitirərkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 
@@ -682,9 +716,16 @@ async function deleteChild(childId, source) {
   }
   
   try {
-    await fetch(`/api/children/${childId}?date=${currentDate}`, {
+    const response = await fetch(`/api/children/${childId}?date=${currentDate}`, {
       method: 'DELETE'
     });
+
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = result?.error || 'Seansı silmək mümkün olmadı.';
+      await showUiAlert(message);
+      return;
+    }
     
     // Clear timer
     if (timerIntervals[childId]) {
@@ -694,6 +735,7 @@ async function deleteChild(childId, source) {
     loadData();
   } catch (error) {
     console.error('Error deleting child:', error);
+    await showUiAlert('Seansı silərkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 
@@ -703,7 +745,13 @@ async function deleteHistorySession(childId, date) {
   if (!delConfirm) return;
 
   try {
-    await fetch(`/api/children/${childId}?date=${date}`, { method: 'DELETE' });
+    const response = await fetch(`/api/children/${childId}?date=${date}`, { method: 'DELETE' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = result?.error || 'Seansı silmək mümkün olmadı.';
+      await showUiAlert(message);
+      return;
+    }
     loadHistoryData(false);
   } catch (error) {
     console.error('Error deleting history session:', error);
@@ -714,7 +762,12 @@ async function deleteHistorySession(childId, date) {
 // Edit notes
 async function editNotes(childId) {
   const response = await fetch(`/api/data/${currentDate}`);
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = data?.error || 'Məlumat yüklənə bilmədi.';
+    await showUiAlert(message);
+    return;
+  }
   
   let child = data.active.find(c => c.id == childId);
   if (!child) {
@@ -727,15 +780,22 @@ async function editNotes(childId) {
 
   if (newNotes !== false) {
     try {
-      await fetch(`/api/children/${childId}?date=${currentDate}`, {
+      const updateResponse = await fetch(`/api/children/${childId}?date=${currentDate}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes: newNotes })
       });
+      const updateResult = await updateResponse.json().catch(() => null);
+      if (!updateResponse.ok) {
+        const message = updateResult?.error || 'Qeyd yenilənə bilmədi.';
+        await showUiAlert(message);
+        return;
+      }
 
       loadData();
     } catch (error) {
       console.error('Error updating notes:', error);
+      await showUiAlert('Qeyd yenilənərkən xəta baş verdi. Yenidən cəhd edin.');
     }
   }
 }
@@ -753,7 +813,12 @@ async function openEditModal(childId, source, historyDate = null) {
   const dateToUse = historyDate || currentDate;
   
   const response = await fetch(`/api/data/${dateToUse}`);
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = data?.error || 'Məlumat yüklənə bilmədi.';
+    await showUiAlert(message);
+    return;
+  }
   
   let child;
   if (source === 'active') {
@@ -950,7 +1015,12 @@ async function saveEdit() {
     if (startTimeInput) {
       // Get the current date from the child being edited
       const response = await fetch(`/api/data/${dateToUse}`);
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        const message = data?.error || 'Məlumat yüklənə bilmədi.';
+        await showUiAlert(message);
+        return;
+      }
       const child = data.active.find(c => c.id == editingChildId);
       
       if (child && child.startTime) {
@@ -977,7 +1047,12 @@ async function saveEdit() {
     
     if (startTimeInput || endTimeInput) {
       const response = await fetch(`/api/data/${dateToUse}`);
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        const message = data?.error || 'Məlumat yüklənə bilmədi.';
+        await showUiAlert(message);
+        return;
+      }
       const child = data.completed.find(c => c.id == editingChildId);
       
       if (child) {
@@ -1000,11 +1075,17 @@ async function saveEdit() {
   
   const savedSource = editingSource;
   try {
-    await fetch(`/api/children/${editingChildId}?date=${dateToUse}`, {
+    const response = await fetch(`/api/children/${editingChildId}?date=${dateToUse}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
     });
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = result?.error || 'Dəyişikliklər saxlanmadı.';
+      await showUiAlert(message);
+      return;
+    }
     
     closeModal();
     
@@ -1016,6 +1097,7 @@ async function saveEdit() {
     }
   } catch (error) {
     console.error('Error saving changes:', error);
+    await showUiAlert('Dəyişikliklər saxlanarkən xəta baş verdi. Yenidən cəhd edin.');
   }
 }
 
@@ -1199,7 +1281,11 @@ async function openStatsModal() {
     closeHistoryModal();
 
     const resp = await fetch(`/api/data/${date}`);
-    const data = await resp.json();
+    const data = await resp.json().catch(() => null);
+    if (!resp.ok) {
+      const message = data?.error || 'Statistikalar yüklənə bilmədi.';
+      throw new Error(message);
+    }
 
     const activeCount = data.active.length;
     const completedCount = data.completed.length;
@@ -1337,7 +1423,10 @@ async function loadHistoryData(showAlertIfEmpty = false) {
   
   try {
     const response = await fetch(url);
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.error || 'Tarixçə yüklənə bilmədi.');
+    }
     renderHistoryContent(data, searchTerm, showAlertIfEmpty);
   } catch (error) {
     console.error('Error loading history:', error);
@@ -1895,7 +1984,10 @@ function closeReportsModal(e) {
 async function loadAvailableMonths() {
   try {
     const response = await fetch('/api/report/months');
-    const months = await response.json();
+    const months = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(months?.error || 'Hesabat ayları yüklənmədi.');
+    }
     
     // Populate all month filters
     const filterSelectors = ['monthlyMonthFilter', 'zonesMonthFilter'];
@@ -2020,7 +2112,10 @@ async function loadMonthlyReport() {
     const month = document.getElementById('monthlyMonthFilter')?.value || '';
     const url = month ? `/api/report/monthly?month=${month}` : '/api/report/monthly';
     const response = await fetch(url);
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.error || 'Aylıq hesabat yüklənə bilmədi.');
+    }
     
     const container = document.getElementById('monthlyReportContent');
     if (data.length === 0) {
@@ -2057,7 +2152,10 @@ async function loadZonesReport() {
     const month = document.getElementById('zonesMonthFilter')?.value || '';
     const url = month ? `/api/report/play-zones?month=${month}` : '/api/report/play-zones';
     const response = await fetch(url);
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.error || 'Zona hesabatı yüklənə bilmədi.');
+    }
     
     const container = document.getElementById('zonesReportContent');
     if (data.length === 0) {
@@ -2096,7 +2194,10 @@ async function updateFilteredStats() {
     if (ticketType) params.append('ticketType', ticketType);
     
     const response = await fetch(`/api/stats/filtered-10days?${params}`);
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.error || 'Filtrlənmiş statistikalar yüklənə bilmədi.');
+    }
     
     // Update chart with filtered data
     updateFilteredChart(data);
