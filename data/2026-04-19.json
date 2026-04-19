@@ -31,15 +31,15 @@
     {
       "id": 1776594264474,
       "name": "Akif",
-      "age": "-",
+      "age": 7,
       "playZone": "Əsas",
       "duration": 60,
       "price": 5,
       "passTypeId": 1,
       "passTypeName": "1 saat",
-      "notes": "",
-      "startTime": "2026-04-19T10:24:24.474Z",
-      "endTime": "2026-04-19T10:24:38.807Z"
+      "notes": "Test",
+      "startTime": "2026-04-19T10:24:00.000Z",
+      "endTime": "2026-04-19T10:24:00.000Z"
     },
     {
       "id": 1776594414012,

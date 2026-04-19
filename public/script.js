@@ -174,33 +174,6 @@ function setupEventListeners() {
     reportsCloseBtn.addEventListener('click', closeReportsModal);
   }
 
-  // Export today's Excel
-  const exportTodayBtn = document.getElementById('exportTodayExcelBtn');
-  if (exportTodayBtn) exportTodayBtn.addEventListener('click', async () => {
-    try {
-      const date = getTodayDate();
-      const response = await fetch(`/api/exportExcel/${date}`);
-      if (!response.ok) {
-        const errorData = await response.json();
-        await showUiAlert(errorData.error || 'Excel faylını yükləmək mümkün olmadı.');
-        return;
-      }
-      // If successful, download the file
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `panda_imisli_${date}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Export error:', error);
-      await showUiAlert('Excel faylını yükləyərkən xəta baş verdi.');
-    }
-  });
-
   // Settings button
   const settingsBtn = document.getElementById('settingsBtn');
   if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
