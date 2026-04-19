@@ -915,7 +915,6 @@ async function editNotes(childId) {
   }
 }
 
-
 // Open edit modal
 async function openEditModal(childId, source, historyDate = null) {
   editingChildId = childId;
@@ -2011,11 +2010,6 @@ async function saveSettings() {
     await showUiAlert('Ən azı bir oyun zonası əlavə edin!');
     return;
   }
-
-  // if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
-  //   await showUiAlert('Zəhmət olmasa, günün bitmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
-  //   return;
-  // }
 
   try {
     const response = await fetch('/api/settings', {
