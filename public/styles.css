@@ -1024,7 +1024,7 @@ body {
 }
 
 .settings-row-wide .settings-section {
-  min-height: 86px;
+  height: stretch;
 }
 
 .settings-section h3 {
@@ -1708,7 +1708,7 @@ body {
 
 .settings-row-wide {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   margin-bottom: 8px;
   align-items: flex-start;
 }
@@ -1716,13 +1716,13 @@ body {
 .settings-section-lg {
   flex: 1.4;
   min-width: 0;
-  min-height: 200px;
+  height: stretch;
 }
 
 .settings-section-sm {
   flex: 0.6;
   min-width: 0;
-  min-height: 200px;
+  height: stretch;
 }
 
 .settings-table-container.flex-80 {
