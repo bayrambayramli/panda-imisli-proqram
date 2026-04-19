@@ -871,7 +871,7 @@ async function editNotes(childId) {
   const response = await fetch(`/api/data/${currentDate}`);
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = data?.error || 'Məlumat yüklənə bilmədi.';
+    const message = data?.error || 'Məlumat yükləmək mümkün olmadı.';
     await showUiAlert(message);
     return;
   }
@@ -894,7 +894,7 @@ async function editNotes(childId) {
       });
       const updateResult = await updateResponse.json().catch(() => null);
       if (!updateResponse.ok) {
-        const message = updateResult?.error || 'Qeyd yenilənə bilmədi.';
+        const message = updateResult?.error || 'Qeydi yeniləmək mümkün olmadı.';
         await showUiAlert(message);
         return;
       }
@@ -922,7 +922,7 @@ async function openEditModal(childId, source, historyDate = null) {
   const response = await fetch(`/api/data/${dateToUse}`);
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = data?.error || 'Məlumat yüklənə bilmədi.';
+    const message = data?.error || 'Məlumat yükləmək mümkün olmadı.';
     await showUiAlert(message);
     return;
   }
@@ -1542,7 +1542,7 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     const response = await fetch(url);
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.error || 'Tarixçə yüklənə bilmədi.');
+      throw new Error(data?.error || 'Tarixçəni yükləmək mümkün olmadı.');
     }
     renderHistoryContent(data, searchTerm, showAlertIfEmpty);
   } catch (error) {
@@ -2325,7 +2325,7 @@ async function loadMonthlyReport() {
     const response = await fetch(url);
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.error || 'Aylıq hesabat yüklənə bilmədi.');
+      throw new Error(data?.error || 'Aylıq hesabatı yükləmək mümkün olmadı.');
     }
     
     const container = document.getElementById('monthlyReportContent');
@@ -2365,7 +2365,7 @@ async function loadZonesReport() {
     const response = await fetch(url);
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.error || 'Zona hesabatı yüklənə bilmədi.');
+      throw new Error(data?.error || 'Zona hesabatını yükləmək mümkün olmadı.');
     }
     
     const container = document.getElementById('zonesReportContent');
@@ -2407,7 +2407,7 @@ async function updateFilteredStats() {
     const response = await fetch(`/api/stats/filtered-10days?${params}`);
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.error || 'Filtrlənmiş statistikalar yüklənə bilmədi.');
+      throw new Error(data?.error || 'Filtrlənmiş statistikaları yükləmək mümkün olmadı.');
     }
     
     // Update chart with filtered data
