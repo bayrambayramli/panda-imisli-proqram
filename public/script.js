@@ -199,6 +199,25 @@ function setupEventListeners() {
   if (settingsSaveBtn) settingsSaveBtn.addEventListener('click', saveSettings);
   const settingsCancelBtn = document.getElementById('settingsCancelBtn');
   if (settingsCancelBtn) settingsCancelBtn.addEventListener('click', closeSettingsModal);
+  const openPasswordResetBtn = document.getElementById('openPasswordResetBtn');
+  if (openPasswordResetBtn) openPasswordResetBtn.addEventListener('click', openPasswordResetModal);
+  const passwordResetCloseBtn = document.getElementById('passwordResetCloseBtn');
+  if (passwordResetCloseBtn) passwordResetCloseBtn.addEventListener('click', closePasswordResetModal);
+  const passwordResetCancelBtn = document.getElementById('passwordResetCancelBtn');
+  if (passwordResetCancelBtn) passwordResetCancelBtn.addEventListener('click', closePasswordResetModal);
+  const passwordResetSaveBtn = document.getElementById('passwordResetSaveBtn');
+  if (passwordResetSaveBtn) passwordResetSaveBtn.addEventListener('click', savePasswordReset);
+  ['currentAccessPassword', 'newAccessPassword', 'confirmAccessPassword'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          savePasswordReset();
+        }
+      });
+    }
+  });
 
   // Reports modal - close when clicking outside of modal content
   const reportsModal = document.getElementById('reportsModal');
@@ -249,6 +268,7 @@ function setupEventListeners() {
     if (e.target === modal) closeModal();
     if (e.target === document.getElementById('historyModal')) closeHistoryModal();
     if (e.target === document.getElementById('statsModal')) closeStatsModal();
+    if (e.target === document.getElementById('passwordResetModal')) closePasswordResetModal();
   });
 
   document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
@@ -1729,13 +1749,6 @@ function openSettingsModal() {
   // Set end day hour
   document.getElementById('endDayHour').value = settings.endDayHour || '22:00';
 
-  const currentPasswordInput = document.getElementById('currentAccessPassword');
-  const newPasswordInput = document.getElementById('newAccessPassword');
-  const confirmPasswordInput = document.getElementById('confirmAccessPassword');
-  if (currentPasswordInput) currentPasswordInput.value = '';
-  if (newPasswordInput) newPasswordInput.value = '';
-  if (confirmPasswordInput) confirmPasswordInput.value = '';
-
   // Set TV pagination frequency
   const tvFreqInput = document.getElementById('tvPaginationFrequency');
   if (tvFreqInput) {
@@ -1794,6 +1807,91 @@ function openSettingsModal() {
 
 function closeSettingsModal() {
   document.getElementById('settingsModal').classList.remove('show');
+  closePasswordResetModal();
+}
+
+function setPasswordResetMessage(message = '', type = 'error') {
+  const messageEl = document.getElementById('passwordResetMessage');
+  if (!messageEl) return;
+
+  if (!message) {
+    messageEl.textContent = '';
+    messageEl.classList.add('is-hidden');
+    messageEl.classList.remove('is-error', 'is-success');
+    return;
+  }
+
+  messageEl.textContent = message;
+  messageEl.classList.remove('is-hidden', 'is-error', 'is-success');
+  messageEl.classList.add(type === 'success' ? 'is-success' : 'is-error');
+}
+
+function openPasswordResetModal() {
+  const currentPasswordInput = document.getElementById('currentAccessPassword');
+  const newPasswordInput = document.getElementById('newAccessPassword');
+  const confirmPasswordInput = document.getElementById('confirmAccessPassword');
+
+  if (currentPasswordInput) currentPasswordInput.value = '';
+  if (newPasswordInput) newPasswordInput.value = '';
+  if (confirmPasswordInput) confirmPasswordInput.value = '';
+  setPasswordResetMessage('');
+
+  const modal = document.getElementById('passwordResetModal');
+  if (modal) modal.classList.add('show');
+
+  if (currentPasswordInput) {
+    window.requestAnimationFrame(() => {
+      currentPasswordInput.focus({ preventScroll: true });
+    });
+  }
+}
+
+function closePasswordResetModal() {
+  const modal = document.getElementById('passwordResetModal');
+  if (modal) modal.classList.remove('show');
+  setPasswordResetMessage('');
+}
+
+async function savePasswordReset() {
+  const currentAccessPassword = document.getElementById('currentAccessPassword').value.trim();
+  const newAccessPassword = document.getElementById('newAccessPassword').value.trim();
+  const confirmAccessPassword = document.getElementById('confirmAccessPassword').value.trim();
+
+  if (!currentAccessPassword || !newAccessPassword || !confirmAccessPassword) {
+    setPasswordResetMessage('Şifrəni dəyişdirmək üçün bütün şifrə sahələrini doldurun.');
+    return;
+  }
+
+  if (newAccessPassword !== confirmAccessPassword) {
+    setPasswordResetMessage('Yeni şifrələr uyğun gəlmir.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/settings/password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        currentAccessPassword,
+        newAccessPassword,
+        confirmAccessPassword
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      setPasswordResetMessage(errorData?.error || 'Şifrə yenilənərkən xəta baş verdi.');
+      return;
+    }
+
+    setPasswordResetMessage('Şifrə uğurla yeniləndi.', 'success');
+    document.getElementById('currentAccessPassword').value = '';
+    document.getElementById('newAccessPassword').value = '';
+    document.getElementById('confirmAccessPassword').value = '';
+  } catch (err) {
+    console.error('Error updating password:', err);
+    setPasswordResetMessage('Şifrə yenilənərkən xəta baş verdi.');
+  }
 }
 
 function addPassTypeRow() {
@@ -1924,14 +2022,10 @@ async function saveSettings() {
   });
 
   const endDayTime = document.getElementById('endDayHour').value;
-  const currentAccessPassword = document.getElementById('currentAccessPassword').value.trim();
-  const newAccessPassword = document.getElementById('newAccessPassword').value.trim();
-  const confirmAccessPassword = document.getElementById('confirmAccessPassword').value.trim();
   const tvPaginationFrequency = parseInt(document.getElementById('tvPaginationFrequency').value) || 5;
   const tvShowUnlimitedPassTypes = document.getElementById('tvShowUnlimitedPassTypes').checked;
   const tvCustomMessage = document.getElementById('tvCustomMessage').value.trim();
   const tvCustomMessageEnabled = document.getElementById('tvCustomMessageEnabled').checked;
-  const shouldChangePassword = !!(currentAccessPassword || newAccessPassword || confirmAccessPassword);
 
   if (tvPaginationFrequency < 2) {
     await showUiAlert('TV ekranı səhifə keçid tezliyi ən azı 2 saniyə olmalıdır.');
@@ -1946,18 +2040,6 @@ async function saveSettings() {
   if (playZones.length === 0) {
     await showUiAlert('Ən azı bir oyun zonası əlavə edin!');
     return;
-  }
-
-  if (shouldChangePassword) {
-    if (!currentAccessPassword || !newAccessPassword || !confirmAccessPassword) {
-      await showUiAlert('Şifrəni yeniləmək üçün bütün şifrə sahələrini doldurun.');
-      return;
-    }
-
-    if (newAccessPassword !== confirmAccessPassword) {
-      await showUiAlert('Yeni şifrələr uyğun gəlmir.');
-      return;
-    }
   }
 
   // if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
@@ -1976,10 +2058,7 @@ async function saveSettings() {
         tvPaginationFrequency,
         tvShowUnlimitedPassTypes,
         tvCustomMessage,
-        tvCustomMessageEnabled,
-        currentAccessPassword,
-        newAccessPassword,
-        confirmAccessPassword
+        tvCustomMessageEnabled
       })
     });
 
@@ -1991,7 +2070,7 @@ async function saveSettings() {
       updatePlayZoneDropdown();
       populateDynamicFilters();
       closeSettingsModal();
-      await showUiAlert(shouldChangePassword ? 'Dəyişikliklər və şifrə uğurla yadda saxlanıldı.' : 'Dəyişikliklər yadda saxlanıldı.');
+      await showUiAlert('Dəyişikliklər yadda saxlanıldı.');
     } else {
       const errorData = await response.json().catch(() => null);
       await showUiAlert(errorData?.error || 'Dəyişiklikləri yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');

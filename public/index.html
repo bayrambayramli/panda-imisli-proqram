@@ -322,16 +322,9 @@
 
           <div class="settings-divider"></div>
 
-          <h3>Şifrəni Yenilə</h3>
-          <div class="settings-password-grid">
-            <label for="currentAccessPassword" class="form-label-nowrap">Köhnə şifrə:</label>
-            <input type="password" id="currentAccessPassword" class="form-input-time settings-password-input" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false">
-
-            <label for="newAccessPassword" class="form-label-nowrap">Yeni şifrə:</label>
-            <input type="password" id="newAccessPassword" class="form-input-time settings-password-input" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
-
-            <label for="confirmAccessPassword" class="form-label-nowrap">Yeni şifrə (təkrar):</label>
-            <input type="password" id="confirmAccessPassword" class="form-input-time settings-password-input" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+          <h3>Şifrəni Dəyiş</h3>
+          <div class="settings-password-action">
+            <button id="openPasswordResetBtn" class="btn-save">Şifrəni Dəyiş</button>
           </div>
         </div>
       </div>
@@ -340,6 +333,32 @@
       <div class="modal-actions">
         <button id="settingsSaveBtn" class="btn-save">Yadda Saxla</button>
         <button id="settingsCancelBtn" class="btn-cancel">Ləğv Et</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Reset Modal -->
+  <div id="passwordResetModal" class="modal">
+    <div class="modal-content password-reset-modal">
+      <span class="close" id="passwordResetCloseBtn">&times;</span>
+      <h2>Şifrəni Yenilə</h2>
+
+      <p id="passwordResetMessage" class="password-reset-message is-hidden"></p>
+
+      <div class="settings-password-grid">
+        <label for="currentAccessPassword" class="form-label-nowrap">Köhnə şifrə:</label>
+        <input type="password" id="currentAccessPassword" class="form-input-time settings-password-input" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+        <label for="newAccessPassword" class="form-label-nowrap">Yeni şifrə:</label>
+        <input type="password" id="newAccessPassword" class="form-input-time settings-password-input" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+        <label for="confirmAccessPassword" class="form-label-nowrap">Yeni şifrə (təkrar):</label>
+        <input type="password" id="confirmAccessPassword" class="form-input-time settings-password-input" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+      </div>
+
+      <div class="modal-actions">
+        <button id="passwordResetSaveBtn" class="btn-save">Yadda Saxla</button>
+        <button id="passwordResetCancelBtn" class="btn-cancel">Ləğv Et</button>
       </div>
     </div>
   </div>
