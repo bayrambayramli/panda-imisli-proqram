@@ -12,14 +12,18 @@ let historySortDir = 'asc'; // 'asc' or 'desc'
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
   // Load settings first
-  await loadSettings();
+  const settingsOk = await loadSettings();
   initializeDateDisplay();
   loadData();
   setupEventListeners();
   startAutoEndPolling();
+  if (!settingsOk) {
+    await showUiAlert('Ayarlar yüklənə bilmədi. Proqramı yenidən başladın.');
+  }
 });
 
 // Load settings from server
+// Returns true if settings loaded successfully from server, false on error
 async function loadSettings() {
   try {
     const response = await fetch('/api/settings');
@@ -38,10 +42,13 @@ async function loadSettings() {
         endDayHour: '22:00',
         tvPaginationFrequency: 5
       };
+      updatePriceConfig();
+      return false;
     } else if (!settings.playZones) {
       settings.playZones = [];
     }
     updatePriceConfig();
+    return true;
   } catch (err) {
     console.error('Error loading settings:', err);
     settings = {
@@ -51,6 +58,7 @@ async function loadSettings() {
       tvPaginationFrequency: 5
     };
     updatePriceConfig();
+    return false;
   }
 }
 
@@ -1544,14 +1552,17 @@ async function loadHistoryData(showAlertIfEmpty = false) {
     if (!response.ok) {
       throw new Error(data?.error || 'Tarixçəni yükləmək mümkün olmadı.');
     }
-    renderHistoryContent(data, searchTerm, showAlertIfEmpty);
+    if (showAlertIfEmpty && (data.completed || []).length === 0) {
+      await showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa, başqa tarix seçin.');
+    }
+    renderHistoryContent(data, searchTerm);
   } catch (error) {
     console.error('Error loading history:', error);
     document.getElementById('historyContent').innerHTML = '<p class="no-data-msg">Məlumat yüklənərkən xəta baş verdi.</p>';
   }
 }
 
-function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
+function renderHistoryContent(data, searchTerm) {
   
     const contentDiv = document.getElementById('historyContent');
     let html = '';
@@ -1563,11 +1574,6 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
       : completed;
     
     if (completed.length === 0) {
-      // Show alert only if Load button was clicked (showAlertIfEmpty = true)
-      if (showAlertIfEmpty) {
-        showUiAlert('Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa, başqa tarix seçin.');
-      }
-      // Always show static message in panel
       html = '<p class="no-data-msg">Bu tarixdə bitmiş seans yoxdur. Zəhmət olmasa, başqa tarix seçin.</p>';
     } else if (filteredCompleted.length === 0) {
       html = '<p class="no-data-msg">Axtarışa uyğun bitmiş seans tapılmadı.</p>';
@@ -2414,6 +2420,11 @@ async function updateFilteredStats() {
     updateFilteredChart(data);
   } catch (err) {
     console.error('Error updating filtered stats:', err);
+    const chartContainer = document.getElementById('analyticsChartContainer');
+    if (chartContainer) {
+      chartContainer.classList.remove('is-hidden');
+      chartContainer.innerHTML = '<p class="report-no-data">Statistikalar yüklənərkən xəta baş verdi.</p>';
+    }
   }
 }
 
