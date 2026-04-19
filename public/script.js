@@ -1046,6 +1046,11 @@ async function saveEdit() {
 
 // Build reusable Chart.js configuration for analytics charts
 function buildChartConfig(labels, childrenCounts, incomeCounts) {
+  const maxChildren = Math.max(...childrenCounts, 0);
+  const maxIncome = Math.max(...incomeCounts, 0);
+  const suggestedChildrenMax = maxChildren === 0 ? 1 : undefined;
+  const suggestedIncomeMax = maxIncome === 0 ? 1 : undefined;
+
   return {
     type: 'line',
     data: {
@@ -1097,14 +1102,28 @@ function buildChartConfig(labels, childrenCounts, incomeCounts) {
           display: true,
           position: 'left',
           title: { display: true, text: 'Uşaq Sayı', font: { size: 12, weight: 'bold' } },
-          grid: { color: 'rgba(0, 0, 0, 0.05)' }
+          grid: { color: 'rgba(0, 0, 0, 0.05)' },
+          min: 0,
+          suggestedMin: 0,
+          suggestedMax: suggestedChildrenMax,
+          ticks: {
+            beginAtZero: true,
+            callback: value => Math.max(0, value)
+          }
         },
         y1: {
           type: 'linear',
           display: true,
           position: 'right',
           title: { display: true, text: 'Gəlir (AZN)', font: { size: 12, weight: 'bold' } },
-          grid: { drawOnChartArea: false }
+          grid: { drawOnChartArea: false },
+          min: 0,
+          suggestedMin: 0,
+          suggestedMax: suggestedIncomeMax,
+          ticks: {
+            beginAtZero: true,
+            callback: value => Math.max(0, value)
+          }
         }
       }
     }
