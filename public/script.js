@@ -2113,6 +2113,11 @@ function updatePlayZoneDropdown() {
 
 // Open reports modal
 async function openReportsModal() {
+  const isAuthorized = await verifyProtectedViewAccess('Hesabatlar');
+  if (!isAuthorized) {
+    return;
+  }
+
   const modal = document.getElementById('reportsModal');
   if (!modal) return;
   

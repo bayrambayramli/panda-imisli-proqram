@@ -1801,6 +1801,7 @@ body {
 
 .form-label-nowrap {
   white-space: nowrap;
+  color: #1a237e;
 }
 
 .form-label-spaced {
