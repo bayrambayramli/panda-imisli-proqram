@@ -549,7 +549,7 @@ app.post('/api/settings/password', (req, res) => {
   }
 
   if (currentPasswordValue !== currentSettings.accessPassword) {
-    return res.status(401).json({ error: 'Köhnə şifrə yanlışdır.' });
+    return res.status(401).json({ error: 'İndiki şifrə yanlışdır.' });
   }
 
   if (newPasswordValue !== confirmPasswordValue) {
