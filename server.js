@@ -181,15 +181,17 @@ app.post('/api/children', (req, res) => {
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
   }
-  if (!age || !playZone || !duration) {
-    return res.status(400).json({ error: 'All fields are required' });
+  if (!playZone || !duration) {
+    return res.status(400).json({ error: 'Play zone and duration are required' });
   }
   
+  const normalizedAge = age === undefined || age === '' ? '-' : age;
   const data = loadData(currentDate);
   
   const newChild = {
     id: Date.now(),
     ...req.body,
+    age: normalizedAge,
     startTime: new Date().toISOString(),
     endTime: null
   };
@@ -293,8 +295,8 @@ app.post('/api/history/add', (req, res) => {
     if (!name || !name.trim()) {
       return res.status(400).json({ error: 'Name is required' });
     }
-    if (!age || !playZone || passTypeId === undefined || passTypeId === null || passTypeId === '') {
-      return res.status(400).json({ error: 'Age, playZone, and passTypeId are required' });
+    if (!playZone || passTypeId === undefined || passTypeId === null || passTypeId === '') {
+      return res.status(400).json({ error: 'Play zone and passTypeId are required' });
     }
 
     const settings = loadSettings();
@@ -315,12 +317,13 @@ app.post('/api/history/add', (req, res) => {
     }
     
     const data = loadData(date);
+    const normalizedAge = age === undefined || age === '' ? '-' : age;
     
     // Create a new completed session
     const newSession = {
       id: Date.now() + Math.floor(Math.random() * 1000),
       name: name.trim(),
-      age: age === "-" ? "-" : parseInt(age),
+      age: normalizedAge === '-' ? '-' : parseInt(normalizedAge),
       playZone,
       duration: passType.duration,
       price: passType.price,

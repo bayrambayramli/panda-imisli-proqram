@@ -375,6 +375,10 @@ function buildSessionCountText(children) {
   return parts.join(', ');
 }
 
+function formatAgeValue(age) {
+  return age === undefined || age === null || age === '' ? '-' : age;
+}
+
 // Render active sessions
 function renderActiveSessions(children) {
   const tbody = document.getElementById('activeTableBody');
@@ -435,7 +439,7 @@ function createActiveRow(child) {
 
   row.innerHTML = `
     <td>${child.name}</td>
-    <td>${child.age}</td>
+    <td>${formatAgeValue(child.age)}</td>
     <td>${child.playZone}</td>
     <td>${startTimeStr}</td>
     <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
@@ -470,7 +474,7 @@ function createCompletedRow(child) {
   
   row.innerHTML = `
     <td>${child.name}</td>
-    <td>${child.age}</td>
+    <td>${formatAgeValue(child.age)}</td>
     <td>${child.playZone}</td>
     <td>${startTime}</td>
     <td>${endTime}</td>
@@ -1392,7 +1396,7 @@ function renderHistoryContent(data, searchTerm, showAlertIfEmpty) {
                 return `
                   <tr>
                     <td>${child.name}</td>
-                    <td>${child.age}</td>
+                    <td>${formatAgeValue(child.age)}</td>
                     <td>${child.playZone}</td>
                     <td>${child.duration === 'unlimited' ? 'Limitsiz' : (child.duration + ' dəq')}</td>
                     <td>${child.price} AZN</td>
