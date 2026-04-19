@@ -346,7 +346,6 @@
         <button class="report-tab-btn active" onclick="switchReportTab('statistics')">📊 Statistika</button>
         <button class="report-tab-btn" onclick="switchReportTab('monthly')">Aylıq</button>
         <button class="report-tab-btn" onclick="switchReportTab('zones')">Oyun Zonası</button>
-        <button class="report-tab-btn" onclick="switchReportTab('age')">Yaş Demoqrafiyası</button>
       </div>
 
       <div id="statisticsReportTab" class="report-tab active">
@@ -364,16 +363,6 @@
             <label for="statTicketFilter">Bilet Tipi:</label>
             <select id="statTicketFilter" onchange="updateFilteredStats()">
               <option value="">Hamısı</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label for="statAgeFilter">Yaş Qrupu:</label>
-            <select id="statAgeFilter" onchange="updateFilteredStats()">
-              <option value="">Hamısı</option>
-              <option value="1-3">1-3 yaş</option>
-              <option value="4-6">4-6 yaş</option>
-              <option value="7-9">7-9 yaş</option>
-              <option value="10-13">10-13 yaş</option>
             </select>
           </div>
         </div>
@@ -404,17 +393,6 @@
           </select>
         </div>
         <div id="zonesReportContent" class="report-content"></div>
-      </div>
-
-      <div id="ageReportTab" class="report-tab">
-        <h3>Yaş Demoqrafiyası</h3>
-        <div class="report-filter">
-          <label for="ageMonthFilter">Ay seçin:</label>
-          <select id="ageMonthFilter" onchange="loadAgeReport()">
-            <option value="">Hamısı</option>
-          </select>
-        </div>
-        <div id="ageReportContent" class="report-content"></div>
       </div>
     </div>
   </div>

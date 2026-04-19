@@ -730,59 +730,6 @@ app.get('/api/report/play-zones', (req, res) => {
   }
 });
 
-// Get age demographics (all time or filtered by month)
-app.get('/api/report/age-demographics', (req, res) => {
-  try {
-    const { month } = req.query; // Format: YYYY-MM
-    const files = fs.readdirSync(dataDir).filter(f => f.match(/\d{4}-\d{2}-\d{2}\.json/));
-    const ageRanges = {
-      '1-3': { range: '1-3', count: 0, revenue: 0 },
-      '4-6': { range: '4-6', count: 0, revenue: 0 },
-      '7-9': { range: '7-9', count: 0, revenue: 0 },
-      '10-13': { range: '10-13', count: 0, revenue: 0 }
-    };
-
-    files.forEach(file => {
-      const date = file.replace('.json', '');
-      
-      // If month filter is specified, skip other months
-      if (month && !date.startsWith(month)) return;
-      
-      const data = loadData(date);
-      
-      (data.completed || []).forEach(child => {
-        const age = parseInt(child.age) || 0;
-        let range;
-        if (age >= 1 && age <= 3) range = '1-3';
-        else if (age >= 4 && age <= 6) range = '4-6';
-        else if (age >= 7 && age <= 9) range = '7-9';
-        else if (age >= 10 && age <= 13) range = '10-13';
-        else return; // skip ages outside defined ranges
-
-        ageRanges[range].count++;
-        ageRanges[range].revenue += child.price || 0;
-      });
-    });
-
-    const result = Object.values(ageRanges)
-      .map(a => ({
-        ...a,
-        avgRevenuePerChild: a.count > 0 ? (a.revenue / a.count).toFixed(2) : 0,
-        percentageOfTotal: 0
-      }));
-
-    const totalChildren = result.reduce((sum, a) => sum + a.count, 0);
-    result.forEach(a => {
-      a.percentageOfTotal = totalChildren > 0 ? ((a.count / totalChildren) * 100).toFixed(2) : 0;
-    });
-
-    res.json(result.sort((a, b) => a.range.localeCompare(b.range)));
-  } catch (err) {
-    logError('Error generating age demographics:', err);
-    res.status(500).json({ error: 'Failed to generate report' });
-  }
-});
-
 // Get available months for report filtering
 app.get('/api/report/months', (req, res) => {
   try {
@@ -806,7 +753,7 @@ app.get('/api/report/months', (req, res) => {
 // Get filtered 10-day statistics
 app.get('/api/stats/filtered-10days', (req, res) => {
   try {
-    const { zone, ticketType, ageRange } = req.query;
+    const { zone, ticketType } = req.query;
     
     // Get last 10 dates
     const files = fs.readdirSync(dataDir)
@@ -827,13 +774,6 @@ app.get('/api/stats/filtered-10days', (req, res) => {
       }
       if (ticketType) {
         filtered = filtered.filter(c => c.duration === ticketType);
-      }
-      if (ageRange) {
-        const [minAge, maxAge] = ageRange.split('-').map(Number);
-        filtered = filtered.filter(c => {
-          const age = parseInt(c.age) || 0;
-          return age >= minAge && age <= maxAge;
-        });
       }
       
       const income = filtered.reduce((sum, c) => sum + (c.price || 0), 0);

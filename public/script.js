@@ -1902,7 +1902,7 @@ async function loadAvailableMonths() {
     const months = await response.json();
     
     // Populate all month filters
-    const filterSelectors = ['monthlyMonthFilter', 'zonesMonthFilter', 'ageMonthFilter'];
+    const filterSelectors = ['monthlyMonthFilter', 'zonesMonthFilter'];
     
     filterSelectors.forEach(selector => {
       const select = document.getElementById(selector);
@@ -2006,9 +2006,6 @@ function switchReportTab(tabName) {
     case 'zones':
       loadZonesReport();
       break;
-    case 'age':
-      loadAgeReport();
-      break;
     case 'statistics':
       loadStatisticsReport();
       break;
@@ -2092,51 +2089,15 @@ async function loadZonesReport() {
   }
 }
 
-// Load age demographics report
-async function loadAgeReport() {
-  try {
-    const month = document.getElementById('ageMonthFilter')?.value || '';
-    const url = month ? `/api/report/age-demographics?month=${month}` : '/api/report/age-demographics';
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    const container = document.getElementById('ageReportContent');
-    if (data.length === 0) {
-      container.innerHTML = '<p class="report-no-data">Məlumat yoxdur.</p>';
-      return;
-    }
-    
-    let html = '<table class="report-table"><thead><tr><th>Yaş Qrupu</th><th>Ümumi Uşaq Sayı</th><th>Ümumi Gəlir (AZN)</th><th>Uşaq Başına Orta Gəlir (AZN)</th><th>Populyarlıq</th></tr></thead><tbody>';
-    
-    data.forEach(age => {
-      html += `<tr>
-        <td>${age.range} yaş</td>
-        <td>${age.count}</td>
-        <td>${Math.round(age.revenue)}</td>
-        <td>${Math.round(age.avgRevenuePerChild)}</td>
-        <td>${Math.round(age.percentageOfTotal)}%</td>
-        </tr>`;
-    });
-    
-    html += '</tbody></table>';
-    container.innerHTML = html;
-  } catch (err) {
-    console.error('Error loading age report:', err);
-    document.getElementById('ageReportContent').innerHTML = '<p class="report-no-data">Hesabat yüklənərkən xəta baş verdi.</p>';
-  }
-}
-
 // Update filtered statistics
 async function updateFilteredStats() {
   const zone = document.getElementById('statZoneFilter')?.value || '';
   const ticketType = document.getElementById('statTicketFilter')?.value || '';
-  const ageRange = document.getElementById('statAgeFilter')?.value || '';
   
   try {
     const params = new URLSearchParams();
     if (zone) params.append('zone', zone);
     if (ticketType) params.append('ticketType', ticketType);
-    if (ageRange) params.append('ageRange', ageRange);
     
     const response = await fetch(`/api/stats/filtered-10days?${params}`);
     const data = await response.json();
