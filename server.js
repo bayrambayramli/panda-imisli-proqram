@@ -577,7 +577,18 @@ app.get('/api/checkAutoEnd', (req, res) => {
 });
 
 app.post('/api/settings', (req, res) => {
-  const { passTypes, playZones, endDayHour, tvPaginationFrequency, tvShowUnlimitedPassTypes, tvCustomMessage, tvCustomMessageEnabled } = req.body;
+  const {
+    passTypes,
+    playZones,
+    endDayHour,
+    tvPaginationFrequency,
+    tvShowUnlimitedPassTypes,
+    tvCustomMessage,
+    tvCustomMessageEnabled,
+    currentAccessPassword,
+    newAccessPassword,
+    confirmAccessPassword
+  } = req.body;
   // Validate endDayHour format
   if (!endDayHour || !endDayHour.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
     return res.status(400).json({ error: 'Invalid endDayHour format. Use HH:MM.' });
@@ -587,7 +598,35 @@ app.post('/api/settings', (req, res) => {
   if (frequency < 2) {
     return res.status(400).json({ error: 'TV pagination frequency must be at least 2 seconds.' });
   }
+
   const currentSettings = loadSettings();
+  let nextAccessPassword = currentSettings.accessPassword;
+  const wantsPasswordChange = !!(currentAccessPassword || newAccessPassword || confirmAccessPassword);
+
+  if (wantsPasswordChange) {
+    const currentPasswordValue = typeof currentAccessPassword === 'string' ? currentAccessPassword.trim() : '';
+    const newPasswordValue = typeof newAccessPassword === 'string' ? newAccessPassword.trim() : '';
+    const confirmPasswordValue = typeof confirmAccessPassword === 'string' ? confirmAccessPassword.trim() : '';
+
+    if (!currentPasswordValue || !newPasswordValue || !confirmPasswordValue) {
+      return res.status(400).json({ error: 'Şifrəni yeniləmək üçün bütün şifrə sahələri doldurulmalıdır.' });
+    }
+
+    if (currentPasswordValue !== currentSettings.accessPassword) {
+      return res.status(401).json({ error: 'Köhnə şifrə yanlışdır.' });
+    }
+
+    if (newPasswordValue !== confirmPasswordValue) {
+      return res.status(400).json({ error: 'Yeni şifrələr uyğun gəlmir.' });
+    }
+
+    if (!/^\d{4}$/.test(newPasswordValue)) {
+      return res.status(400).json({ error: 'Yeni şifrə formatı yanlışdır.' });
+    }
+
+    nextAccessPassword = newPasswordValue;
+  }
+
   const settings = {
     passTypes,
     playZones,
@@ -596,7 +635,7 @@ app.post('/api/settings', (req, res) => {
     tvShowUnlimitedPassTypes: tvShowUnlimitedPassTypes !== false,
     tvCustomMessage: tvCustomMessage || '',
     tvCustomMessageEnabled: tvCustomMessageEnabled === true,
-    accessPassword: currentSettings.accessPassword
+    accessPassword: nextAccessPassword
   };
   saveSettings(settings);
   

@@ -1023,6 +1023,10 @@ body {
   border: 2px solid #667eea;
 }
 
+.settings-row-wide .settings-section {
+  min-height: 86px;
+}
+
 .settings-section h3 {
   color: #1a237e;
   margin: 0 0 8px 0;
@@ -1743,6 +1747,24 @@ body {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
+}
+
+.settings-divider {
+  height: 1px;
+  background: #d7dff7;
+  margin: 10px 0;
+}
+
+.settings-password-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.settings-password-input {
+  width: 100%;
+  max-width: 210px;
 }
 
 .form-input-number {

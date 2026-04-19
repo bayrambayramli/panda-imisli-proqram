@@ -1729,6 +1729,13 @@ function openSettingsModal() {
   // Set end day hour
   document.getElementById('endDayHour').value = settings.endDayHour || '22:00';
 
+  const currentPasswordInput = document.getElementById('currentAccessPassword');
+  const newPasswordInput = document.getElementById('newAccessPassword');
+  const confirmPasswordInput = document.getElementById('confirmAccessPassword');
+  if (currentPasswordInput) currentPasswordInput.value = '';
+  if (newPasswordInput) newPasswordInput.value = '';
+  if (confirmPasswordInput) confirmPasswordInput.value = '';
+
   // Set TV pagination frequency
   const tvFreqInput = document.getElementById('tvPaginationFrequency');
   if (tvFreqInput) {
@@ -1917,10 +1924,14 @@ async function saveSettings() {
   });
 
   const endDayTime = document.getElementById('endDayHour').value;
+  const currentAccessPassword = document.getElementById('currentAccessPassword').value.trim();
+  const newAccessPassword = document.getElementById('newAccessPassword').value.trim();
+  const confirmAccessPassword = document.getElementById('confirmAccessPassword').value.trim();
   const tvPaginationFrequency = parseInt(document.getElementById('tvPaginationFrequency').value) || 5;
   const tvShowUnlimitedPassTypes = document.getElementById('tvShowUnlimitedPassTypes').checked;
   const tvCustomMessage = document.getElementById('tvCustomMessage').value.trim();
   const tvCustomMessageEnabled = document.getElementById('tvCustomMessageEnabled').checked;
+  const shouldChangePassword = !!(currentAccessPassword || newAccessPassword || confirmAccessPassword);
 
   if (tvPaginationFrequency < 2) {
     await showUiAlert('TV ekranı səhifə keçid tezliyi ən azı 2 saniyə olmalıdır.');
@@ -1937,6 +1948,18 @@ async function saveSettings() {
     return;
   }
 
+  if (shouldChangePassword) {
+    if (!currentAccessPassword || !newAccessPassword || !confirmAccessPassword) {
+      await showUiAlert('Şifrəni yeniləmək üçün bütün şifrə sahələrini doldurun.');
+      return;
+    }
+
+    if (newAccessPassword !== confirmAccessPassword) {
+      await showUiAlert('Yeni şifrələr uyğun gəlmir.');
+      return;
+    }
+  }
+
   // if (!endDayTime || !endDayTime.match(/^([0-1]\d|2[0-3]):[0-5]\d$/)) {
   //   await showUiAlert('Zəhmət olmasa, günün bitmə vaxtını düzgün formatda daxil edin. Nümunə: 22:00');
   //   return;
@@ -1946,7 +1969,18 @@ async function saveSettings() {
     const response = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passTypes, playZones, endDayHour: endDayTime, tvPaginationFrequency, tvShowUnlimitedPassTypes, tvCustomMessage, tvCustomMessageEnabled })
+      body: JSON.stringify({
+        passTypes,
+        playZones,
+        endDayHour: endDayTime,
+        tvPaginationFrequency,
+        tvShowUnlimitedPassTypes,
+        tvCustomMessage,
+        tvCustomMessageEnabled,
+        currentAccessPassword,
+        newAccessPassword,
+        confirmAccessPassword
+      })
     });
 
     if (response.ok) {
@@ -1957,9 +1991,10 @@ async function saveSettings() {
       updatePlayZoneDropdown();
       populateDynamicFilters();
       closeSettingsModal();
-      await showUiAlert('Dəyişikliklər yadda saxlanıldı.');
+      await showUiAlert(shouldChangePassword ? 'Dəyişikliklər və şifrə uğurla yadda saxlanıldı.' : 'Dəyişikliklər yadda saxlanıldı.');
     } else {
-      await showUiAlert('Dəyişiklikləri yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
+      const errorData = await response.json().catch(() => null);
+      await showUiAlert(errorData?.error || 'Dəyişiklikləri yadda saxlayarkən xəta baş verdi. Yenidən cəhd edin.');
     }
   } catch (err) {
     console.error('Error saving settings:', err);
