@@ -537,7 +537,7 @@ async function addChild() {
   }
   
   // Validation
-  if (!name || !age || !playZone || !passTypeId) {
+  if (!name || !playZone || !passTypeId) {
     await showUiAlert('Zəhmət olmasa, bütün tələb olunan xanaları doldurun (*).');
     return;
   }
@@ -557,7 +557,7 @@ async function addChild() {
       },
       body: JSON.stringify({
         name,
-        age: parseInt(age),
+        age: age ? parseInt(age) : "-",
         playZone,
         duration: passType.duration,
         price: passType.price,
@@ -789,7 +789,7 @@ async function openEditModal(childId, source, historyDate = null) {
   
   // Populate modal
   document.getElementById('editName').value = child.name;
-  document.getElementById('editAge').value = child.age;
+  document.getElementById('editAge').value = child.age === "-" ? "" : child.age;
   document.getElementById('editPlayZone').value = child.playZone;
   document.getElementById('editNotes').value = child.notes || '';
   
@@ -879,17 +879,14 @@ async function saveEdit() {
   }
   
   const name = document.getElementById('editName').value.trim();
-  const age = parseInt(document.getElementById('editAge').value);
+  const ageValue = document.getElementById('editAge').value;
+  const age = ageValue ? parseInt(ageValue) : "-";
   const playZone = document.getElementById('editPlayZone').value;
   const notes = document.getElementById('editNotes').value;
   
   // Validate required fields
   if (!name) {
     await showUiAlert('Ad boş ola bilməz.');
-    return;
-  }
-  if (!age) {
-    await showUiAlert('Yaş seçilməlidir.');
     return;
   }
   if (!playZone) {
@@ -1228,6 +1225,10 @@ async function openStatsModal() {
     document.getElementById('statActive').textContent = activeCount;
     document.getElementById('statCompleted').textContent = completedCount;
     document.getElementById('statRevenue').textContent = revenue + ' AZN';
+
+    // Update modal title with date
+    const dateDisplay = document.getElementById('dateDisplay').textContent;
+    document.querySelector('#statsModal h2').textContent = `📊 Bu gün: ${dateDisplay}`;
 
     document.getElementById('statsModal').classList.add('show');
   } catch (err) {

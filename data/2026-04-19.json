@@ -1,0 +1,45 @@
+{
+  "active": [
+    {
+      "id": 1776594380469,
+      "name": "Arif",
+      "age": 4,
+      "playZone": "Boyama",
+      "duration": 60,
+      "price": 3,
+      "passTypeId": 2,
+      "passTypeName": "1 saat - Endirimli",
+      "notes": "",
+      "startTime": "2026-04-19T10:26:00.000Z",
+      "endTime": null
+    }
+  ],
+  "completed": [
+    {
+      "id": 1776594264474,
+      "name": "Akif",
+      "age": "-",
+      "playZone": "Əsas",
+      "duration": 60,
+      "price": 5,
+      "passTypeId": 1,
+      "passTypeName": "1 saat",
+      "notes": "",
+      "startTime": "2026-04-19T10:24:24.474Z",
+      "endTime": "2026-04-19T10:24:38.807Z"
+    },
+    {
+      "id": 1776594414012,
+      "name": "Kenan",
+      "age": 1,
+      "playZone": "Körpə",
+      "duration": 60,
+      "price": 3,
+      "passTypeId": 5,
+      "passTypeName": "Körpə - 1 saat",
+      "notes": "",
+      "startTime": "2026-04-19T10:26:00.000Z",
+      "endTime": "2026-04-19T10:27:28.124Z"
+    }
+  ]
+}
