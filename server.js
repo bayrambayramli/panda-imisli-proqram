@@ -320,7 +320,7 @@ app.post('/api/history/add', (req, res) => {
     const newSession = {
       id: Date.now() + Math.floor(Math.random() * 1000),
       name: name.trim(),
-      age: parseInt(age),
+      age: age === "-" ? "-" : parseInt(age),
       playZone,
       duration: passType.duration,
       price: passType.price,

@@ -600,7 +600,7 @@ function startTimer(childId, durationValue, startTimeISO) {
   }
 
   const durationMinutes = parseInt(durationValue) || 0;
-  const totalDuration = (durationMinutes + 6) * 60 * 1000; // Add 6 minutes prep time
+  const totalDuration = (durationMinutes + 1) * 60 * 1000; // Add 1 minute prep time
   const startMs = startTimeISO ? new Date(startTimeISO).getTime() : Date.now();
   let endTime = startMs + totalDuration;
   let lastDisplayedMinute = -1; // Track last displayed minute to reduce updates
@@ -1284,7 +1284,7 @@ async function openHistoryAddModal() {
   
   // Select age 6 option if available
   if (editAgeSelect && editAgeSelect.options.length > 0) {
-    editAgeSelect.value = editAgeSelect.options[5].value;
+    editAgeSelect.value = '6'; // Select age 6 by value instead of index
   }
 
   // Set time fields
