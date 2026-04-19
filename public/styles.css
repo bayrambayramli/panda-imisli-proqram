@@ -1675,6 +1675,14 @@ body {
   color: #000;
 }
 
+.ui-prompt-error {
+  margin-top: 8px;
+  margin-bottom: 6px;
+  color: #b00020;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .ui-prompt-actions {
   display: flex;
   gap: 10px;

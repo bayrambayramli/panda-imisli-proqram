@@ -229,6 +229,16 @@ function setupEventListeners() {
       closeUiPrompt(true);
     }
   });
+  document.getElementById('uiPromptInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (_uiAlertResolve) {
+        closeUiAlert();
+      } else if (_uiPromptResolve) {
+        closeUiPrompt(true);
+      }
+    }
+  });
   
   // Modal
   const modal = document.getElementById('editModal');
@@ -318,6 +328,19 @@ function closeUiAlert() {
   }
 }
 
+function setUiPromptError(message = '') {
+  const errorEl = document.getElementById('uiPromptError');
+  if (!errorEl) return;
+
+  if (message) {
+    errorEl.textContent = message;
+    errorEl.classList.remove('is-hidden');
+  } else {
+    errorEl.textContent = '';
+    errorEl.classList.add('is-hidden');
+  }
+}
+
 // UI prompt implementation (returns Promise)
 let _uiPromptResolve = null;
 function showUiPrompt(message, options = { input: false, defaultValue: '' }) {
@@ -331,17 +354,32 @@ function showUiPrompt(message, options = { input: false, defaultValue: '' }) {
     // Show cancel button for prompts
     if (cancelBtn) cancelBtn.classList.remove('is-hidden');
     if (okBtn) okBtn.classList.remove('is-hidden');
+    setUiPromptError(options.errorMessage || '');
     
     if (options.input) {
       input.classList.remove('is-hidden');
       input.type = options.inputType || 'text';
+      input.name = options.inputName || 'uiPromptInput';
+      input.autocomplete = options.inputType === 'password' ? 'new-password' : 'off';
+      input.autocapitalize = 'off';
+      input.autocorrect = 'off';
+      input.spellcheck = false;
       input.value = options.defaultValue || '';
-      input.focus();
     } else {
       input.classList.add('is-hidden');
       input.type = 'text';
+      input.name = 'uiPromptInput';
+      input.autocomplete = 'off';
     }
+
     modal.classList.add('show');
+    if (options.input) {
+      window.requestAnimationFrame(() => {
+        input.focus({ preventScroll: true });
+        input.select();
+      });
+    }
+
     _uiPromptResolve = resolve;
   });
 }
@@ -351,6 +389,9 @@ function closeUiPrompt(ok) {
   const input = document.getElementById('uiPromptInput');
   modal.classList.remove('show');
   input.type = 'text';
+  input.name = 'uiPromptInput';
+  input.autocomplete = 'off';
+  setUiPromptError('');
   if (_uiPromptResolve) {
     if (ok) {
       if (!input.classList.contains('is-hidden')) {
@@ -366,31 +407,45 @@ function closeUiPrompt(ok) {
 }
 
 async function verifyProtectedViewAccess(viewName) {
-  const password = await showUiPrompt(`${viewName} üçün şifrəni daxil edin:`, { input: true, inputType: 'password', defaultValue: '' });
-  if (password === false) {
-    return false;
-  }
+  let inlineError = '';
 
-  try {
-    const response = await fetch('/api/access/verify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ password })
+  while (true) {
+    const password = await showUiPrompt(`${viewName} üçün şifrəni daxil edin:`, {
+      input: true,
+      inputType: 'password',
+      inputName: 'accessPromptInput',
+      defaultValue: '',
+      errorMessage: inlineError
     });
 
-    const result = await response.json().catch(() => null);
-    if (!response.ok) {
-      await showUiAlert(result?.error || 'Giriş təsdiqlənmədi.');
+    if (password === false) {
       return false;
     }
 
-    return true;
-  } catch (error) {
-    console.error('Error verifying protected view access:', error);
-    await showUiAlert('Giriş yoxlanılarkən xəta baş verdi.');
-    return false;
+    if (!String(password).trim()) {
+      inlineError = 'Şifrə tələb olunur.';
+      continue;
+    }
+
+    try {
+      const response = await fetch('/api/access/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+      });
+
+      const result = await response.json().catch(() => null);
+      if (response.ok) {
+        return true;
+      }
+
+      inlineError = result?.error || 'Giriş təsdiqlənmədi.';
+    } catch (error) {
+      console.error('Error verifying protected view access:', error);
+      inlineError = 'Giriş yoxlanılarkən xəta baş verdi.';
+    }
   }
 }
 
