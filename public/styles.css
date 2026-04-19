@@ -1088,7 +1088,7 @@ body {
 
 .pass-types-table input[type="text"] {
   color: #000;
-  min-width: 300px;
+  min-width: 270px;
 }
 
 .pass-types-table input[type="number"] {
