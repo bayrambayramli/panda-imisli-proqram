@@ -113,14 +113,14 @@ function calculateRowsPerPage() {
   const table = document.getElementById('activeOnlyTable');
   if (!wrapper || !table) return 1;
 
-  const wrapperStyles = window.getComputedStyle(wrapper);
-  let availableHeight = wrapper.clientHeight - (parseFloat(wrapperStyles.paddingTop) || 0) - (parseFloat(wrapperStyles.paddingBottom) || 0);
+  const wrapperHeight = wrapper.getBoundingClientRect().height;
   const thead = table.querySelector('thead');
-  const headerHeight = thead ? thead.offsetHeight : 0;
+  const headerHeight = thead ? thead.getBoundingClientRect().height : 0;
   const firstRow = table.querySelector('tbody tr');
-  const rowHeight = firstRow ? firstRow.offsetHeight : 70;
+  const rowHeight = firstRow ? Math.max(firstRow.getBoundingClientRect().height, 60) : 80;
 
-  const calculatedRows = Math.floor((availableHeight - headerHeight) / rowHeight);
+  const availableHeight = wrapperHeight - headerHeight - 4;
+  const calculatedRows = Math.floor(availableHeight / Math.max(rowHeight, 1));
   return Math.max(1, calculatedRows);
 }
 
@@ -199,6 +199,8 @@ function renderActiveSessions(children) {
     startTimer(child);
   });
 
+  // Force layout before calculating row count
+  tbody.offsetHeight;
   rowsPerPage = calculateRowsPerPage();
   const rows = tbody.querySelectorAll('tr');
   rows.forEach((row, index) => {
@@ -399,4 +401,9 @@ window.addEventListener('resize', () => {
   if (customMessagePage && customMessagePage.classList.contains('show')) {
     adjustCustomMessageFontSize(customMessagePage);
   }
+});
+
+// Recalculate after initial load once CSS is applied
+window.addEventListener('load', () => {
+  handleResize();
 });
