@@ -575,7 +575,6 @@ function createActiveRow(child) {
 
   row.innerHTML = `
     <td>${child.name}</td>
-    <td>${formatAgeValue(child.age)}</td>
     <td>${child.playZone}</td>
     <td>${startTimeStr}</td>
     <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
@@ -610,7 +609,6 @@ function createCompletedRow(child) {
   
   row.innerHTML = `
     <td>${child.name}</td>
-    <td>${formatAgeValue(child.age)}</td>
     <td>${child.playZone}</td>
     <td>${startTime}</td>
     <td>${endTime}</td>
@@ -632,7 +630,6 @@ function createCompletedRow(child) {
 // Add new child
 async function addChild() {
   const name = document.getElementById('childName').value.trim();
-  const age = document.getElementById('childAge').value;
   const playZone = document.getElementById('playZone').value;
   const passTypeId = document.getElementById('duration').value;
   const notes = document.getElementById('notesInput').value.trim();
@@ -670,7 +667,7 @@ async function addChild() {
       },
       body: JSON.stringify({
         name,
-        age: age ? parseInt(age) : '-',
+        age: '-',
         playZone,
         duration: passType.duration,
         price: passType.price,
@@ -687,18 +684,42 @@ async function addChild() {
       return;
     }
     
-    // Clear form
-    document.getElementById('childName').value = '';
-    document.getElementById('childAge').value = '';
-    document.getElementById('playZone').value = '';
-    document.getElementById('duration').value = '';
-    document.getElementById('notesInput').value = '';
+    // Clear form and restore defaults
+    resetAddChildForm();
     
     // Reload data
     loadData();
   } catch (error) {
     console.error('Error adding child:', error);
     await showUiAlert('Uşaq əlavə edilərkən xəta baş verdi. Yenidən cəhd edin.');
+  }
+}
+
+function resetAddChildForm() {
+  const childNameInput = document.getElementById('childName');
+  const playZoneSelect = document.getElementById('playZone');
+  const durationSelect = document.getElementById('duration');
+  const notesInput = document.getElementById('notesInput');
+
+  if (childNameInput) childNameInput.value = '';
+  if (notesInput) notesInput.value = '';
+
+  if (playZoneSelect) {
+    const defaultZone = settings?.playZones?.find(z => z.name === 'Əsas');
+    if (defaultZone) {
+      playZoneSelect.value = defaultZone.name;
+    } else if (playZoneSelect.options.length > 0) {
+      playZoneSelect.value = playZoneSelect.options[0].value;
+    }
+  }
+
+  if (durationSelect) {
+    const defaultPassType = settings?.passTypes?.find(pt => pt.id === 1);
+    if (defaultPassType) {
+      durationSelect.value = defaultPassType.id;
+    } else if (durationSelect.options.length > 0) {
+      durationSelect.value = durationSelect.options[0].value;
+    }
   }
 }
 
@@ -945,7 +966,6 @@ async function openEditModal(childId, source, historyDate = null) {
   
   // Populate modal
   document.getElementById('editName').value = child.name;
-  document.getElementById('editAge').value = child.age === "-" ? "" : child.age;
   document.getElementById('editPlayZone').value = child.playZone;
   document.getElementById('editNotes').value = child.notes || '';
   
@@ -1035,8 +1055,6 @@ async function saveEdit() {
   }
   
   const name = document.getElementById('editName').value.trim();
-  const ageValue = document.getElementById('editAge').value;
-  const age = ageValue ? parseInt(ageValue) : "-";
   const playZone = document.getElementById('editPlayZone').value;
   const notes = document.getElementById('editNotes').value;
   
@@ -1081,7 +1099,7 @@ async function saveEdit() {
         body: JSON.stringify({
           date: dateToUse,
           name,
-          age,
+          age: '-',
           playZone,
           duration: passType.duration,
           price: passType.price,
@@ -1113,7 +1131,7 @@ async function saveEdit() {
   
   const updates = {
     name,
-    age,
+    age: '-',
     playZone,
     duration: passType.duration,
     price: passType.price,
@@ -1468,7 +1486,6 @@ async function openHistoryAddModal() {
   
   // Clear form
   document.getElementById('editName').value = '';
-  document.getElementById('editAge').value = '';
   document.getElementById('editPlayZone').value = '';
   document.getElementById('editDuration').value = '';
   document.getElementById('editNotes').value = '';
@@ -1587,7 +1604,6 @@ function renderHistoryContent(data, searchTerm) {
             <thead>
               <tr>
                 <th class="sortable" onclick="sortHistoryBy('name')">Ad ${getSortIndicator('name')}</th>
-                <th class="sortable" onclick="sortHistoryBy('age')">Yaş ${getSortIndicator('age')}</th>
                 <th class="sortable" onclick="sortHistoryBy('playZone')">Zona ${getSortIndicator('playZone')}</th>
                 <th class="sortable" onclick="sortHistoryBy('duration')">Müddət ${getSortIndicator('duration')}</th>
                 <th class="sortable" onclick="sortHistoryBy('price')">Məbləğ ${getSortIndicator('price')}</th>
@@ -1606,7 +1622,6 @@ function renderHistoryContent(data, searchTerm) {
                 return `
                   <tr>
                     <td>${child.name}</td>
-                    <td>${formatAgeValue(child.age)}</td>
                     <td>${child.playZone}</td>
                     <td>${child.duration === 'unlimited' ? 'Limitsiz' : (child.duration + ' dəq')}</td>
                     <td>${child.price} AZN</td>
@@ -1662,11 +1677,6 @@ function sortHistoryData(data) {
         aVal = (a.name || '').toLowerCase();
         bVal = (b.name || '').toLowerCase();
         return historySortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-      
-      case 'age':
-        aVal = parseInt(a.age) || 0;
-        bVal = parseInt(b.age) || 0;
-        return historySortDir === 'asc' ? aVal - bVal : bVal - aVal;
       
       case 'playZone':
         aVal = (a.playZone || '').toLowerCase();
@@ -2053,14 +2063,6 @@ function updateDurationDropdown() {
       const currentValue = select.value;
       select.innerHTML = '';
       
-      // Only add placeholder option to main form select, not to edit modal
-      if (select.id === 'duration') {
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Bilet seçin';
-        select.appendChild(defaultOption);
-      }
-      
       settings.passTypes.forEach(pt => {
         const option = document.createElement('option');
         option.value = pt.id; // Use pass type ID as value
@@ -2068,8 +2070,14 @@ function updateDurationDropdown() {
         select.appendChild(option);
       });
       
-      // Try to restore previous value
-      if (settings.passTypes.some(pt => pt.id.toString() === currentValue)) {
+      // Set default to 1 saat - 5 AZN (id: 1) if available and no current value
+      if (select.id === 'duration' && !currentValue) {
+        const defaultPassType = settings.passTypes.find(pt => pt.id === 1);
+        if (defaultPassType) {
+          select.value = 1;
+        }
+      } else if (settings.passTypes.some(pt => pt.id.toString() === currentValue)) {
+        // Try to restore previous value
         select.value = currentValue;
       }
     }
@@ -2087,13 +2095,6 @@ function updatePlayZoneDropdown() {
       const currentValue = select.value;
       select.innerHTML = '';
       
-      if (select.id === 'playZone') {
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Zona seçin';
-        select.appendChild(defaultOption);
-      }
-      
       playZones.forEach(zone => {
         const option = document.createElement('option');
         option.value = zone.name;
@@ -2101,8 +2102,14 @@ function updatePlayZoneDropdown() {
         select.appendChild(option);
       });
       
-      // Try to restore previous value
-      if (playZones.some(z => z.name === currentValue)) {
+      // Set default to 'Əsas' if available and no current value
+      if (select.id === 'playZone' && !currentValue) {
+        const defaultZone = playZones.find(z => z.name === 'Əsas');
+        if (defaultZone) {
+          select.value = 'Əsas';
+        }
+      } else if (playZones.some(z => z.name === currentValue)) {
+        // Try to restore previous value
         select.value = currentValue;
       }
     }

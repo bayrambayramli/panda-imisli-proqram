@@ -2,9 +2,11 @@ const timerIntervals = {};
 
 // Pagination variables
 let currentPage = 1;
-const rowsPerPage = 7;
+let rowsPerPage = 8; // initial fallback; recalculated dynamically
 let totalPages = 1;
 let autoRotationInterval = null;
+let activeChildren = [];
+let resizeTimeout = null;
 let tvPaginationFrequency = 5; // Default value, will be loaded from settings
 let tvShowUnlimitedPassTypes = true; // Toggle to show/hide unlimited pass types on TV
 let tvCustomMessage = ''; // Custom message for last page
@@ -106,6 +108,31 @@ function startTimer(child) {
   }, 60000);
 }
 
+function calculateRowsPerPage() {
+  const wrapper = document.querySelector('.table-wrapper');
+  const table = document.getElementById('activeOnlyTable');
+  if (!wrapper || !table) return 1;
+
+  const wrapperStyles = window.getComputedStyle(wrapper);
+  let availableHeight = wrapper.clientHeight - (parseFloat(wrapperStyles.paddingTop) || 0) - (parseFloat(wrapperStyles.paddingBottom) || 0);
+  const thead = table.querySelector('thead');
+  const headerHeight = thead ? thead.offsetHeight : 0;
+  const firstRow = table.querySelector('tbody tr');
+  const rowHeight = firstRow ? firstRow.offsetHeight : 70;
+
+  const calculatedRows = Math.floor((availableHeight - headerHeight) / rowHeight);
+  return Math.max(1, calculatedRows);
+}
+
+function handleResize() {
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout);
+  }
+  resizeTimeout = setTimeout(() => {
+    renderActiveSessions(activeChildren);
+  }, 150);
+}
+
 function renderActiveSessions(children) {
   const tbody = document.getElementById('activeOnlyTableBody');
   const noMsg = document.getElementById('noActiveOnlyMsg');
@@ -157,21 +184,12 @@ function renderActiveSessions(children) {
   customMessagePage.classList.remove('show');
   if (sectionTitle) sectionTitle.classList.remove('is-hidden');
 
-  // Calculate total pages (add 1 if custom message is enabled and set)
-  const dataPagesCount = Math.ceil(children.length / rowsPerPage);
-  const newTotalPages = (tvCustomMessageEnabled && tvCustomMessage.trim()) ? dataPagesCount + 1 : dataPagesCount;
-  
-  children.forEach((child, index) => {
+  children.forEach(child => {
     const row = document.createElement('tr');
     const startTimeStr = formatTime(child.startTime);
-    
-    // Calculate which page this row belongs to (1-indexed)
-    const pageNumber = Math.floor(index / rowsPerPage) + 1;
-    row.setAttribute('data-page', pageNumber);
 
     row.innerHTML = `
       <td>${child.name}</td>
-      <td>${child.age}</td>
       <td>${child.playZone}</td>
       <td>${startTimeStr}</td>
       <td id="timer-cell-${child.id}" class="timer-cell"><span id="timer-${child.id}" class="timer">--:--</span></td>
@@ -180,7 +198,18 @@ function renderActiveSessions(children) {
     tbody.appendChild(row);
     startTimer(child);
   });
-  
+
+  rowsPerPage = calculateRowsPerPage();
+  const rows = tbody.querySelectorAll('tr');
+  rows.forEach((row, index) => {
+    const pageNumber = Math.floor(index / rowsPerPage) + 1;
+    row.setAttribute('data-page', pageNumber);
+  });
+
+  // Calculate total pages (add 1 if custom message is enabled and set)
+  const dataPagesCount = Math.ceil(rows.length / rowsPerPage);
+  const newTotalPages = (tvCustomMessageEnabled && tvCustomMessage.trim()) ? dataPagesCount + 1 : dataPagesCount;
+
   // Preserve current page if possible, otherwise reset to 1
   if (currentPage > newTotalPages) {
     currentPage = 1;
@@ -328,7 +357,8 @@ async function loadActiveSessions() {
     const date = getTodayDate();
     const response = await fetch(`/api/data/${date}`);
     const data = await response.json();
-    renderActiveSessions(data.active || []);
+    activeChildren = data.active || [];
+    renderActiveSessions(activeChildren);
   } catch (error) {
     console.error('Error loading active sessions:', error);
   }
@@ -362,8 +392,9 @@ loadSettings().then(() => {
   setInterval(loadActiveSessions, 30000);
 });
 
-// Re-adjust custom message font size on window resize
+// Re-adjust pagination and custom message on window resize
 window.addEventListener('resize', () => {
+  handleResize();
   const customMessagePage = document.getElementById('customMessagePage');
   if (customMessagePage && customMessagePage.classList.contains('show')) {
     adjustCustomMessageFontSize(customMessagePage);

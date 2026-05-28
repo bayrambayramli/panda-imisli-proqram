@@ -7,26 +7,32 @@
       "price": 5
     },
     {
-      "id": 2,
-      "name": "1 saat - Endirimli",
-      "duration": 60,
-      "price": 3
-    },
-    {
       "id": 3,
       "name": "Limitsiz",
       "duration": "unlimited",
       "price": 8
     },
     {
-      "id": 4,
-      "name": "Boyama",
-      "duration": "unlimited",
-      "price": 5
+      "id": 5,
+      "name": "Körpə",
+      "duration": 60,
+      "price": 3
     },
     {
-      "id": 5,
-      "name": "Körpə - 1 saat",
+      "id": 4,
+      "name": "Körpə endirimli",
+      "duration": 60,
+      "price": 2
+    },
+    {
+      "id": 6,
+      "name": "1 saat endirimli",
+      "duration": 60,
+      "price": 4
+    },
+    {
+      "id": 7,
+      "name": "Endirimli",
       "duration": 60,
       "price": 3
     }
@@ -46,9 +52,9 @@
     }
   ],
   "endDayHour": "23:59",
-  "tvPaginationFrequency": 6,
-  "tvShowUnlimitedPassTypes": true,
-  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\n\nOyun zonasının qiymətləri:\n1 uşaq 1 saat: 5 manat\n1 uşaq limitsiz: 8 manat\n1-3 yaş: 3 manat\nBoyama: 5 manat",
+  "tvPaginationFrequency": 8,
+  "tvShowUnlimitedPassTypes": false,
+  "tvCustomMessage": "\"PANDA İMİŞLİ\"YƏ XOŞ GƏLMİSİNİZ!\n\nOyun zonasının qiymətləri:\n1 uşaq 1 saat: 5 manat\n1 uşaq limitsiz: 8 manat",
   "tvCustomMessageEnabled": false,
-  "accessPassword": "1111"
+  "accessPassword": "2020"
 }
